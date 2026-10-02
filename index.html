@@ -1,288 +1,446 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Nossa Senhora do Ó</title>
-<meta name="description" content="Atravesse quatro séculos da história de Nossa Senhora do Ó, em Ipojuca-PE, numa maquete 3D interativa. Cada fato com fonte.">
+<title>Nossa Senhora do Ó · Memórias do Ó</title>
+<meta name="description" content="Atravesse quatro séculos da história de Nossa Senhora do Ó, em Ipojuca-PE, em 12 capítulos animados. Cada fato traz o selo da sua fonte.">
+<meta name="theme-color" content="#0e0c09">
+<meta property="og:title" content="Nossa Senhora do Ó · uma história em 12 capítulos">
+<meta property="og:description" content="Engenhos, holandeses, revolução, a Batalha das Sedes, a usina e os 199 dias de município. Cada fato com fonte.">
+<meta property="og:image" content="img/o-igreja.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect width=%27200%27 height=%27200%27 rx=%2744%27 fill=%27%23221d17%27/%3E%3Cg fill=%27none%27 transform=%27translate(100 104) scale(0.78) translate(-100 -96)%27%3E%3Cpath d=%27M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z%27 stroke=%27%23f0e6d2%27 stroke-width=%2712%27 stroke-linejoin=%27round%27/%3E%3Ccircle cx=%27100%27 cy=%27112%27 r=%2726%27 stroke=%27%23c9893a%27 stroke-width=%2716%27/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..800&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap">
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..800&family=Barlow:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap">
+<noscript><style>#pre,.cursor{display:none!important}</style></noscript>
 <style>
+/* =========================================================
+   TEMAS · cada capítulo troca a "luz" da página
+   ========================================================= */
 :root{
+  --bg:#0e0c09;--fg:#f0e6d2;--muted:#a8987a;--line:rgba(240,230,210,.14);--card:rgba(255,245,225,.045);
+  --accent:#e0a55a;--accent-2:#c9893a;--teal:#6cbcb5;--red:#d9593f;--on-accent:#1b140c;
+  --display:"Fraunces",Georgia,serif;--text:"Barlow","Helvetica Neue",Arial,sans-serif;--mono:"Space Mono","Courier New",monospace;
+  --ease:cubic-bezier(.16,1,.3,1);--gut:clamp(16px,5vw,80px);
   color-scheme:dark;
-  --bg:#120f0b;--bg-2:#1c1712;--bg-3:#2b2419;--line:#3a3122;
-  --ink:#f0e6d2;--muted:#b9aa8a;--sepia:#c9893a;--sepia-2:#e0a55a;--teal:#4a9b96;--teal-2:#7cc4be;
-  --panel:rgba(18,15,11,.8);
-  --display:"Fraunces",Georgia,serif;--text:"Barlow","Helvetica Neue",Arial,sans-serif;
-  --cond:"Barlow Condensed","Arial Narrow",sans-serif;--mono:"Space Mono","Courier New",monospace;
-  --ease:cubic-bezier(.2,.7,.1,1);
 }
+[data-theme="paper"]{--bg:#ece2cb;--fg:#1f1810;--muted:#6b5c44;--line:rgba(31,24,16,.16);--card:rgba(255,255,255,.5);--accent:#a3601c;--accent-2:#b8722a;--teal:#2c7570;--red:#b23a24;--on-accent:#fff7ea;color-scheme:light}
+[data-theme="fire"]{--bg:#1a0b06;--fg:#f7e3cf;--muted:#c09378;--line:rgba(247,227,207,.14);--accent:#ff9a55;--accent-2:#ff7a35;--red:#ff6a45}
+[data-theme="blue"]{--bg:#0b1219;--fg:#e6edf3;--muted:#8fa3b5;--line:rgba(230,237,243,.14);--accent:#e0b46a;--teal:#7cc4be}
+[data-theme="smoke"]{--bg:#1a1916;--fg:#ece6da;--muted:#a39d8f;--line:rgba(236,230,218,.14);--accent:#e3b06c}
+[data-theme="festa"]{--bg:#2a0f0d;--fg:#fbe9d6;--muted:#d29a88;--line:rgba(251,233,214,.16);--accent:#f3c36a;--teal:#7cd0c6}
+
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;overflow-x:clip}
+html{-webkit-text-size-adjust:100%;overflow-x:clip;background:var(--bg)}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:17px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--text);font-size:18px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased;transition:background-color .9s var(--ease),color .9s var(--ease)}
 img{max-width:100%;display:block}
-a{color:var(--sepia-2)}
+a{color:inherit}
 button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--sepia-2);outline-offset:3px}
-h1,h2,h3,p{margin:0}
-h1,h2,h3{font-family:var(--display);text-wrap:balance;font-weight:700}
-.mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+h1,h2,h3,p,figure{margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance}
+em{font-style:italic}
+::selection{background:var(--accent);color:var(--on-accent)}
+.mono,.kick{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.kick{color:var(--accent)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ---------- cena ---------- */
-#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;touch-action:pan-y}
-.no3d #gl{display:none}
-.no3d body,.no3d .fallback{display:block}
-.fallback{display:none;position:fixed;inset:0;z-index:0;background:#120f0b url(img/o-igreja.webp) 70% 40%/min(900px,120vw) no-repeat;opacity:.5}
-.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 60% 45%,transparent 40%,rgba(10,8,6,.75))}
-.grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain 1s steps(6) infinite}
+/* palavras divididas para animação */
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.wi{display:inline-block;will-change:transform}
+
+/* grão de filme */
+.grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain 1s steps(6) infinite}
 @keyframes grain{20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-6%,-2%)}80%{transform:translate(5%,4%)}}
 
-/* ---------- preloader ---------- */
-#pre{position:fixed;inset:0;z-index:100;background:#0e0c09;display:grid;place-items:center;transition:opacity .9s var(--ease),visibility .9s}
-#pre.out{opacity:0;visibility:hidden}
-#pre .box{display:grid;justify-items:center;gap:22px}
-#pre svg{width:132px;height:132px}
-#pre svg .d{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 1.6s var(--ease) forwards}
-#pre svg .d2{animation-delay:.35s}
+/* =========================================================
+   PRELOADER · cortina
+   ========================================================= */
+#pre{position:fixed;inset:0;z-index:200;background:#0e0c09;color:#f0e6d2;display:grid;place-items:center}
+#pre .box{display:grid;justify-items:center;gap:20px}
+#pre svg{width:120px;height:120px}
+#pre .d{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 1.6s var(--ease) forwards}
+#pre .d2{animation-delay:.3s}
 @keyframes draw{to{stroke-dashoffset:0}}
-#pre .n{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--muted);font-variant-numeric:tabular-nums}
-#pre .n b{color:var(--sepia-2);font-weight:400}
+#pre .count{font-family:var(--display);font-weight:300;font-size:clamp(64px,12vw,150px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+#pre .count sup{font-size:.3em;color:#e0a55a;vertical-align:top;margin-left:4px}
+#pre .mono{color:#a8987a}
+#pre .bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:#e0a55a;transform-origin:left;transform:scaleX(0)}
 
-/* ---------- HUD ---------- */
-.hud-top{position:fixed;top:0;left:0;right:0;z-index:70;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px clamp(16px,3vw,28px);pointer-events:none}
-.hud-top>*{pointer-events:auto}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+/* =========================================================
+   CURSOR
+   ========================================================= */
+.cursor{position:fixed;left:0;top:0;z-index:150;pointer-events:none;display:none}
+.has-cursor .cursor{display:block}
+.cursor .dot{position:fixed;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#f0e6d2;mix-blend-mode:difference}
+.cursor .ring{position:fixed;left:-22px;top:-22px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(240,230,210,.5);display:grid;place-items:center;transition:width .35s var(--ease),height .35s var(--ease),left .35s var(--ease),top .35s var(--ease),background .35s,border-color .35s;mix-blend-mode:difference}
+.cursor .ring span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#0e0c09;opacity:0;transition:opacity .2s}
+.cursor.big .ring{width:76px;height:76px;left:-38px;top:-38px;background:#f0e6d2;border-color:#f0e6d2}
+.cursor.big .ring span{opacity:1}
+.cursor.big .dot{opacity:0}
+
+/* =========================================================
+   HUD
+   ========================================================= */
+.top{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px var(--gut);pointer-events:none;mix-blend-mode:difference;color:#f0e6d2}
+.top>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
 .brand svg{width:30px;height:30px}
 .brand b{font-family:var(--display);font-size:17px;font-weight:600;line-height:1.1}
-.brand b i{color:var(--sepia)}
-.brand small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;font-weight:400}
+.brand small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:400;opacity:.7}
 .tools{display:flex;gap:8px}
-.tbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:rgba(18,15,11,.6);backdrop-filter:blur(6px);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--ink)}
-.tbtn:hover{border-color:var(--sepia)}
-.tbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6}
-.tbtn .bars{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
-.tbtn .bars i{width:2px;background:var(--sepia-2);height:30%}
-.tbtn.on .bars i{animation:eq 1s ease-in-out infinite}
-.tbtn.on .bars i:nth-child(2){animation-delay:.2s}.tbtn.on .bars i:nth-child(3){animation-delay:.4s}
+.tbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid rgba(240,230,210,.4);border-radius:999px;background:none;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:#f0e6d2}
+.tbtn:hover{background:#f0e6d2;color:#0e0c09}
+.eq{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+.eq i{width:2px;height:30%;background:currentColor}
+.tbtn.on .eq i{animation:eq 1s ease-in-out infinite}
+.tbtn.on .eq i:nth-child(2){animation-delay:.2s}.tbtn.on .eq i:nth-child(3){animation-delay:.4s}
 @keyframes eq{50%{height:100%}}
-@media (max-width:560px){.tbtn .lbl{display:none}.tbtn{padding:0 12px}}
+.burger{display:grid;gap:4px;width:16px}
+.burger i{height:1.5px;background:currentColor;transition:transform .4s var(--ease)}
+.menu-open .burger i:first-child{transform:translateY(2.75px) rotate(45deg)}
+.menu-open .burger i:last-child{transform:translateY(-2.75px) rotate(-45deg)}
+@media (max-width:560px){.tbtn .lbl{display:none}.tbtn{padding:0 13px}.brand small{display:none}}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:81;background:var(--accent);transform-origin:left;transform:scaleX(0)}
 
-/* trilha de capítulos (esquerda) */
-.rail{position:fixed;left:clamp(10px,1.6vw,22px);top:50%;translate:0 -50%;z-index:30;display:grid;gap:6px;list-style:none;margin:0;padding:0}
-.rail button{display:flex;align-items:center;gap:10px;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em;min-height:24px}
-.rail button i{display:block;width:10px;height:1px;background:currentColor;transition:width .4s var(--ease)}
-.rail button span{opacity:0;transform:translateX(-6px);transition:.3s;white-space:nowrap;text-transform:uppercase}
-.rail button:hover span{opacity:1;transform:none}
-.rail button.on{color:var(--sepia-2)}
-.rail button.on i{width:26px}
-@media (max-width:1100px){.rail{display:none}}
+.hud{position:absolute;left:50%;top:50%;translate:-50% -50%;display:flex;align-items:baseline;gap:12px;pointer-events:none!important;opacity:0;transition:opacity .5s}
+.hud.show{opacity:1}
+.hud .yr{font-family:var(--display);font-weight:700;font-size:26px;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;min-width:2.4ch;text-align:center}
+.hud .yl,.hud .hc{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+@media (max-width:760px){.hud .yl,.hud .hc{display:none}.hud .yr{font-size:20px}}
+@media (max-width:420px){.hud{display:none}}
 
-/* régua do tempo (baixo) */
-.ruler{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px clamp(16px,3vw,28px) calc(12px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;pointer-events:none;background:linear-gradient(transparent,rgba(12,10,7,.85) 55%)}
-.ruler .yr{font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,46px);line-height:.9;font-variant-numeric:tabular-nums;letter-spacing:-.02em;min-width:3.2ch}
-.ruler .yr small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:400;margin-bottom:6px;text-transform:uppercase}
-.ruler .track{position:relative;height:30px;pointer-events:auto}
-.ruler .line{position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--line)}
-.ruler .tick{position:absolute;bottom:8px;width:1px;height:6px;background:#5a4c36}
-.ruler .tick.big{height:12px;background:#8d7a58}
-.ruler .tick b{position:absolute;bottom:14px;left:50%;translate:-50% 0;font-family:var(--mono);font-size:9px;color:#8d7a58;font-weight:400}
-.ruler .mk{position:absolute;bottom:3px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;border:1px solid var(--sepia);background:var(--bg);cursor:pointer;padding:0}
-.ruler .mk:hover,.ruler .mk.on{background:var(--sepia)}
-.ruler .mk::after{content:"";position:absolute;inset:-12px}
-.ruler .head{position:absolute;bottom:0;width:2px;height:26px;margin-left:-1px;background:var(--sepia-2);box-shadow:0 0 12px rgba(224,165,90,.7);transition:opacity .3s}
-@media (max-width:700px){.ruler .tick b{display:none}.ruler{gap:12px}}
+/* menu */
+#menu{position:fixed;inset:0;z-index:79;background:#0e0c09;color:#f0e6d2;clip-path:inset(0 0 100% 0);visibility:hidden;overflow:auto;padding:96px var(--gut) 60px}
+#menu ol{list-style:none;margin:0 auto;padding:0;max-width:1100px;counter-reset:m}
+#menu li{overflow:hidden;border-bottom:1px solid rgba(240,230,210,.12)}
+#menu li button{width:100%;display:grid;grid-template-columns:60px 1fr auto;gap:16px;align-items:baseline;padding:12px 0;background:none;border:0;cursor:pointer;text-align:left;transition:padding .4s var(--ease)}
+#menu li button:hover{padding-left:16px}
+#menu li button:hover b{color:#e0a55a;font-style:italic}
+#menu li em{font-style:normal;font-family:var(--mono);font-size:11px;color:#a8987a}
+#menu li b{font-family:var(--display);font-size:clamp(24px,4vw,48px);font-weight:500;line-height:1.1;letter-spacing:-.02em}
+#menu li span{font-family:var(--mono);font-size:11px;color:#e0a55a}
+@media (max-width:600px){#menu li button{grid-template-columns:36px 1fr}#menu li span{display:none}}
 
-/* menu de capítulos */
-#menu{position:fixed;inset:0;z-index:60;background:rgba(12,10,7,.96);backdrop-filter:blur(10px);display:none;overflow:auto;padding:84px clamp(16px,5vw,64px) 60px}
-#menu.open{display:block}
-#menu ol{list-style:none;margin:0 auto;padding:0;max-width:1000px;display:grid;gap:2px}
-#menu li button{width:100%;display:grid;grid-template-columns:56px 1fr auto;gap:16px;align-items:baseline;padding:14px 4px;background:none;border:0;border-bottom:1px solid var(--line);cursor:pointer;text-align:left}
-#menu li button:hover b{color:var(--sepia-2)}
-#menu li em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted)}
-#menu li b{font-family:var(--display);font-size:clamp(22px,3.4vw,38px);font-weight:600;line-height:1.1;transition:color .2s}
-#menu li span{font-family:var(--mono);font-size:11px;color:var(--sepia-2)}
-#menu .legend{max-width:1000px;margin:34px auto 0;display:flex;flex-wrap:wrap;gap:10px 22px;color:var(--muted);font-size:15px}
+/* =========================================================
+   BOTÕES · selos · termos
+   ========================================================= */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border:1px solid currentColor;border-radius:999px;background:none;cursor:pointer;overflow:hidden;isolation:isolate;transition:color .45s var(--ease)}
+.btn::before{content:"";position:absolute;left:-10%;right:-10%;top:100%;height:220%;z-index:-1;background:var(--accent);border-radius:50%;transition:top .55s var(--ease)}
+.btn:hover::before{top:-60%}
+.btn:hover{color:var(--on-accent);border-color:var(--accent)}
+.btn.fill{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.fill::before{background:var(--fg)}
+.btn.fill:hover{color:var(--bg);border-color:var(--fg)}
+.btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6;transition:transform .4s var(--ease)}
+.btn:hover svg{transform:translateX(4px)}
+.row{display:flex;flex-wrap:wrap;gap:12px}
 
-/* ---------- capítulos ---------- */
-main{position:relative;z-index:10}
-.ch{position:relative;min-height:100svh;display:flex;align-items:center;padding:110px clamp(16px,4vw,64px) 120px;padding-left:clamp(16px,7vw,120px);pointer-events:none}
-.ch.tall{display:block;padding:0;height:340vh}
-.ch.tall .sticky{position:sticky;top:0;height:100svh;display:flex;align-items:center;padding:96px clamp(16px,4vw,64px) 110px;padding-left:clamp(16px,7vw,120px)}
-.panel{pointer-events:auto;width:100%;max-width:500px;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:10px;padding:clamp(20px,2.6vw,32px);display:grid;gap:14px}
-.panel.wide{max-width:640px}
-.panel.clear{background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0}
-.kick{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sepia-2)}
-.panel h2{font-size:clamp(34px,4.6vw,58px);line-height:1;letter-spacing:-.02em}
-.panel h2 em{font-weight:400;color:var(--sepia)}
-.panel p{color:#ddd1b8}
-.panel p strong{color:var(--ink);font-weight:600}
-.big{font-family:var(--display);font-weight:800;font-size:clamp(46px,7vw,92px);line-height:.9;letter-spacing:-.03em;color:var(--sepia-2);font-variant-numeric:tabular-nums}
-.big small{font-family:var(--text);font-weight:500;font-size:15px;letter-spacing:0;color:var(--muted);display:block;margin-top:6px;line-height:1.3}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
-.stats div{border-top:1px solid var(--line);padding-top:10px}
-.stats b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,44px);line-height:1;color:var(--sepia-2);font-variant-numeric:tabular-nums}
-.stats span{font-size:14px;color:var(--muted);line-height:1.3;display:block;margin-top:4px}
-blockquote{margin:0;padding:14px 18px;border-left:2px solid var(--sepia);background:rgba(201,137,58,.1);font-family:var(--display);font-style:italic;font-size:clamp(19px,2vw,24px);line-height:1.3}
-blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:11px;color:var(--muted);letter-spacing:.06em}
-
-/* selos */
-.selo{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;font-family:var(--mono);font-size:10px;letter-spacing:.06em;line-height:1;padding:4px 7px;border-radius:2px;white-space:nowrap;text-decoration:none;margin-left:4px}
+.selo{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;font-family:var(--mono);font-size:10px;letter-spacing:.06em;line-height:1;padding:4px 7px;border-radius:3px;white-space:nowrap;text-decoration:none;margin-left:4px;transition:transform .25s var(--ease)}
 .selo::before{content:attr(data-k);font-weight:700}
-.selo.doc{background:var(--sepia);color:#1b140c}
-.selo.acad{border:1px solid var(--sepia);color:var(--sepia-2)}
-.selo.oral{background:rgba(74,155,150,.18);border:1px solid var(--teal);color:var(--teal-2)}
-.selo.lenda{border:1px dashed #8d7a58;color:var(--muted)}
-.selo.pend{border:1px dashed #c2432f;color:#e98a78}
-a.selo:hover{filter:brightness(1.15)}
-.legend .selo{margin-left:0}
+.selo.doc{background:var(--accent);color:var(--on-accent)}
+.selo.acad{border:1px solid var(--accent);color:var(--accent)}
+.selo.oral{background:color-mix(in srgb,var(--teal) 18%,transparent);border:1px solid var(--teal);color:var(--teal)}
+.selo.lenda{border:1px dashed var(--muted);color:var(--muted)}
+.selo.pend{border:1px dashed var(--red);color:var(--red)}
+a.selo:hover{transform:translateY(-2px)}
 
-/* botões */
-.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;font-family:var(--cond);font-weight:600;font-size:16px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1px solid var(--sepia);border-radius:6px;color:var(--ink);background:none;cursor:pointer;overflow:hidden;isolation:isolate;transition:color .35s}
-.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--sepia);transform:scaleY(0);transform-origin:bottom;transition:transform .45s var(--ease)}
-.btn:hover::before{transform:scaleY(1)}
-.btn:hover{color:#1b140c}
-.btn.fill{background:var(--sepia);color:#1b140c}
-.btn.fill::before{background:var(--ink)}
-.row{display:flex;flex-wrap:wrap;gap:10px}
+dfn{font-style:normal;position:relative;border-bottom:1.5px dotted var(--accent);cursor:help;font-weight:600}
+dfn::after{content:attr(data-def);position:absolute;left:50%;bottom:calc(100% + 10px);width:max-content;max-width:260px;translate:-50% 6px;padding:10px 12px;border-radius:8px;background:var(--fg);color:var(--bg);font-family:var(--text);font-weight:400;font-size:14px;line-height:1.4;opacity:0;pointer-events:none;transition:opacity .25s,translate .35s var(--ease);z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+dfn:hover::after,dfn:focus::after,dfn.show::after{opacity:1;translate:-50% 0}
 
-/* hero */
-.hero .panel{max-width:620px}
-.hero h1{font-size:clamp(54px,9vw,128px);line-height:.86;letter-spacing:-.035em;font-weight:800;font-variation-settings:"opsz" 144}
-.hero h1 .l{display:block;overflow:hidden;padding-bottom:.06em}
-.hero h1 .l>span{display:inline-block}
-.hero h1 em{font-weight:400;color:var(--sepia)}
-.hero .lead{font-family:var(--display);font-style:italic;font-size:clamp(20px,2.2vw,27px);line-height:1.3;color:var(--ink);max-width:28ch}
-.hero .legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:14px;color:var(--muted);margin-top:4px}
-.cue{position:absolute;left:50%;bottom:86px;translate:-50% 0;display:grid;justify-items:center;gap:6px}
-.cue i{display:block;width:1px;height:40px;background:linear-gradient(var(--sepia),transparent);animation:cue 1.8s var(--ease) infinite;transform-origin:top}
+/* =========================================================
+   HERO · o Ó que vira janela
+   ========================================================= */
+.hero{position:relative;height:100svh;overflow:hidden;background:#0e0c09}
+.hero-img{position:absolute;right:-2vw;bottom:0;width:min(64vw,128svh);transform-origin:31% 70%;will-change:transform;-webkit-mask-image:radial-gradient(ellipse 72% 96% at 50% 92%,#000 66%,transparent 100%);mask-image:radial-gradient(ellipse 72% 96% at 50% 92%,#000 66%,transparent 100%)}
+.hero-img img{width:100%;height:auto;filter:sepia(.35) contrast(1.08) brightness(1.05)}
+.hero-glow{position:absolute;right:10vw;bottom:-10svh;width:50vw;height:70svh;background:radial-gradient(closest-side,rgba(224,165,90,.22),transparent);pointer-events:none;animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{50%{opacity:.55;transform:scale(1.08)}}
+.shade{position:absolute;inset:0;background:#0e0c09;opacity:0;pointer-events:none;z-index:1}
+.hero-copy{position:absolute;left:var(--gut);top:50%;translate:0 -50%;max-width:min(640px,52vw);display:grid;gap:22px;z-index:2}
+.hero h1{font-size:clamp(56px,9.4vw,150px);line-height:.86;letter-spacing:-.045em;font-weight:800;font-variation-settings:"opsz" 144}
+.hero h1 em{font-weight:300;color:var(--accent)}
+.hero .lead{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(20px,2.1vw,28px);line-height:1.3;max-width:26ch}
+.hero .cue{position:absolute;left:50%;bottom:28px;translate:-50% 0;display:grid;justify-items:center;gap:8px;color:var(--muted);z-index:2}
+.hero .cue i{display:block;width:1px;height:46px;background:linear-gradient(var(--accent),transparent);animation:cue 1.8s var(--ease) infinite;transform-origin:top}
 @keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
-.hint{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.hint svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5}
-@media (hover:none){.hint.mouse{display:none}}
+.statement{position:absolute;inset:0;display:grid;place-items:center;padding:0 var(--gut);z-index:3;pointer-events:none}
+.statement p{font-family:var(--display);font-weight:400;font-size:clamp(28px,4.4vw,64px);line-height:1.08;letter-spacing:-.02em;max-width:18ch;text-align:center;color:#f0e6d2}
+.statement p em{color:#e0a55a;font-weight:300}
+.statement{opacity:0}
+.statement .sw{opacity:.14}
+@media (max-width:860px){
+  .hero-img{right:auto;left:50%;translate:-50% 0;bottom:auto;top:10svh;width:min(118vw,64svh)}
+  .hero-glow{right:auto;left:0;width:100vw;top:0;bottom:auto}
+  .hero-copy{top:auto;bottom:calc(64px + env(safe-area-inset-bottom,0px));translate:none;right:var(--gut);max-width:none;gap:16px}
+  .hero .cue{display:none}
+}
 
-/* antífonas */
-.anti{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.anti button{min-height:54px;border:1px solid var(--line);border-radius:6px;background:rgba(0,0,0,.25);cursor:pointer;display:grid;place-items:center;font-family:var(--display);font-size:22px;font-style:italic;color:var(--sepia);transition:.25s}
-.anti button small{font-family:var(--mono);font-style:normal;font-size:9px;color:var(--muted)}
-.anti button:hover,.anti button.on{border-color:var(--sepia);background:rgba(201,137,58,.16)}
-.anti-out{min-height:72px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:grid;gap:2px}
-.anti-out b{font-family:var(--display);font-size:24px;line-height:1.1}
-.anti-out span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+/* marquee */
+.marquee{overflow:hidden;border-block:1px solid var(--line);padding:18px 0;white-space:nowrap}
+.marquee .mq{display:inline-flex;will-change:transform}
+.marquee .mq-in{display:inline-flex;animation:mq 40s linear infinite}
+.marquee span{font-family:var(--display);font-size:clamp(28px,4vw,56px);font-weight:300;letter-spacing:-.02em;padding-right:.6em;display:inline-flex;align-items:center;gap:.6em}
+.marquee span em{color:var(--accent)}
+.marquee span::after{content:"Ó";font-weight:800;font-size:.6em;color:var(--accent)}
+@keyframes mq{to{transform:translateX(-50%)}}
 
-/* sedes */
-.sede-now{display:grid;gap:4px}
-.sede-now .who{font-family:var(--display);font-size:clamp(26px,3vw,36px);line-height:1.05}
-.sede-now .who em{color:var(--sepia);font-style:italic;font-weight:400}
-.sede-now .who.sm em{color:var(--teal-2)}
-.stops{display:flex;gap:4px;margin-top:4px}
-.stops button{flex:1;height:30px;border:0;padding:0;background:none;cursor:pointer;position:relative}
-.stops button::before{content:"";position:absolute;left:0;right:0;top:12px;height:6px;border-radius:2px;background:var(--line);transition:.3s}
-.stops button.o::before{background:rgba(201,137,58,.45)}
-.stops button.s::before{background:rgba(74,155,150,.45)}
-.stops button.on::before{top:8px;height:14px}
-.stops button.o.on::before{background:var(--sepia)}
+/* =========================================================
+   SEÇÕES GERAIS
+   ========================================================= */
+section,.chap{position:relative}
+.wrap{padding:clamp(80px,13vw,180px) var(--gut)}
+.sec-title{font-size:clamp(44px,7vw,112px);line-height:.92;letter-spacing:-.04em;font-weight:700}
+.sec-title em{font-weight:300;color:var(--accent)}
+.intro{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px);align-items:end;margin-bottom:clamp(40px,6vw,80px)}
+.intro p{font-size:clamp(18px,1.5vw,21px);color:var(--muted);max-width:44ch}
+@media (max-width:860px){.intro{grid-template-columns:1fr}}
+
+/* como ler: cartões de selo */
+.legend{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;perspective:1000px}
+.lcard{position:relative;border:1px solid var(--line);border-radius:18px;padding:26px 22px 24px;background:var(--card);display:grid;gap:14px;align-content:start;min-height:320px;transform-style:preserve-3d;transition:border-color .3s}
+.lcard:hover{border-color:var(--accent)}
+.lcard .ic{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);transform:translateZ(30px)}
+.lcard .ic svg{width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.5}
+.lcard.oral .ic{background:color-mix(in srgb,var(--teal) 16%,transparent);color:var(--teal)}
+.lcard.lenda .ic{background:transparent;border:1px dashed var(--muted);color:var(--muted)}
+.lcard h3{font-size:28px;line-height:1;letter-spacing:-.02em;transform:translateZ(20px)}
+.lcard p{font-size:15.5px;line-height:1.5}
+.lcard small{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:auto}
+.lcard .num{position:absolute;right:20px;top:18px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+@media (max-width:1000px){.legend{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.legend{grid-template-columns:1fr}.lcard{min-height:0}}
+
+/* viagem horizontal */
+.journey{height:100svh;overflow:hidden;display:flex;flex-direction:column;justify-content:center;gap:clamp(20px,4vh,48px)}
+.journey .jhead{padding:0 var(--gut);display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.journey .jhead h2{font-size:clamp(36px,5vw,76px);line-height:.95;letter-spacing:-.03em}
+.journey .jhead h2 em{font-weight:300;color:var(--accent)}
+.jtrack{display:flex;gap:18px;padding:0 var(--gut);width:max-content;will-change:transform}
+.jcard{position:relative;width:clamp(260px,26vw,360px);height:clamp(340px,52svh,460px);border-radius:20px;border:1px solid var(--line);background:var(--card);padding:24px;display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;overflow:hidden;transition:border-color .3s,transform .5s var(--ease)}
+.jcard:hover{border-color:var(--c);transform:translateY(-8px)}
+.jcard::before{content:"";position:absolute;inset:auto -30% -60% -30%;height:80%;background:radial-gradient(closest-side,var(--c),transparent);opacity:.18;transition:opacity .4s}
+.jcard:hover::before{opacity:.38}
+.jcard .jn{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.12em}
+.jcard .jy{font-family:var(--display);font-weight:800;font-size:clamp(48px,5vw,72px);line-height:.9;letter-spacing:-.04em;color:var(--c)}
+.jcard .jt{font-family:var(--display);font-size:24px;line-height:1.08;font-weight:600;margin-top:auto}
+.jcard .js{font-size:15px;color:var(--muted);line-height:1.4}
+.jcard .go{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c)}
+.jline{margin:0 var(--gut);height:1px;background:var(--line);position:relative}
+.jline b{position:absolute;inset:0;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+
+/* =========================================================
+   CAPÍTULOS
+   ========================================================= */
+.chap{padding:clamp(100px,14vw,200px) var(--gut) clamp(60px,9vw,120px)}
+.chap-head{position:relative;display:grid;gap:18px;max-width:1100px;margin-bottom:clamp(40px,6vw,90px)}
+.chap-n{position:absolute;right:-2vw;top:-.35em;font-family:var(--display);font-weight:900;font-size:clamp(140px,26vw,400px);line-height:.8;letter-spacing:-.06em;color:transparent;-webkit-text-stroke:1px var(--line);pointer-events:none;user-select:none;z-index:-1}
+.chap-head h2{font-size:clamp(48px,8vw,128px);line-height:.9;letter-spacing:-.045em}
+.chap-head h2 em{font-weight:300;color:var(--accent)}
+.tldr{display:flex;gap:14px;align-items:baseline;max-width:62ch;font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(20px,2vw,27px);line-height:1.3}
+.tldr b{flex:none;font-family:var(--mono);font-style:normal;font-weight:400;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--on-accent);background:var(--accent);padding:5px 8px;border-radius:3px;translate:0 -4px}
+.chap-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(30px,6vw,110px);align-items:start}
+.chap-text{display:grid;gap:22px;max-width:56ch}
+.chap-text p{font-size:clamp(17px,1.3vw,19.5px)}
+.chap-text p strong{font-weight:600;color:var(--fg);background:linear-gradient(transparent 62%,color-mix(in srgb,var(--accent) 28%,transparent) 0)}
+.chap-vis{position:sticky;top:14vh}
+.chap-vis figcaption{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+@media (max-width:900px){.chap-grid{grid-template-columns:1fr}.chap-vis{position:relative;top:0;order:-1}}
+
+.stage{position:relative;border:1px solid var(--line);border-radius:24px;background:var(--card);overflow:hidden;padding:clamp(18px,2.4vw,32px)}
+.stage svg{width:100%;height:auto;display:block;overflow:visible}
+
+blockquote{margin:0;padding:6px 0 6px 22px;border-left:2px solid var(--accent);font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(22px,2.4vw,32px);line-height:1.2}
+blockquote cite{display:block;margin-top:10px;font-family:var(--mono);font-style:normal;font-size:11px;color:var(--muted);letter-spacing:.06em}
+.know{border:1px solid var(--line);border-radius:16px;padding:18px 20px;background:var(--card);display:grid;gap:8px}
+.know .mono{color:var(--accent)}
+.know p{font-size:16px!important}
+
+.big{font-family:var(--display);font-weight:800;font-size:clamp(64px,9vw,140px);line-height:.85;letter-spacing:-.05em;color:var(--accent);font-variant-numeric:tabular-nums}
+.big-cap{font-size:16px;color:var(--muted);max-width:34ch;line-height:1.4}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stats div{border-top:1px solid var(--line);padding-top:12px}
+.stats b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(40px,4.6vw,64px);line-height:1;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums}
+.stats span{font-size:14.5px;color:var(--muted);line-height:1.35;display:block;margin-top:6px}
+
+/* c1 · antífonas */
+.advent{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.advent button{aspect-ratio:3/4;border:1px solid var(--line);border-radius:12px;background:none;cursor:pointer;display:grid;align-content:space-between;justify-items:center;padding:10px 4px;transition:border-color .3s,background .3s,transform .4s var(--ease)}
+.advent button b{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(26px,3vw,40px);line-height:1;color:var(--accent)}
+.advent button small{font-family:var(--mono);font-size:9.5px;color:var(--muted)}
+.advent button:hover{transform:translateY(-4px);border-color:var(--accent)}
+.advent button.on{background:var(--accent);border-color:var(--accent)}
+.advent button.on b,.advent button.on small{color:var(--on-accent)}
+.anti-out{margin-top:18px;min-height:120px;display:grid;align-content:center;gap:6px;text-align:center}
+.anti-out b{font-family:var(--display);font-weight:600;font-size:clamp(30px,3.4vw,48px);line-height:1;letter-spacing:-.02em}
+.anti-out span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.anti-out em{font-family:var(--display);color:var(--accent)}
+
+/* c4 · mapa */
+.map .route{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-dasharray:6 8}
+.map .coast{fill:color-mix(in srgb,var(--teal) 16%,transparent);stroke:var(--teal);stroke-width:1.2}
+.map .pt circle{fill:var(--bg);stroke:var(--fg);stroke-width:2}
+.map .pt text,.map .lbl{fill:var(--fg);font-family:var(--mono);font-size:11px;letter-spacing:.06em}
+.map .pt .sub{fill:var(--muted);font-size:9.5px}
+.map .mangue path{stroke:var(--teal);stroke-width:1.4;fill:none}
+
+/* c5 · sedes (rolagem presa) */
+.tall{height:420vh;position:relative}
+.sticky{position:sticky;top:0;height:100svh;display:grid;align-content:center;padding:80px var(--gut) 90px}
+.sede-board{max-width:1100px;margin:0 auto;width:100%;display:grid;gap:clamp(16px,3vh,34px)}
+.sede-top{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap}
+.sede-top .big{font-size:clamp(80px,13vw,200px)}
+.sede-law{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;max-width:40ch;text-align:right}
+.towns{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.town{border:1px solid var(--line);border-radius:20px;padding:clamp(18px,2.6vw,30px);display:grid;gap:8px;transition:border-color .5s,background .5s,opacity .5s;opacity:.45}
+.town.on{opacity:1;border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.town.sm.on{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 14%,transparent)}
+.town h3{font-size:clamp(26px,3.4vw,46px);line-height:1;letter-spacing:-.02em}
+.town svg{width:clamp(48px,6vw,80px);height:auto;stroke:var(--fg);fill:none;stroke-width:3;stroke-linejoin:round}
+.town small{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em}
+.crown{position:absolute;top:-16px;left:25%;translate:-50% 0;z-index:2;display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--fg);color:var(--bg);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.crown svg{width:16px;height:16px;fill:currentColor}
+.stops{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.stops button{height:44px;border:0;padding:0;background:none;cursor:pointer;position:relative;display:grid;align-items:end}
+.stops button::before{content:"";height:8px;border-radius:3px;background:var(--line);transition:height .35s var(--ease),background .35s}
+.stops button.o::before{background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.stops button.s::before{background:color-mix(in srgb,var(--teal) 45%,transparent)}
+.stops button.on::before{height:26px}
+.stops button.o.on::before{background:var(--accent)}
 .stops button.s.on::before{background:var(--teal)}
-.stops-lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted)}
-.key{display:flex;gap:16px;font-size:13px;color:var(--muted)}
-.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
-.bars{display:grid;gap:8px}
-.bars div{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;font-size:14px}
-.bars i{display:block;height:12px;border-radius:2px;background:var(--sepia);transform-origin:left}
+.stops button span{position:absolute;top:0;left:0;font-family:var(--mono);font-size:9px;color:var(--muted)}
+.swaps{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.swaps b{color:var(--fg);font-size:14px}
+@media (max-width:700px){.stops button span{display:none}.sede-law{text-align:left}.town svg{display:none}}
+
+.bars{display:grid;gap:14px}
+.bars div{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:center;font-size:15px}
+.bars i{display:block;height:16px;border-radius:4px;background:var(--accent);transform-origin:left}
 .bars div:nth-child(2) i{background:var(--teal)}
 .bars b{font-family:var(--mono);font-size:12px;font-weight:400}
 
-/* marcos (usina / município) */
-.miles{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.miles li{display:grid;grid-template-columns:62px 1fr;gap:12px;padding:8px 0;border-top:1px solid var(--line);opacity:.38;transition:opacity .4s}
+/* c6 · unidade */
+.units{display:grid;grid-template-columns:repeat(20,1fr);gap:4px}
+.units i{aspect-ratio:1;border-radius:2px;background:var(--line)}
+.units i.x{background:var(--red)}
+.ukey{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:14px;color:var(--muted)}
+.ukey i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:7px;vertical-align:-1px}
+
+/* c7 · usina (rolagem presa) */
+.usina{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(24px,5vw,80px);align-items:center;max-width:1200px;margin:0 auto;width:100%}
+.usina .big{font-size:clamp(72px,10vw,150px)}
+.miles{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.miles li{display:grid;grid-template-columns:70px 1fr;gap:14px;padding:10px 0;border-top:1px solid var(--line);opacity:.3;transition:opacity .4s}
 .miles li.on{opacity:1}
-.miles li b{font-family:var(--mono);font-size:12px;color:var(--sepia-2);font-weight:400}
-.miles li p{font-size:15px;line-height:1.45}
-.prog{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
-.prog b{display:block;height:100%;background:var(--sepia);transform-origin:left;transform:scaleX(0)}
-.daybig{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.daybig .date{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.miles li.on b{color:var(--accent)}
+.miles li b{font-family:var(--mono);font-size:12px;font-weight:400}
+.miles li p{font-size:15.5px;line-height:1.45}
+.prog{height:3px;background:var(--line);border-radius:3px;overflow:hidden;margin:14px 0}
+.prog b{display:block;height:100%;background:var(--accent);transform-origin:left;transform:scaleX(0)}
+.factory .smoke circle{fill:var(--muted)}
+.factory .sk{animation:smoke 4s linear infinite}
+@keyframes smoke{0%{transform:translate(0,0) scale(.4);opacity:0}15%{opacity:.5}100%{transform:translate(70px,-150px) scale(2.4);opacity:0}}
+@media (max-width:900px){.usina{grid-template-columns:1fr;gap:12px}.usina .stage{padding:12px}.miles li:not(.on){display:none}.usina .big{font-size:64px}}
 
-/* festas */
+/* c8 · 199 dias */
+.days{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,80px);align-items:center;max-width:1200px;margin:0 auto;width:100%}
+.ring{position:relative;max-width:min(480px,70svh);width:100%;margin:0 auto}
+.ring svg{width:100%;height:auto}
+.ring .tk{stroke:var(--line);stroke-width:2.2;stroke-linecap:round;transition:stroke .2s}
+.ring .tk.on{stroke:var(--accent)}
+.ring .tk.cut{stroke:var(--red)}
+.ring .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:4px}
+.ring .mid .big{font-size:clamp(64px,9vw,120px)}
+.ring .mid span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media (max-width:900px){.days{grid-template-columns:1fr;gap:14px}.ring{max-width:min(320px,42svh)}.days .miles li:not(.on){display:none}}
+
+/* c9 · festas + série */
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chips button{min-height:40px;padding:6px 13px;border:1px solid var(--teal);border-radius:999px;background:rgba(74,155,150,.08);color:var(--ink);font-family:var(--cond);font-size:16px;letter-spacing:.04em;cursor:pointer;transition:.25s}
-.chips button:hover,.chips button.on{background:var(--teal);color:#0d1716}
-.chip-out{min-height:64px;font-size:15px;color:#ddd1b8;border-left:2px solid var(--teal);padding:6px 0 6px 14px}
+.chips button{min-height:44px;padding:6px 16px;border:1px solid var(--teal);border-radius:999px;background:none;font-size:16px;cursor:pointer;transition:background .3s,color .3s,transform .4s var(--ease)}
+.chips button:hover{transform:translateY(-3px)}
+.chips button.on{background:var(--teal);color:var(--bg)}
+.chip-out{min-height:84px;border-left:2px solid var(--teal);padding:8px 0 8px 18px;font-size:17px}
+.series{padding:clamp(60px,8vw,120px) 0 clamp(40px,6vw,80px)}
+.series .intro{padding:0 var(--gut)}
+.reel{display:flex;gap:16px;overflow-x:auto;padding:10px var(--gut) 24px;scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab}
+.reel::-webkit-scrollbar{display:none}
+.reel.drag{cursor:grabbing;scroll-snap-type:none}
+.ep{flex:none;width:clamp(200px,22vw,290px);scroll-snap-align:start;text-decoration:none;display:grid;gap:12px}
+.ep .im{position:relative;aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:#1a1510}
+.ep img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease);pointer-events:none}
+.ep:hover img{transform:scale(1.06)}
+.ep .im::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.55))}
+.ep .play{position:absolute;left:14px;bottom:14px;z-index:2;width:44px;height:44px;border-radius:50%;background:#f0e6d2;display:grid;place-items:center;transform:scale(.8);opacity:.9;transition:transform .4s var(--ease)}
+.ep:hover .play{transform:scale(1)}
+.ep .play svg{width:14px;height:14px;fill:#0e0c09;margin-left:2px}
+.ep b{font-family:var(--display);font-size:20px;font-weight:600;line-height:1.1}
+.ep small{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
 
-/* quiz */
-.quiz{display:grid;gap:14px}
-.qhead{display:flex;justify-content:space-between;align-items:center}
+/* c10 · quiz */
+.quiz{max-width:860px;margin:0 auto;display:grid;gap:18px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .qdots{display:flex;gap:5px}
-.qdots i{width:18px;height:4px;border-radius:2px;background:var(--line)}
-.qdots i.ok{background:var(--sepia)}.qdots i.no{background:#8a3a2c}.qdots i.cur{background:var(--ink)}
-.qcard{border:1px solid var(--line);border-radius:8px;padding:20px;background:rgba(0,0,0,.25);min-height:120px;display:grid;align-content:center}
-.qcard p{font-family:var(--display);font-size:clamp(20px,2.2vw,26px);line-height:1.3;color:var(--ink)}
-.qopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.qopts button{min-height:52px;border:1px solid var(--line);border-radius:6px;background:rgba(0,0,0,.2);cursor:pointer;display:grid;gap:2px;justify-items:start;padding:8px 12px;text-align:left;transition:.2s}
-.qopts button b{font-family:var(--cond);font-size:17px;letter-spacing:.04em}
-.qopts button small{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em}
-.qopts button:hover:not(:disabled){border-color:var(--sepia)}
-.qopts button.right{border-color:var(--sepia);background:rgba(201,137,58,.22)}
-.qopts button.wrong{border-color:#c2432f;background:rgba(194,67,47,.18)}
+.qdots i{width:22px;height:5px;border-radius:3px;background:var(--line);transition:background .3s}
+.qdots i.ok{background:var(--accent)}.qdots i.no{background:var(--red)}.qdots i.cur{background:var(--fg)}
+.qcard{border:1px solid var(--line);border-radius:22px;padding:clamp(24px,4vw,44px);background:var(--card);min-height:180px;display:grid;align-content:center}
+.qcard p{font-family:var(--display);font-size:clamp(24px,3vw,38px);line-height:1.2;letter-spacing:-.01em}
+.qopts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.qopts button{min-height:84px;border:1px solid var(--line);border-radius:14px;background:none;cursor:pointer;display:grid;gap:4px;align-content:center;justify-items:start;padding:12px 16px;text-align:left;transition:border-color .25s,background .25s,transform .4s var(--ease)}
+.qopts button b{font-family:var(--display);font-size:20px;font-weight:600}
+.qopts button small{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.04em}
+.qopts button:hover:not(:disabled){border-color:var(--accent);transform:translateY(-3px)}
+.qopts button.right{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.qopts button.wrong{border-color:var(--red);background:color-mix(in srgb,var(--red) 16%,transparent)}
 .qopts button:disabled{cursor:default}
-.qfeed{min-height:24px;font-size:15px;color:#ddd1b8}
-.qfeed b{color:var(--ink)}
+.qfeed{min-height:28px;font-size:17px}
+@media (max-width:700px){.qopts{grid-template-columns:1fr 1fr}}
 
-/* ruas */
-.plaques{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
-.plq{position:relative;min-height:128px;border:0;padding:0;background:none;cursor:pointer;perspective:800px;text-align:left}
-.plq .in{position:absolute;inset:0;transition:transform .7s var(--ease);transform-style:preserve-3d}
+/* c11 · placas */
+.plaques{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;perspective:1200px}
+.plq{position:relative;min-height:170px;border:0;padding:0;background:none;cursor:pointer;text-align:left}
+.plq .in{position:absolute;inset:0;transition:transform .9s var(--ease);transform-style:preserve-3d}
 .plq.open .in{transform:rotateY(180deg)}
-.plq .f,.plq .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:6px;padding:12px;display:grid}
-.plq .f{background:#f4f1ea;border:3px double #2f6f8f;color:#1f4f6f;align-content:center;justify-items:center;text-align:center;box-shadow:inset 0 0 0 6px #f4f1ea,inset 0 0 0 7px #9cc3d4}
-.plq .f small{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#4f7f9a}
-.plq .f b{font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
-.plq .b{background:var(--bg-2);border:1px solid var(--teal);transform:rotateY(180deg);font-size:13.5px;line-height:1.4;color:#ddd1b8;align-content:start;gap:6px}
+.plq .f,.plq .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;padding:16px;display:grid}
+.plq .f{background:#f4f1ea;border:3px double #2f6f8f;color:#1f4f6f;align-content:center;justify-items:center;text-align:center;gap:4px;box-shadow:inset 0 0 0 7px #f4f1ea,inset 0 0 0 8px #9cc3d4,0 18px 40px -20px rgba(0,0,0,.6)}
+.plq .f small{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:#4f7f9a}
+.plq .f b{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.05}
+.plq .f i{font-style:normal;font-family:var(--mono);font-size:9px;color:#4f7f9a;margin-top:8px;letter-spacing:.1em}
+.plq .b{background:var(--bg);border:1px solid var(--teal);transform:rotateY(180deg);font-size:15px;line-height:1.45;align-content:start;gap:10px}
 .plq .b .selo{margin-left:0;justify-self:start}
 
-/* fontes */
-.srcs{display:grid;gap:6px;font-size:14.5px;margin:0;padding:0;list-style:none}
-.srcs li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
-.srcs a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
-.srcs a:hover{border-color:var(--sepia)}
-.gaps{display:grid;gap:8px;margin:0;padding:0;list-style:none}
-.gaps li{display:flex;gap:10px;font-size:15px;color:#ddd1b8}
-.gaps li::before{content:"?";flex:none;width:22px;height:22px;border-radius:50%;border:1px dashed #c2432f;color:#e98a78;display:grid;place-items:center;font-family:var(--mono);font-size:12px}
-footer{position:relative;z-index:10;padding:24px clamp(16px,7vw,120px) 110px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;pointer-events:auto}
-footer a{color:var(--ink)}
+/* c12 · fontes */
+.srcs{display:grid;gap:0;margin:0;padding:0;list-style:none;border-top:1px solid var(--line)}
+.srcs li{border-bottom:1px solid var(--line)}
+.srcs a{display:grid;grid-template-columns:70px 1fr auto;gap:14px;align-items:center;padding:16px 0;text-decoration:none;transition:padding .4s var(--ease)}
+.srcs a:hover{padding-left:12px}
+.srcs a .selo{margin:0;justify-self:start}
+.srcs a svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6;transition:transform .4s var(--ease)}
+.srcs a:hover svg{transform:translate(3px,-3px)}
+.gaps{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.gaps li{display:flex;gap:12px;font-size:17px;align-items:baseline}
+.gaps li::before{content:"?";flex:none;width:26px;height:26px;border-radius:50%;border:1px dashed var(--red);color:var(--red);display:grid;place-items:center;font-family:var(--mono);font-size:12px;translate:0 4px}
 
-/* celular: maquete em cima, texto embaixo */
-@media (max-width:860px){
-  .ch{align-items:flex-end;padding:46svh 16px 96px}
-  .ch.tall .sticky{align-items:flex-end;padding:0 16px 92px}
-  .panel{max-width:none;padding:18px}
-  .panel h2{font-size:clamp(30px,8.4vw,40px)}
-  .hero{padding-top:38svh}
-  .cue{display:none}
-  .anti button{min-height:46px;font-size:18px}
-  .qopts{grid-template-columns:1fr 1fr}
-  .tall .panel{gap:10px}
-  .tall .panel p{font-size:15px}
-  .miles li{grid-template-columns:52px 1fr;padding:6px 0}
-  .miles li p{font-size:14px}
-  .miles li:not(.on){display:none}
-}
+/* rodapé */
+footer{position:relative;padding:clamp(60px,10vw,140px) var(--gut) 40px;overflow:hidden}
+.foot-big{font-family:var(--display);font-weight:800;font-size:clamp(70px,16vw,260px);line-height:.82;letter-spacing:-.06em}
+.foot-big em{font-weight:300;color:var(--accent)}
+.foot-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.foot-row a{color:var(--fg)}
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
-  #pre svg .d{stroke-dashoffset:0}
+  #pre .d{stroke-dashoffset:0}
 }
 </style>
 </head>
 <body>
-<canvas id="gl" aria-hidden="true"></canvas>
-<div class="fallback" aria-hidden="true"></div>
-<div class="vig" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><div class="dot"></div><div class="ring"><span></span></div></div>
 
 <div id="pre" aria-hidden="true">
   <div class="box">
@@ -293,273 +451,490 @@ footer a{color:var(--ink)}
         <circle class="d d2" cx="100" cy="112" r="26" stroke="#c9893a" stroke-width="12"/>
       </g>
     </svg>
-    <div class="n">CARREGANDO 4 SÉCULOS · <b id="pren">000</b>%</div>
+    <div class="count"><span id="pren">0</span><sup>%</sup></div>
+    <div class="mono">Carregando quatro séculos</div>
   </div>
+  <div class="bar"></div>
 </div>
 
-<header class="hud-top">
-  <a class="brand" href="#c0" aria-label="Nossa Senhora do Ó, início">
-    <svg viewBox="0 0 200 200" fill="none" aria-hidden="true"><g transform="translate(100 104) scale(0.78) translate(-100 -96)"><path d="M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z" stroke="#f0e6d2" stroke-width="12" stroke-linejoin="round"/><circle cx="100" cy="112" r="26" stroke="#c9893a" stroke-width="16"/><path d="M108 72 L122 56" stroke="#c9893a" stroke-width="13" stroke-linecap="round"/></g></svg>
-    <b>Nossa Senhora do <i>Ó</i><small>Uma história em 12 capítulos</small></b>
+<header class="top">
+  <a class="brand" href="#top" aria-label="Nossa Senhora do Ó, início">
+    <svg viewBox="0 0 200 200" fill="none" aria-hidden="true"><g transform="translate(100 104) scale(0.78) translate(-100 -96)"><path d="M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z" stroke="currentColor" stroke-width="12" stroke-linejoin="round"/><circle cx="100" cy="112" r="26" stroke="#c9893a" stroke-width="16"/><path d="M108 72 L122 56" stroke="#c9893a" stroke-width="13" stroke-linecap="round"/></g></svg>
+    <b>Memórias do Ó<small>Uma história em 12 capítulos</small></b>
   </a>
+  <div class="hud" aria-hidden="true"><span class="yl" id="ylab">Hoje</span><span class="yr" id="yr">2026</span><span class="hc" id="hudch">00 / 12</span></div>
   <div class="tools">
-    <button class="tbtn" id="snd" type="button" aria-pressed="false" aria-label="Ligar som ambiente"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="lbl">Som</span></button>
-    <button class="tbtn" id="mbtn" type="button" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h8"/></svg><span class="lbl">Capítulos</span></button>
+    <button class="tbtn" id="snd" type="button" aria-pressed="false" aria-label="Ligar som ambiente"><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span><span class="lbl">Som</span></button>
+    <button class="tbtn" id="mbtn" type="button" aria-expanded="false" aria-controls="menu"><span class="burger" aria-hidden="true"><i></i><i></i></span><span class="lbl">Capítulos</span></button>
   </div>
 </header>
 
-<nav id="menu" aria-label="Capítulos"><ol id="mlist"></ol>
-  <div class="legend"><span><span class="selo doc" data-k="DOC"></span> documento oficial</span><span><span class="selo acad" data-k="ACAD"></span> pesquisa que cita documento</span><span><span class="selo oral" data-k="ORAL"></span> memória dos moradores</span><span><span class="selo lenda" data-k="LENDA"></span> tradição sem prova</span></div>
-</nav>
-<ul class="rail" id="rail" aria-label="Capítulos"></ul>
+<nav id="menu" aria-label="Capítulos"><ol id="mlist"></ol></nav>
 
-<div class="ruler" aria-hidden="true">
-  <div class="yr"><small id="ylab">Hoje</small><span id="yr">2026</span></div>
-  <div class="track" id="rtrack"><div class="line"></div><div class="head" id="rhead"></div></div>
-</div>
 
-<main>
-<!-- 0 · ABERTURA -->
-<section class="ch hero" id="c0" data-ch="0">
-  <div class="panel clear">
-    <span class="kick">Ipojuca · Pernambuco · antes de 1608</span>
-    <h1 aria-label="Nossa Senhora do Ó"><span class="l" aria-hidden="true"><span>Nossa Senhora</span></span><span class="l" aria-hidden="true"><span>do <em>Ó</em></span></span></h1>
-    <p class="lead">Um bairro que já foi sede de município, campo de batalha e palco de festa. Role e atravesse quatro séculos.</p>
-    <div class="row">
-      <a class="btn fill" href="#c1">Começar a viagem</a>
-      <button class="btn" type="button" data-open-menu>Ver capítulos</button>
+<main id="top">
+<!-- ================= ABERTURA ================= -->
+<section class="hero" id="hero" data-theme="dark" aria-label="Abertura">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-img" aria-hidden="true"><img src="img/o-igreja.webp" alt="" width="900" height="610" fetchpriority="high"></div>
+  <div class="shade" aria-hidden="true"></div>
+  <div class="hero-copy">
+    <span class="kick">Ipojuca · Pernambuco · desde antes de 1608</span>
+    <h1 data-split>Nossa Senhora do <em>Ó</em></h1>
+    <p class="lead" data-hero-in>Um bairro que já foi sede de município, campo de batalha e palco de festa.</p>
+    <div class="row" data-hero-in>
+      <a class="btn fill mag" href="#como-ler" data-cursor="ir">Começar a viagem <svg viewBox="0 0 16 16"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+      <button class="btn mag" type="button" data-open-menu>Ver capítulos</button>
     </div>
-    <div class="legend">Cada fato traz um selo:
-      <span><span class="selo doc" data-k="DOC"></span> documento</span>
-      <span><span class="selo acad" data-k="ACAD"></span> pesquisa</span>
-      <span><span class="selo oral" data-k="ORAL"></span> memória oral</span>
-      <span><span class="selo lenda" data-k="LENDA"></span> lenda</span>
-    </div>
-    <span class="hint mouse"><svg viewBox="0 0 16 16"><path d="M3 8h10M3 8l3-3M3 8l3 3M13 8l-3-3M13 8l-3 3"/></svg>Arraste a maquete para girar</span>
   </div>
+  <div class="statement" aria-hidden="true"><p id="stmt">Em <em>12 capítulos</em>, você vai atravessar quatro séculos e aprender a separar <em>documento</em> de <em>lenda</em>.</p></div>
   <div class="cue mono" aria-hidden="true">Role<i></i></div>
 </section>
 
-<!-- 1 · POR QUE Ó -->
-<section class="ch" id="c1" data-ch="1">
-  <div class="panel">
-    <span class="kick">01 · A origem do nome</span>
-    <h2>Por que <em>“Ó”</em>?</h2>
-    <p>O nome vem das sete <strong>Antífonas do Ó</strong>, cantadas de 17 a 23 de dezembro. Cada uma começa com “Ó”. <a class="selo doc" data-k="DOC" href="https://www.arquidioceseolindarecife.org/em-ipojuca-fieis-participam-da-festa-de-nossa-senhora-do-o/" target="_blank" rel="noopener">Arquidiocese</a></p>
-    <div class="anti" id="anti" role="group" aria-label="As sete antífonas"></div>
-    <div class="anti-out" aria-live="polite" id="antiout"><b>Toque num “Ó”</b><span>e veja a antífona de cada dia</span></div>
-    <p>É a devoção à <strong>Virgem grávida</strong>, Senhora da Expectação do Parto. A imagem mostra Maria com a mão sobre o ventre. <a class="selo acad" data-k="ACAD" href="https://pt.wikipedia.org/wiki/Nossa_Senhora_do_%C3%93" target="_blank" rel="noopener">Wikipédia</a></p>
-    <p>A devoção nasceu em Toledo, Espanha, no ano 656. No Brasil, começou em Olinda, com Duarte Coelho, e de lá chegou a Ipojuca. <span class="selo acad" data-k="ACAD">Megale e Etzel</span></p>
-    <blockquote>“Nossa Senhora do Ó adorada na imagem de uma mulher prenhe”<cite>Gilberto Freyre · Casa-Grande &amp; Senzala</cite></blockquote>
+<div class="marquee" aria-hidden="true"><div class="mq"><div class="mq-in">
+  <span>Engenhos</span><span><em>Holandeses</em></span><span>Revolução de 1817</span><span><em>Batalha das Sedes</em></span><span>Bumba meu boi</span><span><em>Usina Salgado</em></span><span>199 dias de município</span><span><em>Memória viva</em></span>
+  <span>Engenhos</span><span><em>Holandeses</em></span><span>Revolução de 1817</span><span><em>Batalha das Sedes</em></span><span>Bumba meu boi</span><span><em>Usina Salgado</em></span><span>199 dias de município</span><span><em>Memória viva</em></span>
+</div></div></div>
+
+<!-- ================= COMO LER ================= -->
+<section class="wrap" id="como-ler" data-theme="paper" data-hud="0">
+  <div class="intro">
+    <h2 class="sec-title" data-split>Como ler esta <em>história</em></h2>
+    <p data-reveal>Nem tudo que se conta sobre o Ó tem a mesma prova. Por isso, <strong>cada fato traz um selo</strong> dizendo de onde veio. Aprenda os quatro selos antes de começar. Eles vão aparecer o tempo todo.</p>
+  </div>
+  <div class="legend">
+    <article class="lcard tilt">
+      <span class="num">01</span>
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h7"/></svg></div>
+      <h3>Documento</h3>
+      <span><span class="selo doc" data-k="DOC" style="margin:0"></span></span>
+      <p>Lei, censo, inquérito, relatório oficial. É a prova mais forte: alguém registrou na época.</p>
+      <small>Ex.: a Lei 4.979 de 1963</small>
+    </article>
+    <article class="lcard tilt">
+      <span class="num">02</span>
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 6l9-3 9 3-9 3z"/><path d="M7 8v5c0 1.5 2.5 3 5 3s5-1.5 5-3V8M21 6v6"/></svg></div>
+      <h3>Pesquisa</h3>
+      <span><span class="selo acad" data-k="ACAD" style="margin:0"></span></span>
+      <p>Historiador, tese ou livro que estudou documentos. Boa prova, mas é a leitura de alguém.</p>
+      <small>Ex.: a Fundaj sobre a Usina Salgado</small>
+    </article>
+    <article class="lcard oral tilt">
+      <span class="num">03</span>
+      <div class="ic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg></div>
+      <h3>Memória oral</h3>
+      <span><span class="selo oral" data-k="ORAL" style="margin:0"></span></span>
+      <p>Quem viveu conta. É preciosa, porque ninguém escreveu, e é por isso que precisa ser guardada.</p>
+      <small>Ex.: idosos ouvidos pela UFPE em 2017</small>
+    </article>
+    <article class="lcard lenda tilt">
+      <span class="num">04</span>
+      <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg></div>
+      <h3>Lenda</h3>
+      <span><span class="selo lenda" data-k="LENDA" style="margin:0"></span></span>
+      <p>História que todo mundo conta, mas que não tem prova. Faz parte da cultura, mas não é fato.</p>
+      <small>Ex.: a idade do baobá</small>
+    </article>
   </div>
 </section>
 
-<!-- 2 · ENGENHOS -->
-<section class="ch" id="c2" data-ch="2">
-  <div class="panel">
-    <span class="kick">02 · Séculos XVI e XVII</span>
-    <h2>Terra de <em>engenhos</em></h2>
-    <p>O distrito já existia antes de 1608, com o nome <strong>Nossa Senhora do Ó de Ipojuca</strong>. <a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE</a></p>
-    <p>No começo do século XVII, Cosme Dias da Fonseca fundou o <strong>Engenho Salgado</strong>, dentro do Ó. Em 1636, ele moía com bois. <span class="selo doc" data-k="DOC">inventário holandês</span></p>
-    <div class="stats">
-      <div><b data-count="30" data-pre="+">+30</b><span>engenhos em Ipojuca entre 1550 e 1650</span></div>
-      <div><b data-count="5000" data-fmt="1">5.000</b><span>arrobas de açúcar no Salgado em 1636</span></div>
+<!-- ================= MAPA DA VIAGEM (horizontal) ================= -->
+<section class="journey" id="viagem" data-theme="dark" data-hud="0" aria-label="Mapa da viagem">
+  <div class="jhead">
+    <h2 data-split>O mapa da <em>viagem</em></h2>
+    <span class="mono" style="color:var(--muted)">12 paradas · role para ver todas →</span>
+  </div>
+  <div class="jtrack" id="jtrack"></div>
+  <div class="jline"><b id="jprog"></b></div>
+</section>
+
+<!-- ================= 01 ================= -->
+<article class="chap" id="c1" data-theme="dark" data-ch="1">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">01</span>
+    <span class="kick">Capítulo 01 · A origem do nome</span>
+    <h2 data-split>Por que <em>“Ó”</em>?</h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> O nome vem de sete cantos de Natal que começam com a exclamação “Ó”.</p>
+  </header>
+  <div class="chap-grid">
+    <div class="chap-text">
+      <p data-reveal>O nome vem das sete <dfn tabindex="0" data-def="Antífona é um verso curto cantado antes e depois de um salmo, nas orações da Igreja.">Antífonas</dfn> do Ó, cantadas de 17 a 23 de dezembro, no fim do <dfn tabindex="0" data-def="Advento são as quatro semanas antes do Natal, tempo de espera.">Advento</dfn>. Cada uma começa com “Ó”. <a class="selo doc" data-k="DOC" href="https://www.arquidioceseolindarecife.org/em-ipojuca-fieis-participam-da-festa-de-nossa-senhora-do-o/" target="_blank" rel="noopener">Arquidiocese</a></p>
+      <p data-reveal>É a devoção à <strong>Virgem grávida</strong>, Senhora da Expectação do Parto. A imagem mostra Maria com a mão sobre o ventre, esperando Jesus. <a class="selo acad" data-k="ACAD" href="https://pt.wikipedia.org/wiki/Nossa_Senhora_do_%C3%93" target="_blank" rel="noopener">Wikipédia</a></p>
+      <p data-reveal>A devoção nasceu em <strong>Toledo, Espanha, no ano 656</strong>. No Brasil, começou em Olinda, com Duarte Coelho, e de lá chegou a Ipojuca. <span class="selo acad" data-k="ACAD">Megale e Etzel</span></p>
+      <blockquote data-reveal>“Nossa Senhora do Ó adorada na imagem de uma mulher prenhe”<cite>Gilberto Freyre · Casa-Grande &amp; Senzala</cite></blockquote>
     </div>
-    <p>O rio era navegável até o meio do território. Por ele descia o açúcar. <span class="selo acad" data-k="ACAD">Leão, via TCC UFPE</span></p>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <span class="mono" style="color:var(--muted)">Calendário do Advento · toque num dia</span>
+        <div class="advent" id="anti" role="group" aria-label="As sete antífonas" style="margin-top:14px"></div>
+        <div class="anti-out" id="antiout" aria-live="polite"><b>Toque num “Ó”</b><span>e veja a antífona de cada dia</span></div>
+      </div>
+      <figcaption>Uma antífona por dia, de 17 a 23 de dezembro</figcaption>
+    </figure>
   </div>
-</section>
+</article>
 
-<!-- 3 · 1645 -->
-<section class="ch" id="c3" data-ch="3">
-  <div class="panel">
-    <span class="kick">03 · 1634–1645</span>
-    <h2>A luta contra <em>os holandeses</em></h2>
-    <p>Em 12 de março de 1634, os holandeses desembarcaram em terras do Engenho Salgado. <span class="selo acad" data-k="ACAD">Engenhos de PE</span></p>
-    <div class="big" data-count="16">16<small>homens armados se levantaram com Amador de Araújo em 17 de julho de 1645. O povo incendiou o quartel holandês.</small></div>
-    <p>Seis dias depois, numa emboscada no <strong>Engenho Tabatinga</strong>, os holandeses foram derrotados. <a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE</a></p>
-    <p><strong>Você sabia?</strong> Em 1641–42, um fiscal holandês reclamou que os engenhos de Ipojuca jogavam bagaço de cana nos rios. É um dos primeiros registros de poluição de rios na Mata pernambucana. <span class="selo doc" data-k="DOC">relatório holandês</span></p>
+<!-- ================= 02 ================= -->
+<article class="chap" id="c2" data-theme="paper" data-ch="2">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">02</span>
+    <span class="kick">Capítulo 02 · Séculos XVI e XVII</span>
+    <h2 data-split>Terra de <em>engenhos</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Antes de ser bairro, o Ó era canavial, moenda e um rio por onde descia o açúcar.</p>
+  </header>
+  <div class="chap-grid">
+    <div class="chap-text">
+      <p data-reveal>O distrito já existia antes de 1608, com o nome <strong>Nossa Senhora do Ó de Ipojuca</strong>. <a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE</a></p>
+      <p data-reveal>No começo do século XVII, Cosme Dias da Fonseca fundou o <strong>Engenho Salgado</strong>, dentro do Ó. Em 1636, ele moía com bois. <span class="selo doc" data-k="DOC">inventário holandês</span></p>
+      <div class="stats" data-reveal>
+        <div><b data-count="30" data-pre="+">+30</b><span>engenhos em Ipojuca entre 1550 e 1650</span></div>
+        <div><b data-count="5000" data-fmt="1">5.000</b><span><dfn tabindex="0" data-def="Arroba é uma medida antiga de peso: cerca de 15 kg. 5.000 arrobas são uns 75 mil quilos.">arrobas</dfn> de açúcar no Salgado em 1636</span></div>
+      </div>
+      <p data-reveal>O rio era navegável até o meio do território. Por ele descia o açúcar. <span class="selo acad" data-k="ACAD">Leão, via TCC UFPE</span></p>
+    </div>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <svg viewBox="0 0 400 360" id="moenda" aria-label="Esquema de uma moenda movida a bois, vista de cima">
+          <g opacity=".5" stroke="var(--teal)" stroke-width="1.4" fill="none">
+            <path d="M0 330 C80 300 120 345 200 320 S330 300 400 330"/><path d="M0 342 C80 312 120 357 200 332 S330 312 400 342"/>
+          </g>
+          <text x="330" y="318" class="lbl" fill="var(--teal)" font-family="Space Mono" font-size="10">rio →</text>
+          <circle cx="200" cy="165" r="120" fill="none" stroke="var(--line)" stroke-width="22"/>
+          <circle cx="200" cy="165" r="120" fill="none" stroke="var(--muted)" stroke-dasharray="3 7"/>
+          <g id="marm">
+            <line x1="80" y1="165" x2="320" y2="165" stroke="var(--fg)" stroke-width="5" stroke-linecap="round"/>
+            <g fill="var(--accent)"><rect x="66" y="150" width="30" height="30" rx="7"/><rect x="304" y="150" width="30" height="30" rx="7"/></g>
+            <g stroke="var(--fg)" stroke-width="2.5" stroke-linecap="round"><path d="M72 150l-6-8M90 150l6-8M310 180l-6 8M328 180l6 8"/></g>
+          </g>
+          <circle cx="200" cy="165" r="30" fill="var(--bg)" stroke="var(--fg)" stroke-width="3"/>
+          <circle cx="200" cy="165" r="12" fill="var(--accent)"/>
+          <g fill="none" stroke="#7c8a3a" stroke-width="2" stroke-linecap="round">
+            <path d="M20 40v-30M28 44v-36M36 40v-26M364 48v-34M372 44v-28M380 50v-36M24 250v-30M32 254v-34M368 250v-30M376 246v-26"/>
+          </g>
+          <g font-family="Space Mono" font-size="10.5" fill="var(--fg)">
+            <text x="216" y="152">eixo da moenda</text>
+            <text x="44" y="210">bois</text>
+            <text x="16" y="80">canavial</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Moenda a boi vista de cima · esquema · os bois giram o eixo que espreme a cana</figcaption>
+    </figure>
   </div>
-</section>
+</article>
 
-<!-- 4 · 1817 -->
-<section class="ch" id="c4" data-ch="4">
-  <div class="panel">
-    <span class="kick">04 · 15 de maio de 1817</span>
-    <h2>O fim de uma <em>revolução</em></h2>
-    <p>As tropas de <strong>Domingos José Martins</strong>, líder da Revolução Pernambucana, foram derrotadas entre Merepe e Ipojuca. <a class="selo acad" data-k="ACAD" href="https://en.wikipedia.org/wiki/Pernambucan_revolution" target="_blank" rel="noopener">R. C. Lins, Fundaj</a></p>
-    <p>Ele fugiu pelos mangues de Porto de Galinhas, se escondeu numa casa e foi preso. Foi fuzilado em Salvador no mesmo ano. <span class="selo acad" data-k="ACAD">relato de preso</span></p>
-    <p>O Ó guarda isso no mapa: <strong>Rua da Batalha</strong> e <strong>Travessa Batalha Domingos José Martins</strong>. <span class="selo doc" data-k="DOC">nomes oficiais</span></p>
-    <p>Em 2011, Martins entrou no Livro dos Heróis da Pátria. A bandeira de Pernambuco nasceu nessa mesma revolução. <span class="selo doc" data-k="DOC">Lei federal</span></p>
+<!-- ================= 03 ================= -->
+<article class="chap" id="c3" data-theme="fire" data-ch="3">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">03</span>
+    <span class="kick">Capítulo 03 · 1634–1645</span>
+    <h2 data-split>A luta contra <em>os holandeses</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Os holandeses chegaram pelo Engenho Salgado e, onze anos depois, o povo daqui se levantou contra eles.</p>
+  </header>
+  <div class="chap-grid">
+    <div class="chap-text">
+      <p data-reveal>Em <strong>12 de março de 1634</strong>, os holandeses desembarcaram em terras do Engenho Salgado. <span class="selo acad" data-k="ACAD">Engenhos de PE</span></p>
+      <div data-reveal><div class="big" data-count="16">16</div><p class="big-cap">homens armados se levantaram com Amador de Araújo em 17 de julho de 1645. O povo incendiou o quartel holandês.</p></div>
+      <p data-reveal>Seis dias depois, numa emboscada no <strong>Engenho Tabatinga</strong>, os holandeses foram derrotados. <a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE</a></p>
+      <div class="know" data-reveal><span class="mono">Você sabia?</span><p>Em 1641–42, um fiscal holandês reclamou que os engenhos de Ipojuca jogavam bagaço de cana nos rios. É um dos primeiros registros de poluição de rios na Mata pernambucana. <span class="selo doc" data-k="DOC">relatório holandês</span></p></div>
+    </div>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <span class="mono" style="color:var(--muted)">Os 16 do levante</span>
+        <svg viewBox="0 0 400 210" id="men" aria-label="Dezesseis figuras representando os homens do levante" style="margin-top:12px"></svg>
+        <svg viewBox="0 0 400 120" id="tl3" aria-label="Linha do tempo de 1634 a 1645" style="margin-top:20px">
+          <line x1="20" y1="50" x2="380" y2="50" stroke="var(--line)" stroke-width="2"/>
+          <line id="tl3l" x1="20" y1="50" x2="380" y2="50" stroke="var(--accent)" stroke-width="2"/>
+          <g font-family="Space Mono" font-size="10.5" fill="var(--fg)">
+            <circle cx="20" cy="50" r="7" fill="var(--accent)"/><text x="10" y="30">1634</text><text x="10" y="80" fill="var(--muted)">desembarque</text>
+            <circle cx="300" cy="50" r="7" fill="var(--accent)"/><text x="282" y="30">17/07/45</text><text x="270" y="80" fill="var(--muted)">levante</text>
+            <circle cx="380" cy="50" r="9" fill="var(--red)"/><text x="330" y="105" fill="var(--muted)">23/07/45 vitória</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Onze anos entre a chegada e o levante</figcaption>
+    </figure>
   </div>
-</section>
+</article>
 
-<!-- 5 · BATALHA DAS SEDES (scrub) -->
-<section class="ch tall" id="c5" data-ch="5">
+<!-- ================= 04 ================= -->
+<article class="chap" id="c4" data-theme="blue" data-ch="4">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">04</span>
+    <span class="kick">Capítulo 04 · 15 de maio de 1817</span>
+    <h2 data-split>O fim de uma <em>revolução</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> A Revolução Pernambucana perdeu sua última batalha bem aqui, e as ruas do Ó guardam isso no nome.</p>
+  </header>
+  <div class="chap-grid">
+    <div class="chap-text">
+      <p data-reveal>As tropas de <strong>Domingos José Martins</strong>, líder da <dfn tabindex="0" data-def="Movimento de 1817 que quis separar Pernambuco de Portugal e criar uma república. Durou cerca de 75 dias.">Revolução Pernambucana</dfn>, foram derrotadas entre Merepe e Ipojuca. <a class="selo acad" data-k="ACAD" href="https://en.wikipedia.org/wiki/Pernambucan_revolution" target="_blank" rel="noopener">R. C. Lins, Fundaj</a></p>
+      <p data-reveal>Ele fugiu pelos mangues de Porto de Galinhas, se escondeu numa casa e foi preso. Foi fuzilado em Salvador no mesmo ano. <span class="selo acad" data-k="ACAD">relato de preso</span></p>
+      <p data-reveal>O Ó guarda isso no mapa: <strong>Rua da Batalha</strong> e <strong>Travessa Batalha Domingos José Martins</strong>. <span class="selo doc" data-k="DOC">nomes oficiais</span></p>
+      <div class="know" data-reveal><span class="mono">Você sabia?</span><p>Em 2011, Martins entrou no Livro dos Heróis da Pátria. E a <strong>bandeira de Pernambuco</strong> nasceu nessa mesma revolução. <span class="selo doc" data-k="DOC">Lei federal</span></p></div>
+    </div>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <svg viewBox="0 0 400 440" class="map" id="map" aria-label="Esquema da fuga: de Merepe a Ipojuca, depois os mangues de Porto de Galinhas e, por fim, Salvador">
+          <path class="coast" d="M330 0 C310 80 350 140 320 210 C300 260 340 320 315 380 L310 440 L400 440 L400 0Z"/>
+          <text x="352" y="120" class="lbl" fill="var(--teal)" style="fill:var(--teal)">mar</text>
+          <g class="mangue" opacity=".8"><path d="M268 300c6-10 12-10 18 0M280 316c6-10 12-10 18 0M262 320c6-10 12-10 18 0M274 336c6-10 12-10 18 0"/></g>
+          <path class="route" id="route" d="M250 110 C220 140 170 150 150 190 C140 220 200 240 240 260 C270 280 285 300 285 330 C285 370 230 400 200 430"/>
+          <g class="pt" data-at=".0"><circle cx="250" cy="110" r="7"/><text x="264" y="106">MEREPE</text><text class="sub" x="264" y="120">tropas chegam</text></g>
+          <g class="pt" data-at=".3"><path d="M150 176l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="var(--red)"/><text x="40" y="186">BATALHA</text><text class="sub" x="40" y="200">15/05/1817</text></g>
+          <g class="pt" data-at=".3"><circle cx="120" cy="250" r="5" style="fill:var(--fg);stroke:none"/><text x="56" y="272">IPOJUCA</text></g>
+          <g class="pt" data-at=".6"><circle cx="285" cy="330" r="7"/><text x="170" y="350">MANGUES</text><text class="sub" x="140" y="364">Porto de Galinhas · preso</text></g>
+          <g class="pt" data-at=".9"><text x="214" y="432">↓ SALVADOR · fuzilado</text></g>
+        </svg>
+      </div>
+      <figcaption>A fuga de Domingos José Martins · esquema sem escala</figcaption>
+    </figure>
+  </div>
+</article>
+
+<!-- ================= 05 ================= -->
+<article class="chap" id="c5" data-theme="dark" data-ch="5" style="padding-bottom:0">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">05</span>
+    <span class="kick">Capítulo 05 · 1846–1896</span>
+    <h2 data-split>A Batalha <em>das Sedes</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Por 50 anos, a sede do município trocou de lugar entre o Ó e São Miguel, lei após lei. Role e veja cada troca.</p>
+  </header>
+</article>
+<div class="tall" id="sedes" data-theme="dark" data-ch="5">
   <div class="sticky">
-    <div class="panel">
-      <span class="kick">05 · 1846–1896 · role para avançar</span>
-      <h2>A Batalha <em>das Sedes</em></h2>
-      <p>Por 50 anos, a sede do município trocou de lugar entre o Ó e São Miguel, lei após lei.</p>
-      <div class="sede-now" aria-live="polite">
-        <div class="big" id="syear">1846</div>
-        <div class="who" id="swho">Sede: <em>Nossa Senhora do Ó</em></div>
-        <span class="mono" id="slaw">Lei provincial 152 · 30/03/1846 · cria o município</span>
+    <div class="sede-board" aria-live="polite">
+      <div class="sede-top">
+        <div><span class="kick">Ano da lei</span><div class="big" id="syear">1846</div></div>
+        <div style="display:grid;gap:8px;justify-items:end"><span class="swaps">Trocas de sede: <b id="sswap">0</b></span><span class="sede-law" id="slaw">Lei provincial 152 · 30/03/1846 · cria o município</span></div>
+      </div>
+      <div class="towns">
+        <div class="crown" id="crown"><svg viewBox="0 0 24 24"><path d="M3 18h18l-2-10-5 4-2-7-2 7-5-4z"/></svg>Sede</div>
+        <div class="town o on" id="town-o"><svg viewBox="0 0 200 200"><path d="M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z"/><circle cx="100" cy="112" r="26"/></svg><h3>Nossa Senhora do Ó</h3><small>a vila do Ó</small></div>
+        <div class="town sm" id="town-s"><svg viewBox="0 0 200 200"><path d="M40 184V100L100 50 160 100V184Z"/><path d="M84 184v-40h32v40"/></svg><h3>São Miguel</h3><small>hoje a cidade de Ipojuca</small></div>
       </div>
       <div class="stops" id="stops" role="group" aria-label="Escolha uma lei"></div>
-      <div class="stops-lbl"><span>1846</span><span>1896</span></div>
-      <div class="key"><span><i style="background:var(--sepia)"></i>Ó</span><span><i style="background:var(--teal)"></i>São Miguel (hoje Ipojuca)</span><a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/livros/liv82148.pdf" target="_blank" rel="noopener">IBGE 1948</a></div>
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span class="mono" style="color:var(--muted)">Cada barra é uma lei · toque para pular</span><a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/livros/liv82148.pdf" target="_blank" rel="noopener">IBGE 1948</a></div>
     </div>
   </div>
-</section>
-<section class="ch" id="c5b" data-ch="5">
-  <div class="panel">
-    <span class="kick">05 · Quem era maior?</span>
-    <h2>A vila <em>do Ó</em></h2>
-    <p>Por volta de 1889, o Ó tinha cerca de <strong>250 casas</strong>. Era maior que São Miguel. <span class="selo acad" data-k="ACAD">Sebastião Galvão</span></p>
-    <div class="bars" id="vbars">
-      <div><span>Vila do Ó</span><i style="--w:1"></i><b>~1.500 almas</b></div>
-      <div><span>São Miguel</span><i style="--w:.467"></i><b>~700 almas</b></div>
+</div>
+<section class="chap" data-theme="dark" data-ch="5" style="padding-top:clamp(60px,8vw,120px)">
+  <div class="chap-grid">
+    <div class="chap-text">
+      <h3 class="sec-title" style="font-size:clamp(36px,5vw,72px)" data-split>A vila <em>do Ó</em></h3>
+      <p data-reveal>Por volta de 1889, o Ó tinha cerca de <strong>250 casas</strong>. Era maior que São Miguel. <span class="selo acad" data-k="ACAD">Sebastião Galvão</span></p>
+      <p data-reveal>O historiador Antônio Geraldo Leão chama o Ó de <strong>“Vila Rebelde”</strong>. Ele conta que, com tanta mudança, o lugar ganhou o apelido de “Vila das Trouxas”. <span class="selo acad" data-k="ACAD">um só autor</span></p>
+      <div class="know" data-reveal><span class="mono">Você sabia?</span><p>O aniversário de Ipojuca, <strong>30 de março</strong>, é a data da lei que criou o município com sede no Ó. <span class="selo acad" data-k="ACAD">IBGE · Frei Milton</span></p></div>
     </div>
-    <p>O historiador Antônio Geraldo Leão chama o Ó de <strong>“Vila Rebelde”</strong>. Ele conta que, com tanta mudança, o lugar ganhou o apelido de “Vila das Trouxas”. <span class="selo acad" data-k="ACAD">um só autor</span></p>
-    <p>O aniversário de Ipojuca, <strong>30 de março</strong>, é a data da lei que criou o município com sede no Ó. <span class="selo acad" data-k="ACAD">IBGE · Frei Milton</span></p>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <span class="mono" style="color:var(--muted)">Quem era maior, por volta de 1889?</span>
+        <div class="bars" id="vbars" style="margin-top:18px">
+          <div><span>Vila do Ó</span><i data-w="1"></i><b>~1.500 almas</b></div>
+          <div><span>São Miguel</span><i data-w=".467"></i><b>~700 almas</b></div>
+        </div>
+      </div>
+      <figcaption>“Almas” era como se contava a população</figcaption>
+    </figure>
   </div>
 </section>
 
-<!-- 6 · 1890 BOI -->
-<section class="ch" id="c6" data-ch="6">
-  <div class="panel">
-    <span class="kick">06 · 28 de junho de 1890</span>
-    <h2>O boi na frente <em>da igreja</em></h2>
-    <p>Em 1872, a paróquia sediada no Ó tinha <strong>19.420 pessoas</strong>. Delas, <strong>3.315 eram escravizadas</strong>. <span class="selo acad" data-k="ACAD">tese Unicamp, 2014</span></p>
-    <p>Na véspera de São Pedro de 1890, dois anos depois da Abolição, a polícia autorizou um <strong>bumba meu boi</strong> em frente à igreja do Ó.</p>
-    <div class="big" data-count="300" data-pre="~">~300<small>pessoas assistiram, entre elas ex-escravizados dos engenhos vizinhos.</small></div>
-    <p>Os nomes ficaram no inquérito: Cláudio Pergentino Ferreira do Monte, 40 anos, cozinheiro do Engenho Salgado; o capitão João Manoel; e um moço chamado Liberato. <span class="selo doc" data-k="DOC">inquérito policial</span></p>
+<!-- ================= 06 ================= -->
+<article class="chap" id="c6" data-theme="festa" data-ch="6">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">06</span>
+    <span class="kick">Capítulo 06 · 28 de junho de 1890</span>
+    <h2 data-split>O boi na frente <em>da igreja</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Dois anos depois da Abolição, um bumba meu boi juntou centenas de pessoas e acabou registrado num inquérito.</p>
+  </header>
+  <div class="chap-grid">
+    <div class="chap-text">
+      <p data-reveal>Em 1872, a paróquia sediada no Ó tinha <strong>19.420 pessoas</strong>. Delas, <strong>3.315 eram escravizadas</strong>. Isso é quase <strong>1 em cada 6</strong>. <span class="selo acad" data-k="ACAD">tese Unicamp, 2014</span></p>
+      <p data-reveal>Na véspera de São Pedro de 1890, a polícia autorizou um <dfn tabindex="0" data-def="Folguedo popular com música, dança e personagens em volta de um boi que morre e ressuscita.">bumba meu boi</dfn> em frente à igreja do Ó.</p>
+      <div data-reveal><div class="big" data-count="300" data-pre="~">~300</div><p class="big-cap">pessoas assistiram, entre elas ex-escravizados dos engenhos vizinhos.</p></div>
+      <p data-reveal>Os nomes ficaram no inquérito: Cláudio Pergentino Ferreira do Monte, 40 anos, cozinheiro do Engenho Salgado; o capitão João Manoel; e um moço chamado Liberato. <span class="selo doc" data-k="DOC">inquérito policial</span></p>
+    </div>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <span class="mono" style="color:var(--muted)">A paróquia em 1872 · cada quadrado ≈ 97 pessoas</span>
+        <div class="units" id="units" style="margin-top:16px"></div>
+        <div class="ukey"><span><i style="background:var(--red)"></i>escravizadas · 3.315</span><span><i style="background:var(--line)"></i>livres · 16.105</span></div>
+      </div>
+      <figcaption>Fonte: censo de 1872, via tese Unicamp</figcaption>
+    </figure>
   </div>
-</section>
+</article>
 
-<!-- 7 · USINA (scrub) -->
-<section class="ch tall" id="c7" data-ch="7">
+<!-- ================= 07 ================= -->
+<article class="chap" id="c7" data-theme="smoke" data-ch="7" style="padding-bottom:0">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">07</span>
+    <span class="kick">Capítulo 07 · 1892–2014</span>
+    <h2 data-split>O tempo <em>da usina</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> O velho engenho virou usina, ganhou ferrovia e chaminé, e parou de moer depois de mais de um século. Role para avançar no tempo.</p>
+  </header>
+</article>
+<div class="tall" id="usina" data-theme="smoke" data-ch="7" style="height:380vh">
   <div class="sticky">
-    <div class="panel">
-      <span class="kick">07 · 1892–2014 · role para avançar</span>
-      <h2>O tempo <em>da usina</em></h2>
-      <div class="prog"><b id="uprog"></b></div>
-      <ul class="miles" id="umiles"></ul>
+    <div class="usina">
+      <div class="stage factory">
+        <svg viewBox="0 0 400 300" aria-label="Esquema da Usina Salgado com chaminé e trem">
+          <line x1="0" y1="262" x2="400" y2="262" stroke="var(--line)" stroke-width="2"/>
+          <g class="smoke" id="smoke"><circle class="sk" cx="96" cy="60" r="14"/><circle class="sk" cx="96" cy="60" r="14" style="animation-delay:-1s"/><circle class="sk" cx="96" cy="60" r="14" style="animation-delay:-2s"/><circle class="sk" cx="96" cy="60" r="14" style="animation-delay:-3s"/></g>
+          <rect id="chim" x="84" y="60" width="24" height="202" fill="var(--accent)" opacity=".85" style="transform-origin:96px 262px"/>
+          <rect x="120" y="170" width="170" height="92" fill="var(--fg)" opacity=".12" stroke="var(--fg)" stroke-width="2"/>
+          <path d="M112 172 L205 120 L298 172" fill="none" stroke="var(--fg)" stroke-width="2"/>
+          <g fill="var(--fg)" opacity=".5"><rect x="140" y="196" width="18" height="24"/><rect x="172" y="196" width="18" height="24"/><rect x="220" y="196" width="18" height="24"/><rect x="252" y="196" width="18" height="24"/></g>
+          <g id="rails" opacity="0"><line x1="0" y1="282" x2="400" y2="282" stroke="var(--muted)" stroke-width="2" stroke-dasharray="10 5"/></g>
+          <g id="train" opacity="0"><rect x="0" y="262" width="34" height="18" rx="3" fill="var(--fg)"/><rect x="8" y="252" width="8" height="10" fill="var(--fg)"/><rect x="38" y="264" width="34" height="16" rx="2" fill="var(--accent)"/><rect x="76" y="264" width="34" height="16" rx="2" fill="var(--accent)"/></g>
+          <text x="300" y="30" font-family="Space Mono" font-size="11" fill="var(--muted)" id="ustate">moendo</text>
+        </svg>
+      </div>
+      <div>
+        <span class="kick">Usina Salgado</span>
+        <div class="big" id="uyear">1892</div>
+        <div class="prog"><b id="uprog"></b></div>
+        <ul class="miles" id="umiles"></ul>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- 8 · MUNICÍPIO (scrub) -->
-<section class="ch tall" id="c8" data-ch="8">
+<!-- ================= 08 ================= -->
+<article class="chap" id="c8" data-theme="dark" data-ch="8" style="padding-bottom:0">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">08</span>
+    <span class="kick">Capítulo 08 · 1963–1964</span>
+    <h2 data-split>199 dias <em>de município</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Em 1963, o Ó virou município de verdade. Seis meses e meio depois, deixou de ser. Role e conte os dias.</p>
+  </header>
+</article>
+<div class="tall" id="muni" data-theme="dark" data-ch="8" style="height:340vh">
   <div class="sticky">
-    <div class="panel">
-      <span class="kick">08 · 1963–1964 · role para avançar</span>
-      <h2>199 dias <em>de município</em></h2>
-      <div class="daybig" aria-live="polite"><div class="big" id="mday">0</div><span class="date" id="mdate">20/12/1963</span></div>
-      <ul class="miles" id="mmiles"></ul>
-      <p style="font-size:14px">Quem foi o prefeito? Esse documento ainda não foi achado. <span class="selo pend" data-k="PENDENTE"></span> <a href="https://wa.me/5581989361309?text=Ol%C3%A1!%20Sei%20algo%20sobre%20o%20munic%C3%ADpio%20do%20%C3%93%20em%201963-64%3A%20" target="_blank" rel="noopener">Você sabe? Conte pra gente</a></p>
+    <div class="days">
+      <div class="ring">
+        <svg viewBox="0 0 300 300" id="ring" aria-hidden="true"></svg>
+        <div class="mid" aria-live="polite"><div class="big" id="mday">0</div><span id="mdate">20/12/1963</span></div>
+      </div>
+      <div>
+        <span class="kick">Município de Nossa Senhora do Ó</span>
+        <ul class="miles" id="mmiles" style="margin-top:14px"></ul>
+        <p style="font-size:15px;margin-top:18px">Quem foi o prefeito? Esse documento ainda não foi achado. <span class="selo pend" data-k="PENDENTE"></span> <a href="https://wa.me/5581989361309?text=Ol%C3%A1!%20Sei%20algo%20sobre%20o%20munic%C3%ADpio%20do%20%C3%93%20em%201963-64%3A%20" target="_blank" rel="noopener" style="color:var(--accent)">Você sabe? Conte pra gente</a></p>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- 9 · MEMÓRIA VIVA -->
-<section class="ch" id="c9" data-ch="9">
-  <div class="panel">
-    <span class="kick">09 · Século XX, contado em 2017</span>
-    <h2>A memória que <em>ninguém escreveu</em></h2>
-    <p>Em 2017, uma pesquisa da UFPE ouviu quatro idosos do Ó, de 83 a 90 anos. Todos lembraram das mesmas festas. <a class="selo oral" data-k="ORAL" href="https://repositorio.ufpe.br/bitstream/123456789/47752/1/TCC%20Deomaci%20Jose%20Ramos.pdf" target="_blank" rel="noopener">TCC UFPE · Deomaci J. Ramos</a></p>
-    <div class="chips" id="chips" role="group" aria-label="Festas lembradas"></div>
-    <div class="chip-out" id="chipout" aria-live="polite">Toque numa festa para saber onde e com quem ela acontecia.</div>
-    <blockquote>“Apoi meu filho, o Ó era bom demais!”<cite>Moradora de 85 anos · TCC UFPE, 2017</cite></blockquote>
-    <p>Hoje a padroeira é celebrada duas vezes por ano: no Advento e na primeira semana de fevereiro. Desde outubro de 2005, o Ó tem paróquia própria. <span class="selo doc" data-k="DOC">Arquidiocese</span></p>
-    <p>A Arquidiocese data a igreja matriz do <strong>século XVI</strong>. Ela está em processo de tombamento pela Fundarpe. <span class="selo doc" data-k="DOC">Arquidiocese, 2021</span></p>
+<!-- ================= 09 ================= -->
+<article class="chap" id="c9" data-theme="paper" data-ch="9">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">09</span>
+    <span class="kick">Capítulo 09 · Século XX, contado em 2017</span>
+    <h2 data-split>A memória que <em>ninguém escreveu</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Quatro idosos do Ó lembraram, sem combinar, das mesmas festas. Essa é a história que não está em nenhum papel.</p>
+  </header>
+  <div class="chap-grid">
+    <div class="chap-text">
+      <p data-reveal>Em 2017, uma pesquisa da UFPE ouviu quatro idosos do Ó, de 83 a 90 anos. Todos lembraram das mesmas festas. <a class="selo oral" data-k="ORAL" href="https://repositorio.ufpe.br/bitstream/123456789/47752/1/TCC%20Deomaci%20Jose%20Ramos.pdf" target="_blank" rel="noopener">TCC UFPE · Deomaci J. Ramos</a></p>
+      <blockquote data-reveal>“Apoi meu filho, o Ó era bom demais!”<cite>Moradora de 85 anos · TCC UFPE, 2017</cite></blockquote>
+      <p data-reveal>Hoje a padroeira é celebrada duas vezes por ano: no Advento e na primeira semana de fevereiro. Desde outubro de 2005, o Ó tem paróquia própria. <span class="selo doc" data-k="DOC">Arquidiocese</span></p>
+      <p data-reveal>A Arquidiocese data a igreja matriz do <strong>século XVI</strong>. Ela está em processo de <dfn tabindex="0" data-def="Tombar é proteger por lei um patrimônio histórico, para que não seja demolido nem descaracterizado.">tombamento</dfn> pela Fundarpe. <span class="selo doc" data-k="DOC">Arquidiocese, 2021</span></p>
+    </div>
+    <figure class="chap-vis" data-reveal>
+      <div class="stage">
+        <span class="mono" style="color:var(--muted)">Festas lembradas · toque numa</span>
+        <div class="chips" id="chips" role="group" aria-label="Festas lembradas" style="margin:16px 0 18px"></div>
+        <div class="chip-out" id="chipout" aria-live="polite">Toque numa festa para saber onde e com quem ela acontecia.</div>
+      </div>
+    </figure>
   </div>
-</section>
-
-<!-- 10 · QUIZ -->
-<section class="ch" id="c10" data-ch="10">
-  <div class="panel wide">
-    <span class="kick">10 · Teste o que você aprendeu</span>
-    <h2>Fato, relato <em>ou lenda?</em></h2>
-    <p>Nem tudo que se conta sobre o Ó tem documento. Para cada frase, escolha de onde ela vem.</p>
-    <div class="quiz" id="quiz"></div>
+</article>
+<section class="series" data-theme="paper" data-ch="9" aria-label="A série Memórias do Ó">
+  <div class="intro">
+    <h2 class="sec-title" style="font-size:clamp(40px,6vw,92px)" data-split>Assista à <em>série</em></h2>
+    <p data-reveal>A pesquisa virou série em vídeo. Episódios curtos, gravados no Ó, com quem guarda essa memória. <strong>Arraste para o lado.</strong></p>
   </div>
+  <div class="reel" id="reel" data-cursor="arraste"></div>
 </section>
 
-<!-- 11 · RUAS -->
-<section class="ch" id="c11" data-ch="11">
-  <div class="panel wide">
-    <span class="kick">11 · Toponímia</span>
-    <h2>As ruas <em>contam</em></h2>
-    <p>Os nomes das ruas guardam a história do Ó. Toque numa placa para virar.</p>
-    <div class="plaques" id="plaques"></div>
-  </div>
+<!-- ================= 10 ================= -->
+<section class="chap" id="c10" data-theme="dark" data-ch="10">
+  <header class="chap-head" style="text-align:center;justify-items:center;margin-inline:auto">
+    <span class="kick">Capítulo 10 · Teste o que você aprendeu</span>
+    <h2 data-split>Fato, relato <em>ou lenda?</em></h2>
+    <p class="tldr" data-reveal style="text-align:left"><b>Como jogar</b> Para cada frase, escolha de onde ela vem. Lembra dos quatro selos?</p>
+  </header>
+  <div class="quiz" id="quiz" data-reveal></div>
 </section>
 
-<!-- 12 · FONTES -->
-<section class="ch" id="c12" data-ch="12">
-  <div class="panel wide">
-    <span class="kick">12 · De onde vem cada fato</span>
-    <h2>Fontes e <em>o que falta</em></h2>
-    <ul class="srcs">
-      <li><span class="selo doc" data-k="DOC"></span><a href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE · Divisão Territorial de Ipojuca</a></li>
-      <li><span class="selo doc" data-k="DOC"></span><a href="https://biblioteca.ibge.gov.br/visualizacao/livros/liv82148.pdf" target="_blank" rel="noopener">IBGE · Sinopse Estatística do Ipojuca, 1948</a></li>
-      <li><span class="selo doc" data-k="DOC"></span><a href="https://www.arquidioceseolindarecife.org/em-ipojuca-fieis-participam-da-festa-de-nossa-senhora-do-o/" target="_blank" rel="noopener">Arquidiocese de Olinda e Recife · Festa do Ó, 2021</a></li>
-      <li><span class="selo acad" data-k="ACAD"></span><a href="https://repositorio.ufpe.br/bitstream/123456789/47752/1/TCC%20Deomaci%20Jose%20Ramos.pdf" target="_blank" rel="noopener">Deomaci José Ramos · TCC UFPE sobre a memória dos idosos do Ó</a></li>
-      <li><span class="selo acad" data-k="ACAD"></span><a href="https://pesquisaescolar.fundaj.gov.br/pt-br/artigo/usina-salgado/" target="_blank" rel="noopener">Fundaj · Usina Salgado</a></li>
-      <li><span class="selo acad" data-k="ACAD"></span><a href="https://freimilton-ofm.blogspot.com/2009/06/" target="_blank" rel="noopener">Frei Milton Coelho OFM · história de Ipojuca</a></li>
-      <li><span class="selo acad" data-k="ACAD"></span><a href="https://pt.wikipedia.org/wiki/Nossa_Senhora_do_%C3%93" target="_blank" rel="noopener">Wikipédia · Nossa Senhora do Ó</a></li>
-      <li><span class="selo acad" data-k="ACAD"></span><a href="https://exame.com/colunistas/primeiro-lugar/usina-salgado-coloca-terrenos-a-venda/" target="_blank" rel="noopener">Exame · Usina Salgado põe terrenos à venda</a></li>
-    </ul>
-    <p><strong>Ajude a completar esta história.</strong> Ainda faltam documentos sobre:</p>
-    <ul class="gaps">
-      <li>O prefeito e a sede do município de 1963–64</li>
-      <li>Os furtos de São Benedito, Sant'Ana e São José, nos anos 70 e 80</li>
-      <li>A coroa votiva da padroeira e quem a doou</li>
-      <li>O livro de Antônio Geraldo de Souza Leão (2004)</li>
-    </ul>
-    <div class="row">
-      <a class="btn fill" href="https://wa.me/5581989361309?text=Ol%C3%A1!%20Tenho%20uma%20informa%C3%A7%C3%A3o%20sobre%20a%20hist%C3%B3ria%20do%20%C3%93%3A%20" target="_blank" rel="noopener">Tenho uma informação</a>
-      <a class="btn" href="#c0">Voltar ao início</a>
+<!-- ================= 11 ================= -->
+<section class="chap" id="c11" data-theme="blue" data-ch="11">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">11</span>
+    <span class="kick">Capítulo 11 · Toponímia</span>
+    <h2 data-split>As ruas <em>contam</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Os nomes das ruas guardam a história do Ó. Toque numa placa para virar.</p>
+  </header>
+  <div class="plaques" id="plaques"></div>
+</section>
+
+<!-- ================= 12 ================= -->
+<section class="chap" id="c12" data-theme="paper" data-ch="12">
+  <header class="chap-head">
+    <span class="chap-n" aria-hidden="true">12</span>
+    <span class="kick">Capítulo 12 · De onde vem cada fato</span>
+    <h2 data-split>Fontes e <em>o que falta</em></h2>
+    <p class="tldr" data-reveal><b>Em uma frase</b> Toda a história acima tem endereço. E ainda há buracos que você pode ajudar a preencher.</p>
+  </header>
+  <div class="chap-grid">
+    <ul class="srcs" id="srcs"></ul>
+    <div class="chap-text">
+      <p data-reveal><strong>Ajude a completar esta história.</strong> Ainda faltam documentos sobre:</p>
+      <ul class="gaps" data-reveal>
+        <li>O prefeito e a sede do município de 1963–64</li>
+        <li>Os furtos de São Benedito, Sant'Ana e São José, nos anos 70 e 80</li>
+        <li>A coroa votiva da padroeira e quem a doou</li>
+        <li>O livro de Antônio Geraldo de Souza Leão (2004)</li>
+      </ul>
+      <div class="row" data-reveal>
+        <a class="btn fill mag" href="https://wa.me/5581989361309?text=Ol%C3%A1!%20Tenho%20uma%20informa%C3%A7%C3%A3o%20sobre%20a%20hist%C3%B3ria%20do%20%C3%93%3A%20" target="_blank" rel="noopener">Tenho uma informação</a>
+        <a class="btn mag" href="#top">Voltar ao início</a>
+      </div>
     </div>
   </div>
 </section>
 </main>
-<footer><span>Pesquisa e realização: <a href="https://www.instagram.com/memorias_do_o/" target="_blank" rel="noopener">Memórias do Ó</a> · dedicado a Seu Álvaro, guardião da memória oral do Ó</span><span>Nossa Senhora do Ó · Ipojuca-PE</span></footer>
+
+<footer data-theme="dark" data-ch="12">
+  <div class="foot-big" data-split>Onde o passado <em>ainda respira.</em></div>
+  <div class="foot-row"><span>Pesquisa e realização: <a href="https://www.instagram.com/memorias_do_o/" target="_blank" rel="noopener">Memórias do Ó</a> · dedicado a Seu Álvaro, guardião da memória oral do Ó</span><span>Nossa Senhora do Ó · Ipojuca-PE</span></div>
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script type="module">
-import * as THREE from 'three';
-import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
-import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
-import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
-import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
-
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches&&!/[?&]motion=1/.test(location.search);
+<script>
+(()=>{
+if("scrollRestoration" in history)history.scrollRestoration="manual";
+const $=s=>document.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
-const mobile=innerWidth<860;
-const M=reduce?0:1; // multiplicador de movimento
-let progress=0;const setPre=p=>{progress=Math.max(progress,p);$("#pren").textContent=String(Math.round(progress)).padStart(3,"0")};
-setPre(8);
+const pad=n=>String(n).padStart(2,"0");
 
-/* =============== DADOS (todos do Arsenal Histórico) =============== */
+/* =============== DADOS =============== */
 const CH=[
  {t:"Abertura",y:2026,l:"Hoje"},
- {t:"Por que “Ó”?",y:null,l:"17–23 dez",yl:"Antífonas"},
- {t:"Terra de engenhos",y:1608,l:"Antes de"},
- {t:"A luta contra os holandeses",y:1645,l:"Julho"},
- {t:"O fim de uma revolução",y:1817,l:"15 de maio"},
- {t:"A Batalha das Sedes",y:1846,l:"Sede"},
- {t:"O boi na frente da igreja",y:1890,l:"28 de junho"},
- {t:"O tempo da usina",y:1892,l:"Usina Salgado"},
- {t:"199 dias de município",y:1963,l:"Município"},
- {t:"A memória que ninguém escreveu",y:2017,l:"Pesquisa UFPE"},
- {t:"Fato, relato ou lenda?",y:2026,l:"Hoje"},
- {t:"As ruas contam",y:2026,l:"Hoje"},
- {t:"Fontes e o que falta",y:2026,l:"Hoje"}];
+ {t:"Por que “Ó”?",y:null,l:"17–23 dez",r:"17–23 dez",s:"O nome vem de sete cantos de Advento que começam com “Ó”.",c:"#e0a55a"},
+ {t:"Terra de engenhos",y:1608,l:"Antes de",r:"antes de 1608",s:"Açúcar, bois e um rio navegável.",c:"#b9a24a"},
+ {t:"A luta contra os holandeses",y:1645,l:"Julho",r:"1634–1645",s:"16 homens começam um levante.",c:"#ff7a45"},
+ {t:"O fim de uma revolução",y:1817,l:"15 de maio",r:"1817",s:"A Revolução Pernambucana é derrotada aqui perto.",c:"#7fa6d6"},
+ {t:"A Batalha das Sedes",y:1846,l:"Sede",r:"1846–1896",s:"Dez leis em 50 anos jogam a sede de um lado para o outro.",c:"#e0a55a"},
+ {t:"O boi na frente da igreja",y:1890,l:"28 de junho",r:"1890",s:"Um bumba meu boi vira caso de polícia e de memória.",c:"#e35d4a"},
+ {t:"O tempo da usina",y:1892,l:"Usina Salgado",r:"1892–2014",s:"Ferrovia, fumaça e o fim da moagem.",c:"#c9b79a"},
+ {t:"199 dias de município",y:1963,l:"Município",r:"1963–64",s:"O Ó vira município e deixa de ser.",c:"#e0a55a"},
+ {t:"A memória que ninguém escreveu",y:2017,l:"Pesquisa UFPE",r:"2017",s:"Idosos lembram as festas do Ó.",c:"#6cbcb5"},
+ {t:"Fato, relato ou lenda?",y:2026,l:"Hoje",r:"quiz",s:"Teste o que você aprendeu.",c:"#f3c36a"},
+ {t:"As ruas contam",y:2026,l:"Hoje",r:"hoje",s:"Placas que guardam história.",c:"#5c9cc0"},
+ {t:"Fontes e o que falta",y:2026,l:"Hoje",r:"hoje",s:"De onde vem cada fato, e como ajudar.",c:"#e0a55a"}];
 const ANTI=[["Ó Sabedoria","O Sapientia",17],["Ó Adonai","O Adonai",18],["Ó Raiz de Jessé","O Radix Iesse",19],["Ó Chave de Davi","O Clavis David",20],["Ó Sol nascente","O Oriens",21],["Ó Rei das nações","O Rex Gentium",22],["Ó Emanuel","O Emmanuel",23]];
 const SEDES=[
  [1846,"o","Lei provincial 152 · 30/03/1846 · cria o município"],
@@ -608,96 +983,108 @@ const RUAS=[
  ["Rua","da Palha","Antiga Rua do Cabaré. Dali saía o bloco de carnaval Última Hora.","oral","TCC UFPE"],
  ["Praça","Carozita de Brito","Carozita encomendou as tribunas da igreja nos anos 60, feitas por Baixa Romão.","oral","dossiê local"],
  ["Praça","do Baobá","A cerca de 100 metros da paróquia. Há outro baobá a 5 km, entre canaviais.","doc","endereço"]];
+const SRCS=[
+ ["doc","IBGE · Divisão Territorial de Ipojuca","https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf"],
+ ["doc","IBGE · Sinopse Estatística do Ipojuca, 1948","https://biblioteca.ibge.gov.br/visualizacao/livros/liv82148.pdf"],
+ ["doc","Arquidiocese de Olinda e Recife · Festa do Ó, 2021","https://www.arquidioceseolindarecife.org/em-ipojuca-fieis-participam-da-festa-de-nossa-senhora-do-o/"],
+ ["acad","Deomaci José Ramos · TCC UFPE sobre a memória dos idosos do Ó","https://repositorio.ufpe.br/bitstream/123456789/47752/1/TCC%20Deomaci%20Jose%20Ramos.pdf"],
+ ["acad","Fundaj · Usina Salgado","https://pesquisaescolar.fundaj.gov.br/pt-br/artigo/usina-salgado/"],
+ ["acad","Frei Milton Coelho OFM · história de Ipojuca","https://freimilton-ofm.blogspot.com/2009/06/"],
+ ["acad","Wikipédia · Nossa Senhora do Ó","https://pt.wikipedia.org/wiki/Nossa_Senhora_do_%C3%93"],
+ ["acad","Exame · Usina Salgado põe terrenos à venda","https://exame.com/colunistas/primeiro-lugar/usina-salgado-coloca-terrenos-a-venda/"]];
+const EPS=[
+ ["capa-trailer","Onde o passado ainda respira","Trailer"],
+ ["capa-ep00","A história está morrendo?","Episódio 00"],
+ ["capa-ep01","Do engenho pro Ó","Episódio 01"],
+ ["capa-ep02","Ipojuca virou cidade num dia","Episódio 02"],
+ ["capa-ep03","“Quebra tudo e vamos pro Ó”","Episódio 03"],
+ ["ep0912","Projeto Memórias do Ó","Pôster"],
+ ["ep0914","O cruzeiro ao pôr do sol","Bastidores"],
+ ["ep0915","Do engenho pro Ó","Pôster"],
+ ["ep0921","Gravando no Ó","Bastidores"],
+ ["ep0924","Conversa sobre o Ó","Bastidores"]];
+const IG="https://www.instagram.com/memorias_do_o/";
+const ARROW='<svg viewBox="0 0 16 16"><path d="M2 8h11M9 4l4 4-4 4"/></svg>';
+const selo=(k,t)=>`<span class="selo ${k}" data-k="${k.toUpperCase()}">${t}</span>`;
 
-/* =============== UI =============== */
-// menu + trilha + régua
-const mlist=$("#mlist"),rail=$("#rail"),rtrack=$("#rtrack");
-const Y0=1590,Y1=2030,yx=y=>((y-Y0)/(Y1-Y0)*100)+"%";
-CH.forEach((c,i)=>{
-  const li=document.createElement("li");li.innerHTML=`<button type="button" data-go="${i}"><em>${String(i).padStart(2,"0")}</em><b>${c.t}</b><span>${c.y?(i===2?"antes de 1608":i===5?"1846–1896":i===7?"1892–2014":i===8?"1963–64":c.y):"17–23 dez"}</span></button>`;mlist.appendChild(li);
-  const r=document.createElement("li");r.innerHTML=`<button type="button" data-go="${i}" aria-label="${c.t}"><i></i><span>${String(i).padStart(2,"0")} ${c.t}</span></button>`;rail.appendChild(r);
-});
-for(let y=1600;y<=2020;y+=20){const t=document.createElement("span");t.className="tick"+(y%100===0?" big":"");t.style.left=yx(y);if(y%100===0)t.innerHTML=`<b>${y}</b>`;rtrack.appendChild(t)}
-CH.forEach((c,i)=>{if(!c.y||i===0||i>=10)return;const b=document.createElement("button");b.className="mk";b.type="button";b.dataset.go=i;b.style.left=yx(c.y);b.setAttribute("aria-label",c.t);rtrack.appendChild(b)});
-const menu=$("#menu"),mbtn=$("#mbtn");
-function toggleMenu(o){menu.classList.toggle("open",o);mbtn.setAttribute("aria-expanded",o);if(lenis)o?lenis.stop():lenis.start();if(o)mlist.querySelector("button").focus()}
-mbtn.onclick=()=>toggleMenu(!menu.classList.contains("open"));
-$$("[data-open-menu]").forEach(b=>b.onclick=()=>toggleMenu(true));
-addEventListener("keydown",e=>{if(e.key==="Escape"&&menu.classList.contains("open")){toggleMenu(false);mbtn.focus()}});
-document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;toggleMenu(false);goTo($("#c"+b.dataset.go))});
-$$('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{const t=$(a.getAttribute("href"));if(t){e.preventDefault();goTo(t)}}));
-let lenis=null;
-function goTo(el){if(!el)return;if(lenis)lenis.scrollTo(el,{duration:1.6});else el.scrollIntoView({behavior:reduce?"auto":"smooth"})}
+/* =============== MONTAGEM =============== */
+$("#mlist").innerHTML=CH.slice(1).map((c,k)=>`<li><button type="button" data-go="${k+1}"><em>${pad(k+1)}</em><b>${c.t}</b><span>${c.r}</span></button></li>`).join("");
+$("#jtrack").innerHTML=CH.slice(1).map((c,k)=>`<button class="jcard" type="button" data-go="${k+1}" style="--c:${c.c}" data-cursor="ler"><span class="jn">PARADA ${pad(k+1)}</span><span class="jy">${c.r.replace("antes de ","&lt;")}</span><span class="jt">${c.t}</span><span class="js">${c.s}</span><span class="go">Ler capítulo ${ARROW.replace('<svg','<svg width="12" height="12" stroke="currentColor" fill="none"')}</span></button>`).join("");
+$("#anti").innerHTML=ANTI.map((a,i)=>`<button type="button" data-i="${i}" aria-label="${a[0]}, ${a[2]} de dezembro"><small>DEZ</small><b>Ó</b><small>${a[2]}</small></button>`).join("");
+$("#stops").innerHTML=SEDES.map((s,i)=>`<button type="button" class="${s[1]}" data-i="${i}" aria-label="${s[0]}: sede em ${s[1]==="o"?"Nossa Senhora do Ó":"São Miguel"}"><span>${s[0]}</span></button>`).join("");
+$("#umiles").innerHTML=USINA.map(u=>`<li><b>${u[1]}</b><p>${u[2]} ${selo(u[3],u[4])}</p></li>`).join("");
+$("#mmiles").innerHTML=MUNI.map(u=>`<li><b>${u[1]}</b><p>${u[2]} ${selo(u[3],u[4])}</p></li>`).join("");
+$("#chips").innerHTML=FESTAS.map((f,i)=>`<button type="button" data-i="${i}" aria-pressed="false">${f[0]}</button>`).join("");
+$("#plaques").innerHTML=RUAS.map(r=>`<button type="button" class="plq" aria-expanded="false" data-cursor="virar" data-reveal><span class="in"><span class="f"><small>${r[0].toUpperCase()}</small><b>${r[1]}</b><i>TOQUE PARA VIRAR</i></span><span class="b">${r[2]}${selo(r[3],r[4])}</span></span></button>`).join("");
+$("#srcs").innerHTML=SRCS.map(s=>`<li data-reveal><a href="${s[2]}" target="_blank" rel="noopener">${selo(s[0],"")}<span>${s[1]}</span><svg viewBox="0 0 16 16"><path d="M4 12L12 4M5 4h7v7"/></svg></a></li>`).join("");
+$("#reel").innerHTML=EPS.map(e=>`<a class="ep" href="${IG}" target="_blank" rel="noopener" draggable="false"><span class="im"><img src="img/${e[0]}.webp" alt="${e[1]}" loading="lazy" width="540" height="960"><span class="play" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M0 0l10 6-10 6z"/></svg></span></span><small>${e[2]}</small><b>${e[1]}</b></a>`).join("");
+// unidades: 200 quadrados, 34 escravizados (3.315 / 19.420 ≈ 17%)
+$("#units").innerHTML=Array.from({length:200},(_,i)=>`<i${i<34?' class="x"':''}></i>`).join("");
+// homens do levante
+$("#men").innerHTML=Array.from({length:16},(_,i)=>{const x=25+(i%8)*50,y=10+Math.floor(i/8)*100;return `<g class="man" transform="translate(${x} ${y})"><circle cx="0" cy="14" r="11" fill="var(--accent)"/><path d="M-17 82 C-17 44 -10 32 0 32 C10 32 17 44 17 82Z" fill="var(--accent)" opacity=".85"/></g>`}).join("");
+// anel de 199 dias
+{const svg=$("#ring");let h="";for(let i=0;i<199;i++){const a=i/199*Math.PI*2-Math.PI/2,c=Math.cos(a),s=Math.sin(a),r1=128,r2=i===104||i===0?146:140;h+=`<line class="tk" x1="${150+c*r1}" y1="${150+s*r1}" x2="${150+c*r2}" y2="${150+s*r2}"/>`}svg.innerHTML=h}
+const ticks=$$("#ring .tk");
 
-// antífonas
-let antiSel=-1;
-$("#anti").innerHTML=ANTI.map((a,i)=>`<button type="button" data-i="${i}" aria-label="${a[0]}, ${a[2]} de dezembro">Ó<small>${a[2]}/12</small></button>`).join("");
-$("#anti").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;antiSel=+b.dataset.i;$$("#anti button").forEach((x,i)=>x.classList.toggle("on",i===antiSel));const a=ANTI[antiSel];$("#antiout").innerHTML=`<b>${a[0]}</b><span>${a[2]} de dezembro · em latim, “${a[1]}”</span>`;bell(0.6+antiSel*.08)});
-
-// sedes
-$("#stops").innerHTML=SEDES.map((s,i)=>`<button type="button" class="${s[1]}" data-i="${i}" aria-label="${s[0]}: sede em ${s[1]==="o"?"Nossa Senhora do Ó":"São Miguel"}"></button>`).join("");
-$("#stops").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;const st=sedeST;if(st){const y=st.start+(st.end-st.start)*((i+.5)/SEDES.length);lenis?lenis.scrollTo(y,{duration:1}):scrollTo(0,y)}else setSede(i)});
-let sedeIdx=-1;
-function setSede(i){if(i===sedeIdx)return;sedeIdx=i;const s=SEDES[i];
-  $("#syear").textContent=s[0];
-  const w=$("#swho");w.className="who"+(s[1]==="s"?" sm":"");w.innerHTML=i===9?"Sede: <em>Ipojuca</em> (antiga São Miguel)":"Sede: <em>"+(s[1]==="o"?"Nossa Senhora do Ó":"São Miguel")+"</em>";
-  $("#slaw").textContent=s[2];
-  $$("#stops button").forEach((b,k)=>b.classList.toggle("on",k===i));
-  setYear(s[0],"Sede");
-  if(scene){gsap.to(S,{bpos:s[1]==="o"?0:1,houses:70+i/9*180,duration:1.1,ease:"power3.inOut",overwrite:"auto"})}
-  if(i>0)bell(s[1]==="o"?.7:.9);
+/* =============== DIVIDIR TEXTO EM PALAVRAS =============== */
+function split(el,cls="w"){
+  const label=el.textContent.replace(/\s+/g," ").trim();
+  const walk=node=>{[...node.childNodes].forEach(n=>{
+    if(n.nodeType===3){const f=document.createDocumentFragment();n.textContent.split(/(\s+)/).forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){f.appendChild(document.createTextNode(" "));return}
+      const o=document.createElement("span");o.className=cls;const i=document.createElement("span");i.className=cls==="w"?"wi":"swi";i.textContent=p;o.appendChild(i);f.appendChild(o)});n.replaceWith(f)}
+    else if(n.nodeType===1)walk(n)})};
+  walk(el);el.setAttribute("aria-label",label);$$("."+cls,el).forEach(s=>s.setAttribute("aria-hidden","true"));
+  return $$(cls==="w"?".wi":"."+cls,el);
 }
 
-// usina e município
-$("#umiles").innerHTML=USINA.map(u=>`<li><b>${u[1]}</b><p>${u[2]} <span class="selo ${u[3]}" data-k="${u[3].toUpperCase()}">${u[4]}</span></p></li>`).join("");
-$("#mmiles").innerHTML=MUNI.map(u=>`<li><b>${u[1]}</b><p>${u[2]} <span class="selo ${u[3]}" data-k="${u[3].toUpperCase()}">${u[4]}</span></p></li>`).join("");
-const D0=new Date(1963,11,20);
-const fmtD=d=>String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
-
+/* =============== INTERAÇÕES =============== */
+// antífonas
+let antiSel=-1;
+$("#anti").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;antiSel=+b.dataset.i;$$("#anti button").forEach((x,i)=>x.classList.toggle("on",i===antiSel));const a=ANTI[antiSel];
+  $("#antiout").innerHTML=`<b>${a[0]}</b><span>${a[2]} de dezembro · em latim, <em>${a[1]}</em></span>`;
+  if(window.gsap&&!reduce)gsap.from("#antiout>*",{y:20,opacity:0,duration:.6,stagger:.06,ease:"power3.out"});bell(.6+antiSel*.08)});
 // festas
-$("#chips").innerHTML=FESTAS.map((f,i)=>`<button type="button" data-i="${i}" aria-pressed="false">${f[0]}</button>`).join("");
-$("#chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;$$("#chips button").forEach((x,k)=>{x.classList.toggle("on",k===i);x.setAttribute("aria-pressed",k===i)});$("#chipout").innerHTML=`<strong>${FESTAS[i][0]}.</strong> ${FESTAS[i][1]} <span class="selo oral" data-k="ORAL">memória</span>`;if(scene)gsap.fromTo(S,{flagsPulse:1},{flagsPulse:0,duration:1.2})});
-
-// ruas
-$("#plaques").innerHTML=RUAS.map(r=>`<button type="button" class="plq" aria-expanded="false"><span class="in"><span class="f"><small>${r[0].toUpperCase()}</small><b>${r[1]}</b></span><span class="b">${r[2]}<span class="selo ${r[3]}" data-k="${r[3].toUpperCase()}">${r[4]}</span></span></span></button>`).join("");
-$("#plaques").addEventListener("click",e=>{const b=e.target.closest(".plq");if(!b)return;const o=!b.classList.contains("open");b.classList.toggle("open",o);b.setAttribute("aria-expanded",o)});
-
+$("#chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;$$("#chips button").forEach((x,k)=>{x.classList.toggle("on",k===i);x.setAttribute("aria-pressed",k===i)});
+  $("#chipout").innerHTML=`<strong>${FESTAS[i][0]}.</strong> ${FESTAS[i][1]} ${selo("oral","memória")}`;
+  if(window.gsap&&!reduce)gsap.from("#chipout",{x:-16,opacity:0,duration:.6,ease:"power3.out"});bell(1+i*.05)});
+// placas
+$("#plaques").addEventListener("click",e=>{const b=e.target.closest(".plq");if(!b)return;const o=!b.classList.contains("open");b.classList.toggle("open",o);b.setAttribute("aria-expanded",o);bell(o?1.1:.9)});
+// termos no celular
+document.addEventListener("click",e=>{const d=e.target.closest("dfn");$$("dfn.show").forEach(x=>x!==d&&x.classList.remove("show"));if(d)d.classList.toggle("show")});
 // quiz
 let qi=0,qs=[];
 function renderQuiz(){
   const q=$("#quiz");
   if(qi>=QUIZ.length){const ok=qs.filter(Boolean).length;
-    q.innerHTML=`<div class="qcard"><p>Você acertou <b>${ok} de ${QUIZ.length}</b>. ${ok>=6?"Você já pode ser guia do Ó.":ok>=4?"Bom! A história do Ó tem muitas camadas.":"Normal: lenda e fato se misturam muito por aqui."}</p></div><div class="row"><button class="btn fill" type="button" id="qagain">Jogar de novo</button></div>`;
-    $("#qagain").onclick=()=>{qi=0;qs=[];renderQuiz()};return}
+    q.innerHTML=`<div class="qcard" style="text-align:center"><span class="big" style="font-size:clamp(80px,12vw,160px)">${ok}<span style="font-size:.35em;color:var(--muted)">/${QUIZ.length}</span></span><p style="margin-top:12px">${ok>=6?"Você já pode ser guia do Ó.":ok>=4?"Bom! A história do Ó tem muitas camadas.":"Normal: lenda e fato se misturam muito por aqui."}</p></div><div class="row" style="justify-content:center"><button class="btn fill" type="button" id="qagain">Jogar de novo</button></div>`;
+    $("#qagain").onclick=()=>{qi=0;qs=[];renderQuiz()};if(window.gsap&&!reduce)gsap.from("#quiz .qcard",{scale:.9,opacity:0,duration:.8,ease:"back.out(1.6)"});return}
   const [txt,ans,exp]=QUIZ[qi];
-  q.innerHTML=`<div class="qhead"><span class="mono">Frase ${qi+1} de ${QUIZ.length}</span><span class="qdots">${QUIZ.map((_,k)=>`<i class="${k<qi?(qs[k]?"ok":"no"):k===qi?"cur":""}"></i>`).join("")}</span></div>
+  q.innerHTML=`<div class="qhead"><span class="mono" style="color:var(--muted)">Frase ${qi+1} de ${QUIZ.length}</span><span class="qdots">${QUIZ.map((_,k)=>`<i class="${k<qi?(qs[k]?"ok":"no"):k===qi?"cur":""}"></i>`).join("")}</span></div>
   <div class="qcard"><p>${txt}</p></div>
-  <div class="qopts">${QOPT.map(o=>`<button type="button" data-a="${o[0]}"><b>${o[1]}</b><small>${o[2]}</small></button>`).join("")}</div>
+  <div class="qopts">${QOPT.map(o=>`<button type="button" data-a="${o[0]}"><span class="selo ${o[0]}" data-k="${o[0].toUpperCase()}" style="margin:0 0 6px"></span><b>${o[1]}</b><small>${o[2]}</small></button>`).join("")}</div>
   <div class="qfeed" aria-live="polite"></div>`;
+  if(window.gsap&&!reduce&&qi>0){gsap.from("#quiz .qcard",{x:60,opacity:0,duration:.7,ease:"power3.out"});gsap.from("#quiz .qopts button",{y:20,opacity:0,duration:.5,stagger:.05,ease:"power3.out",delay:.1})}
   q.querySelector(".qopts").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;
     const right=b.dataset.a===ans;qs[qi]=right;
     q.querySelectorAll(".qopts button").forEach(x=>{x.disabled=true;if(x.dataset.a===ans)x.classList.add("right")});
     if(!right)b.classList.add("wrong");
+    if(window.gsap&&!reduce){if(right)gsap.fromTo(q.querySelector(".right"),{scale:1},{scale:1.06,yoyo:true,repeat:1,duration:.18});else gsap.fromTo(b,{x:-8},{x:0,duration:.5,ease:"elastic.out(1,.3)"})}
     const lbl=QOPT.find(o=>o[0]===ans)[1];
-    q.querySelector(".qfeed").innerHTML=`${right?"<b>Acertou.</b>":"<b>Não foi dessa vez.</b>"} Resposta: <span class="selo ${ans}" data-k="${ans.toUpperCase()}">${lbl}</span><br>${exp}<div class="row" style="margin-top:12px"><button class="btn" type="button" id="qnext">${qi+1<QUIZ.length?"Próxima frase":"Ver resultado"}</button></div>`;
+    q.querySelector(".qfeed").innerHTML=`${right?"<b>Acertou!</b>":"<b>Não foi dessa vez.</b>"} Resposta: ${selo(ans,lbl)}<br>${exp}<div class="row" style="margin-top:16px"><button class="btn" type="button" id="qnext">${qi+1<QUIZ.length?"Próxima frase":"Ver resultado"} ${ARROW}</button></div>`;
     $("#qnext").onclick=()=>{qi++;renderQuiz()};$("#qnext").focus({preventScroll:true});
     bell(right?1.2:.5);
   });
 }
 renderQuiz();
 
-// ano no HUD
-const yrEl=$("#yr"),ylab=$("#ylab"),rhead=$("#rhead");let yShown=2026;const yObj={v:2026};
-function setYear(y,label){
-  ylab.textContent=label||"";
-  if(y==null){yrEl.textContent="Ó";rhead.style.opacity=0;return}
-  rhead.style.opacity=1;
-  if(typeof y==="number"){
-    gsap.to(yObj,{v:y,duration:reduce?0:1.1,ease:"power3.out",overwrite:true,onUpdate:()=>{yrEl.textContent=Math.round(yObj.v);rhead.style.left=yx(yObj.v)}});
-  }
-}
+// galeria arrastável
+{const r=$("#reel");let down=null,moved=false;
+  r.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;down={x:e.clientX,s:r.scrollLeft};moved=false});
+  addEventListener("pointermove",e=>{if(!down)return;const dx=e.clientX-down.x;if(Math.abs(dx)>4){moved=true;r.classList.add("drag")}r.scrollLeft=down.s-dx});
+  addEventListener("pointerup",()=>{down=null;r.classList.remove("drag")});
+  r.addEventListener("click",e=>{if(moved){e.preventDefault();moved=false}},true);}
 
-/* =============== SOM (opcional, sintetizado) =============== */
+/* =============== SOM (sintetizado, opcional) =============== */
 let ac=null,master=null;
 function audioOn(){
   ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=0;master.connect(ac.destination);
@@ -713,365 +1100,145 @@ $("#snd").onclick=()=>{const b=$("#snd");
   const on=master.gain.value<.1;master.gain.cancelScheduledValues(ac.currentTime);master.gain.linearRampToValueAtTime(on?.9:0,ac.currentTime+.6);
   b.classList.toggle("on",on);b.setAttribute("aria-pressed",on);b.setAttribute("aria-label",on?"Desligar som ambiente":"Ligar som ambiente");if(on)ac.resume()};
 
-/* =============== CENA 3D =============== */
-let scene=null,renderer,camera,composer,world;
-const S={houses:260,cane:1,caneIn:0,engenho:0,tower:1,usina:1,chimney:1,smoke:0,train:0,sm:0,beacon:0,bpos:0,fire:0,crowd:0,ring:0,ringEnd:0,flags:0,flagsPulse:0,lant:0,anti:0,spin:1,oculo:1,offX:0};
-const camPos=new THREE.Vector3(13,8,17),camTgt=new THREE.Vector3(0,1.6,0);
-const MOODS={
- noite:{bg:"#120f0b",key:"#ffd9a8",ki:2.4,hemi:"#7a6a54",hi:.9,rim:.6,exp:1.05},
- dourado:{bg:"#24180d",key:"#ffb066",ki:3.2,hemi:"#9a7a50",hi:1.1,rim:.3,exp:1.1},
- fogo:{bg:"#1c0d07",key:"#ff8a48",ki:1.6,hemi:"#6a3a24",hi:.7,rim:.2,exp:1.05},
- azul:{bg:"#0b1117",key:"#a9c2e0",ki:1.4,hemi:"#3a4a5a",hi:.7,rim:1,exp:1},
- festa:{bg:"#160f0a",key:"#ffc27a",ki:2.6,hemi:"#8a6a4a",hi:1,rim:.5,exp:1.1},
- industrial:{bg:"#1a1814",key:"#e8d4b0",ki:2.2,hemi:"#6a665a",hi:1,rim:.4,exp:1},
- ouro:{bg:"#0e0b08",key:"#ffd9a0",ki:1.6,hemi:"#5a4a38",hi:.7,rim:.4,exp:1}};
-const ERA=[
- {m:"noite",c:[13,8,17],t:[0,1.6,0],s:{houses:260,cane:1,caneIn:0,engenho:0,tower:1,usina:1,chimney:1,smoke:0,train:0,sm:0,beacon:0,fire:0,crowd:0,ring:0,ringEnd:0,flags:0,lant:0,anti:0,spin:1,oculo:1}},
- {m:"noite",c:[0,2.6,7.2],t:[0,2.3,0],s:{houses:260,cane:1,anti:1,spin:0,oculo:2.4}},
- {m:"dourado",c:[-12.5,5.5,-1.5],t:[-4.6,.6,-3.2],s:{houses:0,cane:1,caneIn:1,engenho:1,tower:0,usina:0,chimney:0,anti:0,spin:0,oculo:.6}},
- {m:"fogo",c:[-10.5,4.2,-.5],t:[-4.6,1,-3.2],s:{houses:0,cane:.8,caneIn:.7,engenho:1,tower:0,usina:0,chimney:0,fire:1,spin:0,oculo:.4}},
- {m:"azul",c:[9,3,10],t:[0,1,3],s:{houses:45,cane:1,caneIn:.4,engenho:0,tower:1,usina:0,chimney:0,fire:0,lant:1,spin:0,oculo:1.2}},
- {m:"noite",c:[2,17,16],t:[2.5,0,2.5],s:{houses:70,cane:1,caneIn:0,tower:1,usina:0,chimney:0,lant:0,sm:1,beacon:1,crowd:0,spin:0,oculo:1}},
- {m:"festa",c:[4.5,3.2,10],t:[0,.9,2.6],s:{houses:250,cane:1,caneIn:0,sm:0,beacon:0,usina:0,chimney:0,crowd:1,spin:0,oculo:1.8}},
- {m:"industrial",c:[-12.5,6.5,-9],t:[-4.9,2.2,-2.9],s:{houses:250,crowd:0,usina:1,sm:0,ring:0,ringEnd:0,spin:0,oculo:.8}},
- {m:"ouro",c:[0,27,.5],t:[0,0,0],s:{houses:260,usina:1,chimney:1,smoke:0,train:0,spin:0,oculo:1.4}},
- {m:"festa",c:[6.5,5,11],t:[0,2.4,0],s:{houses:260,ring:0,ringEnd:0,flags:1,usina:1,chimney:1,spin:0,oculo:1.8}},
- {m:"noite",c:[13,9,-11],t:[0,1.4,0],s:{houses:260,flags:0,usina:1,chimney:1,spin:1,oculo:1}},
- {m:"noite",c:[0,20,7],t:[0,0,1],s:{houses:260,spin:0,oculo:1}},
- {m:"noite",c:[16,12,17],t:[0,1.4,0],s:{houses:260,spin:1,oculo:1}}];
-
-const cBg=new THREE.Color(MOODS.noite.bg),cKey=new THREE.Color(MOODS.noite.key),cHemi=new THREE.Color(MOODS.noite.hemi);
-const L={ki:2.4,hi:.9,rim:.6,exp:1.05};
-
-function rnd(a,b){return a+Math.random()*(b-a)}
-function prism(w=1,h=.5,d=1){const s=new THREE.Shape();s.moveTo(-w/2,0);s.lineTo(w/2,0);s.lineTo(0,h);s.closePath();const g=new THREE.ExtrudeGeometry(s,{depth:d,bevelEnabled:false});g.translate(0,0,-d/2);return g}
-function dotTex(){const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.35,"rgba(255,255,255,.45)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,64,64);const t=new THREE.CanvasTexture(c);return t}
-function groundTex(){const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.fillStyle="#2a2219";x.fillRect(0,0,512,512);
-  for(let i=0;i<9000;i++){x.fillStyle=`rgba(${Math.random()<.5?"0,0,0":"120,96,64"},${Math.random()*.12})`;x.fillRect(Math.random()*512,Math.random()*512,2,2)}
-  x.strokeStyle="rgba(150,120,80,.18)";x.lineWidth=14; // ruas
-  x.beginPath();x.moveTo(256,300);x.lineTo(256,512);x.moveTo(256,300);x.lineTo(40,350);x.moveTo(256,300);x.lineTo(470,380);x.moveTo(256,240);x.lineTo(400,60);x.stroke();
-  x.beginPath();x.arc(256,256,150,0,6.283);x.lineWidth=8;x.stroke();
-  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t}
-function windMat(color,uniforms){const m=new THREE.MeshStandardMaterial({color,roughness:.85});
-  m.onBeforeCompile=sh=>{sh.uniforms.uTime=uniforms.uTime;sh.uniforms.uGrow=uniforms.uGrow;
-    sh.vertexShader="uniform float uTime;uniform float uGrow;\n"+sh.vertexShader.replace("#include <begin_vertex>",`#include <begin_vertex>
-      transformed.y*=uGrow; vec4 wp=instanceMatrix*vec4(0.,0.,0.,1.); float hh=transformed.y;
-      transformed.x+=sin(uTime*1.6+wp.x*.7+wp.z*.5)*.09*hh*hh; transformed.z+=cos(uTime*1.3+wp.x*.4)*.05*hh*hh;`)};return m}
-
-let U={},meshes={},pts={};
-function build(){
-  const canvas=$("#gl");
-  renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,powerPreference:"high-performance"});
-  renderer.setPixelRatio(Math.min(mobile?1.5:2,devicePixelRatio||1));
-  renderer.setSize(innerWidth,innerHeight,false);
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  scene=new THREE.Scene();scene.background=cBg;scene.fog=new THREE.Fog(cBg,28,70);
-  camera=new THREE.PerspectiveCamera(mobile?44:34,innerWidth/innerHeight,.1,200);
-  world=new THREE.Group();scene.add(world);
-
-  // luzes
-  const hemi=new THREE.HemisphereLight(cHemi,0x0c0906,.9);scene.add(hemi);U.hemi=hemi;
-  const key=new THREE.DirectionalLight(cKey,2.4);key.position.set(7,12,8);key.castShadow=!mobile;
-  key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:1,far:40});key.shadow.bias=-.0004;key.shadow.normalBias=.02;scene.add(key);U.key=key;
-  const rim=new THREE.DirectionalLight(0x6f8fb8,.6);rim.position.set(-9,6,-10);scene.add(rim);U.rim=rim;
-  const fireL=new THREE.PointLight(0xff7a30,0,14,1.4);fireL.position.set(-4.6,1.4,-3.2);world.add(fireL);U.fireL=fireL;
-  const festL=new THREE.PointLight(0xffb060,0,10,1.4);festL.position.set(0,2.2,3.2);world.add(festL);U.festL=festL;
-
-  // maquete: pedestal
-  const gmat=new THREE.MeshStandardMaterial({map:groundTex(),roughness:1});
-  const sideMat=new THREE.MeshStandardMaterial({color:0x17120d,roughness:.9});
-  const base=new THREE.Mesh(new THREE.CylinderGeometry(10,10.3,.9,128,1),[sideMat,gmat,sideMat]);base.position.y=-.45;base.receiveShadow=true;world.add(base);
-  const rimT=new THREE.Mesh(new THREE.TorusGeometry(10.02,.025,6,220),new THREE.MeshStandardMaterial({color:0xc9893a,emissive:0xc9893a,emissiveIntensity:1.6}));rimT.rotation.x=Math.PI/2;rimT.position.y=.005;world.add(rimT);
-
-  // rio
-  const curve=new THREE.CatmullRomCurve3([[-8.9,4.4],[-7.7,1.6],[-8.3,-1.6],[-7.2,-4.9],[-5.3,-8.1]].map(p=>new THREE.Vector3(p[0],0,p[1])));
-  const rp=[],ri=[],N=80;for(let i=0;i<=N;i++){const p=curve.getPoint(i/N),t=curve.getTangent(i/N),n=new THREE.Vector3(-t.z,0,t.x).multiplyScalar(.5+Math.sin(i*.3)*.08);rp.push(p.x+n.x,.025,p.z+n.z,p.x-n.x,.025,p.z-n.z);if(i<N){const a=i*2;ri.push(a,a+1,a+2,a+1,a+3,a+2)}}
-  const rg=new THREE.BufferGeometry();rg.setAttribute("position",new THREE.Float32BufferAttribute(rp,3));rg.setIndex(ri);rg.computeVertexNormals();
-  const river=new THREE.Mesh(rg,new THREE.MeshStandardMaterial({color:0x2a5654,roughness:.25,metalness:.3,emissive:0x0d2624,side:THREE.DoubleSide}));world.add(river);
-  const riverPts=[];for(let i=0;i<=40;i++)riverPts.push(curve.getPoint(i/40));
-  const nearRiver=(x,z,d)=>riverPts.some(p=>Math.hypot(p.x-x,p.z-z)<d);
-
-  // igreja matriz
-  const lime=new THREE.MeshStandardMaterial({color:0xe6dcc6,roughness:.92});
-  const stone=new THREE.MeshStandardMaterial({color:0xbfae8e,roughness:.85});
-  const tile=new THREE.MeshStandardMaterial({color:0x7c3a22,roughness:.8});
-  const gold=new THREE.MeshStandardMaterial({color:0xc9893a,metalness:.7,roughness:.35,emissive:0x3a2208});
-  const church=new THREE.Group();world.add(church);
-  const s=3.4/132,P=(x,y)=>new THREE.Vector2((x-100)*s,(184-y)*s);
-  const fs=new THREE.Shape();const mv=(x,y)=>{const p=P(x,y);fs.moveTo(p.x,p.y)},ln=(x,y)=>{const p=P(x,y);fs.lineTo(p.x,p.y)},bz=(a,b,c,d,e,f)=>{const p1=P(a,b),p2=P(c,d),p3=P(e,f);fs.bezierCurveTo(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y)};
-  mv(34,184);ln(34,86);ln(48,86);bz(48,62,66,58,74,46);bz(82,34,88,22,100,16);bz(112,22,118,34,126,46);bz(134,58,152,62,152,86);ln(166,86);ln(166,184);fs.closePath();
-  const door=new THREE.Path();{const a=P(82,184),b=P(82,150),c=P(100,150);door.moveTo(a.x,a.y);door.lineTo(b.x,b.y);door.absarc(c.x,c.y,18*s,Math.PI,0,true);const e=P(118,184);door.lineTo(e.x,e.y);door.closePath()}
-  const oc=P(100,100),ocR=22*s;const ocu=new THREE.Path();ocu.absarc(oc.x,oc.y,ocR,0,Math.PI*2,true);fs.holes.push(door,ocu);
-  const facade=new THREE.Mesh(new THREE.ExtrudeGeometry(fs,{depth:.32,bevelEnabled:true,bevelSize:.03,bevelThickness:.03,bevelSegments:2,curveSegments:24}),lime);facade.position.z=-.12;facade.castShadow=facade.receiveShadow=true;church.add(facade);
-  const glowMat=new THREE.MeshStandardMaterial({color:0x2a1608,emissive:0xffb35c,emissiveIntensity:1});U.glow=glowMat;
-  const ocg=new THREE.Mesh(new THREE.CircleGeometry(ocR,32),glowMat);ocg.position.set(oc.x,oc.y,-.06);church.add(ocg);
-  const ocr=new THREE.Mesh(new THREE.TorusGeometry(ocR,.045,8,40),stone);ocr.position.set(oc.x,oc.y,.24);church.add(ocr);
-  const dg=new THREE.Mesh(new THREE.PlaneGeometry(36*s,52*s),new THREE.MeshStandardMaterial({color:0x2e1b0e,emissive:0xff9a40,emissiveIntensity:.25}));dg.position.set(0,26*s,-.05);church.add(dg);U.door=dg.material;
-  [-1.66,1.66].forEach(x=>{const p=new THREE.Mesh(new THREE.BoxGeometry(.2,2.56,.12),stone);p.position.set(x,1.28,.24);p.castShadow=true;church.add(p)});
-  const cor=new THREE.Mesh(new THREE.BoxGeometry(3.6,.12,.2),stone);cor.position.set(0,2.55,.26);church.add(cor);
-  const cx1=new THREE.Mesh(new THREE.BoxGeometry(.07,.55,.07),stone);cx1.position.set(0,4.33+.3,.05);const cx2=new THREE.Mesh(new THREE.BoxGeometry(.32,.07,.07),stone);cx2.position.set(0,4.33+.4,.05);church.add(cx1,cx2);
-  const nave=new THREE.Mesh(new THREE.BoxGeometry(3.2,2.5,5.6),lime);nave.position.set(0,1.25,-2.9);nave.castShadow=nave.receiveShadow=true;church.add(nave);
-  const roof=new THREE.Mesh(prism(3.55,1.25,5.7),tile);roof.position.set(0,2.5,-2.95);roof.castShadow=true;church.add(roof);
-  const cap=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.9,1.6),lime);cap.position.set(0,.95,-6.4);cap.castShadow=true;church.add(cap);
-  const capr=new THREE.Mesh(prism(2.5,.9,1.7),tile);capr.position.set(0,1.9,-6.4);church.add(capr);
-  // torre (azulejo no coruchéu)
-  const tower=new THREE.Group();tower.position.set(2.32,0,-.75);church.add(tower);meshes.tower=tower;
-  const tb=new THREE.Mesh(new THREE.BoxGeometry(1.15,4.2,1.15),lime);tb.position.y=2.1;tb.castShadow=true;tower.add(tb);
-  [2.55,3.05,4.2].forEach(y=>{const c=new THREE.Mesh(new THREE.BoxGeometry(1.3,.1,1.3),stone);c.position.y=y;tower.add(c)});
-  const dark=new THREE.MeshStandardMaterial({color:0x140d08});
-  for(let k=0;k<4;k++){const a=k*Math.PI/2;const op=new THREE.Mesh(new THREE.PlaneGeometry(.46,.62),dark);op.position.set(Math.sin(a)*.58,3.6,Math.cos(a)*.58);op.rotation.y=a;tower.add(op);
-    const bl=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8,0,6.283,0,1.6),gold);bl.position.set(Math.sin(a)*.42,3.62,Math.cos(a)*.42);tower.add(bl)}
-  const azul=new THREE.MeshStandardMaterial({color:0x3f8f8a,roughness:.25,metalness:.15});
-  const sp=new THREE.Mesh(new THREE.ConeGeometry(.82,1.3,4),azul);sp.rotation.y=Math.PI/4;sp.position.y=4.25+.65;sp.castShadow=true;tower.add(sp);
-  const ball=new THREE.Mesh(new THREE.SphereGeometry(.09,12,8),gold);ball.position.y=5.6;tower.add(ball);
-  const tc1=new THREE.Mesh(new THREE.BoxGeometry(.05,.42,.05),gold);tc1.position.y=5.88;const tc2=new THREE.Mesh(new THREE.BoxGeometry(.24,.05,.05),gold);tc2.position.y=5.95;tower.add(tc1,tc2);
-  // adro + cruzeiro
-  const adro=new THREE.Mesh(new THREE.BoxGeometry(5.6,.1,3.8),new THREE.MeshStandardMaterial({color:0x6a5a44,roughness:1}));adro.position.set(.4,.05,1.95);adro.receiveShadow=true;world.add(adro);
-  const cz=new THREE.Group();cz.position.set(0,0,4.6);world.add(cz);
-  const czb=new THREE.Mesh(new THREE.BoxGeometry(.5,.25,.5),stone);czb.position.y=.12;const czp=new THREE.Mesh(new THREE.BoxGeometry(.1,1.5,.1),stone);czp.position.y=1;const cza=new THREE.Mesh(new THREE.BoxGeometry(.6,.1,.1),stone);cza.position.y=1.42;cz.add(czb,czp,cza);[czp,cza].forEach(m=>m.castShadow=true);
-
-  // antífonas: 7 luzes em volta do óculo
-  const am=new THREE.MeshStandardMaterial({color:0x2a1608,emissive:0xffc070,emissiveIntensity:2.5,transparent:true,opacity:0});
-  meshes.anti=[];for(let i=0;i<7;i++){const a=Math.PI*.5+((i-3)/7)*Math.PI*1.7;const m=new THREE.Mesh(new THREE.SphereGeometry(.07,12,8),am.clone());m.position.set(oc.x+Math.cos(a)*1.05,oc.y+Math.sin(a)*1.05,.55);church.add(m);meshes.anti.push(m)}
-
-  // casas
-  const isBlocked=(x,z)=>{const r=Math.hypot(x,z);if(r<2.6||r>6.9)return true;if(x>-2.6&&x<3.4&&z>-7.4&&z<4.2)return true;if(Math.abs(x)<.7&&z>0)return true;if(Math.hypot(x+5,z+2.8)<2.7)return true;if(Math.hypot(x-6.6,z-6.6)<1.7)return true;if(nearRiver(x,z,1.1))return true;return false};
-  const hp=[];let tries=0;while(hp.length<260&&tries<20000){tries++;const a=Math.random()*6.283,r=Math.sqrt(rnd(2.6*2.6,6.9*6.9)),x=Math.cos(a)*r,z=Math.sin(a)*r;if(isBlocked(x,z))continue;if(hp.some(p=>Math.hypot(p.x-x,p.z-z)<.82))continue;hp.push({x,z,r})}
-  hp.sort((a,b)=>a.r-b.r);
-  const hbody=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1).translate(0,.5,0),new THREE.MeshStandardMaterial({roughness:.9}),hp.length);
-  const hroof=new THREE.InstancedMesh(prism(1,1,1),tile,hp.length);
-  const pal=[0xe8dcc4,0xd9b98a,0xc9a27a,0xa9b8b0,0xd7a99a,0xe3cfa0,0xb8c4c8,0xd4c4a8];const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sc=new THREE.Vector3(),col=new THREE.Color();
-  hp.forEach((p,i)=>{const w=rnd(.5,.72),h=rnd(.42,.62),d=rnd(.6,.85);e.set(0,Math.atan2(-p.x,-p.z),0);q.setFromEuler(e);
-    m4.compose(v.set(p.x,0,p.z),q,sc.set(w,h,d));hbody.setMatrixAt(i,m4);hbody.setColorAt(i,col.setHex(pal[i%pal.length]).offsetHSL(0,0,rnd(-.06,.03)));
-    m4.compose(v.set(p.x,h,p.z),q,sc.set(w*1.1,w*.42,d*1.06));hroof.setMatrixAt(i,m4)});
-  hbody.castShadow=hbody.receiveShadow=hroof.castShadow=true;world.add(hbody,hroof);meshes.hb=hbody;meshes.hr=hroof;
-
-  // canavial (externo e interno)
-  U.cane={uTime:{value:0},uGrow:{value:1}};U.caneIn={uTime:U.cane.uTime,uGrow:{value:0}};
-  const blade=new THREE.BoxGeometry(.035,1,.035).translate(0,.5,0);
-  function caneField(n,r0,r1,uni,extra){const im=new THREE.InstancedMesh(blade,windMat(0x6f7a38,uni),n);let k=0,t=0;
-    while(k<n&&t<n*30){t++;const a=Math.random()*6.283,r=Math.sqrt(rnd(r0*r0,r1*r1)),x=Math.cos(a)*r,z=Math.sin(a)*r;
-      if(nearRiver(x,z,.75))continue;if(Math.abs(x)<.8&&z>3)continue;if(Math.hypot(x-6.6,z-6.6)<1.6)continue;if(extra&&extra(x,z))continue;
-      e.set(rnd(-.12,.12),Math.random()*6.283,rnd(-.12,.12));q.setFromEuler(e);m4.compose(v.set(x,0,z),q,sc.set(1,rnd(.7,1.25),1));im.setMatrixAt(k,m4);im.setColorAt(k,col.setHex(0x6f7a38).offsetHSL(rnd(-.03,.04),rnd(-.1,.05),rnd(-.08,.08)));k++}
-    im.count=k;world.add(im);return im}
-  meshes.cane=caneField(mobile?900:2800,7,9.75,U.cane,(x,z)=>Math.hypot(x+5,z+2.8)<2.6);
-  meshes.caneIn=caneField(mobile?500:1600,2.4,6.9,U.caneIn,(x,z)=>(x>-2.6&&x<3.4&&z>-7.4&&z<4.4)||Math.hypot(x+4.6,z+3.2)<2.2);
-
-  // engenho (moenda a boi + casa-grande)
-  const eng=new THREE.Group();eng.position.set(-4.6,0,-3.2);world.add(eng);meshes.eng=eng;
-  const wood=new THREE.MeshStandardMaterial({color:0x5a3a22,roughness:.9});
-  for(const [x,z] of [[-.8,-.8],[.8,-.8],[-.8,.8],[.8,.8]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1.1,6),wood);p.position.set(x,.55,z);eng.add(p)}
-  const er=new THREE.Mesh(prism(2,.7,2),tile);er.position.y=1.1;er.castShadow=true;eng.add(er);
-  const wheel=new THREE.Group();wheel.position.set(1.7,0,1.2);eng.add(wheel);meshes.wheel=wheel;
-  const wt=new THREE.Mesh(new THREE.TorusGeometry(.65,.05,6,32),wood);wt.rotation.x=Math.PI/2;wt.position.y=.6;wheel.add(wt);
-  const ax=new THREE.Mesh(new THREE.CylinderGeometry(.08,.1,.9,8),wood);ax.position.y=.45;wheel.add(ax);
-  const arm=new THREE.Mesh(new THREE.BoxGeometry(2.2,.06,.06),wood);arm.position.y=.62;wheel.add(arm);
-  const ox=new THREE.MeshStandardMaterial({color:0x4a3a2c,roughness:1});
-  [-1.05,1.05].forEach(x=>{const b=new THREE.Mesh(new THREE.BoxGeometry(.38,.24,.18),ox);b.position.set(x,.22,0);b.castShadow=true;wheel.add(b)});
-  const cg=new THREE.Mesh(new THREE.BoxGeometry(1.6,.8,1),lime);cg.position.set(-1.7,.4,-1.3);cg.castShadow=true;eng.add(cg);
-  const cgr=new THREE.Mesh(prism(1.75,.55,1.1),tile);cgr.position.set(-1.7,.8,-1.3);eng.add(cgr);
-
-  // usina (mesmo lugar do engenho)
-  const brick=new THREE.MeshStandardMaterial({color:0x7a4a33,roughness:.9});
-  const us=new THREE.Group();us.position.set(-4.9,0,-2.9);world.add(us);meshes.us=us;
-  const ub=new THREE.Mesh(new THREE.BoxGeometry(2.5,1.3,1.7),brick);ub.position.y=.65;ub.castShadow=true;us.add(ub);
-  const ubr=new THREE.Mesh(prism(2.7,.6,1.8),new THREE.MeshStandardMaterial({color:0x5a5650,roughness:.6,metalness:.3}));ubr.position.y=1.3;us.add(ubr);
-  const ch=new THREE.Mesh(new THREE.CylinderGeometry(.17,.3,4.8,16).translate(0,2.4,0),brick);ch.position.set(-.9,0,-1.1);ch.castShadow=true;us.add(ch);meshes.chim=ch;
-  const chr=new THREE.Mesh(new THREE.TorusGeometry(.19,.04,6,16),brick);chr.rotation.x=Math.PI/2;chr.position.set(-.9,4.75,-1.1);us.add(chr);meshes.chr=chr;
-
-  // trem + trilho
-  const rail=new THREE.Mesh(new THREE.TorusGeometry(8.45,.03,4,240),new THREE.MeshStandardMaterial({color:0x8a7a62,metalness:.6,roughness:.4}));rail.rotation.x=Math.PI/2;rail.position.y=.04;world.add(rail);meshes.rail=rail;
-  const train=new THREE.Group();world.add(train);meshes.train=train;meshes.cars=[];
-  const loco=new THREE.MeshStandardMaterial({color:0x2a2622,metalness:.5,roughness:.5});
-  for(let i=0;i<4;i++){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(.32,.26,.6),i?brick:loco);b.position.y=.2;b.castShadow=true;g.add(b);if(!i){const st=new THREE.Mesh(new THREE.CylinderGeometry(.05,.06,.22,8),loco);st.position.set(0,.43,.18);g.add(st);const lamp=new THREE.Mesh(new THREE.SphereGeometry(.04,8,6),new THREE.MeshStandardMaterial({emissive:0xffd080,emissiveIntensity:4}));lamp.position.set(0,.25,.31);g.add(lamp)}train.add(g);meshes.cars.push(g)}
-
-  // São Miguel (capela no canto) + farol da sede
-  const smg=new THREE.Group();smg.position.set(6.6,0,6.6);smg.rotation.y=-Math.PI*.75;world.add(smg);meshes.sm=smg;
-  const smb=new THREE.Mesh(new THREE.BoxGeometry(1.1,1,1.6),lime);smb.position.y=.5;smb.castShadow=true;smg.add(smb);
-  const smr=new THREE.Mesh(prism(1.25,.55,1.7),tile);smr.position.y=1;smg.add(smr);
-  const smt=new THREE.Mesh(new THREE.BoxGeometry(.4,1.6,.4),lime);smt.position.set(.55,.8,.7);smg.add(smt);
-  const sms=new THREE.Mesh(new THREE.ConeGeometry(.3,.5,4),azul);sms.rotation.y=Math.PI/4;sms.position.set(.55,1.85,.7);smg.add(sms);
-  const beacon=new THREE.Group();world.add(beacon);meshes.beacon=beacon;
-  const bmat=new THREE.MeshBasicMaterial({color:0xe0a55a,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
-  const bcyl=new THREE.Mesh(new THREE.CylinderGeometry(.35,.6,9,32,1,true).translate(0,4.5,0),bmat);beacon.add(bcyl);
-  const bring=new THREE.Mesh(new THREE.TorusGeometry(1,.04,8,64),new THREE.MeshStandardMaterial({emissive:0xe0a55a,emissiveIntensity:3,transparent:true,opacity:0}));bring.rotation.x=Math.PI/2;bring.position.y=.08;beacon.add(bring);
-  const bgem=new THREE.Mesh(new THREE.OctahedronGeometry(.35),new THREE.MeshStandardMaterial({color:0xc9893a,emissive:0xe0a55a,emissiveIntensity:2,metalness:.6,roughness:.3,transparent:true,opacity:0}));bgem.position.y=6.8;beacon.add(bgem);meshes.bgem=bgem;
-  U.bmats=[bmat,bring.material,bgem.material];
-
-  // multidão de 1890 + boi
-  const crowdN=300;const cg2=new THREE.CylinderGeometry(.05,.065,.24,6).translate(0,.12+.1,0);
-  const crowdM=new THREE.MeshStandardMaterial({roughness:.8});
-  crowdM.onBeforeCompile=sh=>{sh.uniforms.uTime=U.cane.uTime;sh.vertexShader="uniform float uTime;\n"+sh.vertexShader.replace("#include <begin_vertex>",`#include <begin_vertex>
-    vec4 wp=instanceMatrix*vec4(0.,0.,0.,1.); transformed.y+=abs(sin(uTime*5.+wp.x*13.+wp.z*7.))*.05;`)};
-  const crowd=new THREE.InstancedMesh(cg2,crowdM,crowdN);const cpal=[0xf0e6d2,0xc2432f,0xe0a55a,0x4a9b96,0x2f5f8f,0xd7a99a,0x8a5a6a,0xf3d37a];
-  const cpos=[];for(let i=0;i<crowdN;i++){let x,z;do{const a=Math.random()*6.283,r=rnd(.75,2.5);x=Math.cos(a)*r*1.12+.3;z=3.1+Math.sin(a)*r*.8}while(z<1.1||z>5.4);cpos.push([x,z]);
-    m4.compose(v.set(x,.1,z),q.identity(),sc.set(1,rnd(.85,1.2),1));crowd.setMatrixAt(i,m4);crowd.setColorAt(i,col.setHex(cpal[i%cpal.length]))}
-  crowd.count=0;world.add(crowd);meshes.crowd=crowd;
-  const boi=new THREE.Group();world.add(boi);meshes.boi=boi;
-  const boiM=new THREE.MeshStandardMaterial({color:0x8a2a1f,roughness:.6,emissive:0x2a0804});
-  const bb=new THREE.Mesh(new THREE.BoxGeometry(.5,.26,.26),boiM);bb.position.y=.42;const sk=new THREE.Mesh(new THREE.ConeGeometry(.42,.36,16,1,true),new THREE.MeshStandardMaterial({color:0xf3d37a,side:THREE.DoubleSide,roughness:.7}));sk.position.y=.24;
-  const hd=new THREE.Mesh(new THREE.BoxGeometry(.16,.16,.16),boiM);hd.position.set(.32,.5,0);const hn=new THREE.Mesh(new THREE.TorusGeometry(.1,.015,4,12,Math.PI),new THREE.MeshStandardMaterial({color:0xf0e6d2}));hn.position.set(.34,.6,0);hn.rotation.y=Math.PI/2;
-  boi.add(bb,sk,hd,hn);
-
-  // anel dos 199 dias
-  const ring=new THREE.InstancedMesh(new THREE.BoxGeometry(.06,.05,.2),new THREE.MeshStandardMaterial({color:0x3a2208,emissive:0xe0a55a,emissiveIntensity:2.2,transparent:true}),199);
-  for(let i=0;i<199;i++){const a=i/199*6.283-Math.PI/2;e.set(0,-a,0);q.setFromEuler(e);m4.compose(v.set(Math.cos(a)*9.87,.03,Math.sin(a)*9.87),q,sc.set(1,1,1));ring.setMatrixAt(i,m4)}
-  ring.count=0;world.add(ring);meshes.ring=ring;
-
-  // bandeirinhas
-  const flagShape=new THREE.Shape();flagShape.moveTo(-.07,0);flagShape.lineTo(.07,0);flagShape.lineTo(0,-.16);flagShape.closePath();
-  const flags=new THREE.InstancedMesh(new THREE.ShapeGeometry(flagShape),new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:.7,emissive:0x221408}),8*18);
-  const fpal=[0xc2432f,0xe0a55a,0x4a9b96,0xf0e6d2,0x2f5f8f,0xf3d37a,0x8a5a6a];let fk=0;const A=new THREE.Vector3(2.32,4.3,-.75);
-  for(let sI=0;sI<8;sI++){const a=-1.2+sI*(2.4/7)+Math.PI/2,B=new THREE.Vector3(Math.cos(a)*5.6,1.05,Math.sin(a)*5.6+.6);
-    for(let k=1;k<=18;k++){const t=k/19;v.lerpVectors(A,B,t);v.y-=Math.sin(Math.PI*t)*.9;e.set(0,Math.atan2(B.x-A.x,B.z-A.z)+Math.PI/2,0);q.setFromEuler(e);m4.compose(v,q,sc.set(1,1,1));flags.setMatrixAt(fk,m4);flags.setColorAt(fk,col.setHex(fpal[(fk*3)%fpal.length]));fk++}}
-  flags.count=0;world.add(flags);meshes.flags=flags;
-
-  // partículas: fogo, fumaça, lanternas, poeira
-  const tex=dotTex();
-  function points(n,color,size,blend){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(n*3),3));const m=new THREE.PointsMaterial({color,size,map:tex,transparent:true,opacity:0,depthWrite:false,blending:blend||THREE.AdditiveBlending,sizeAttenuation:true});const p=new THREE.Points(g,m);world.add(p);return p}
-  pts.fire=points(mobile?60:180,0xff8a3a,.42);pts.fire.userData.seed=[...Array(pts.fire.geometry.attributes.position.count)].map(()=>[rnd(-1.2,1.2),Math.random(),rnd(-1,1.2),rnd(.6,1.4)]);
-  pts.smoke=points(mobile?40:110,0x8a847a,1.1,THREE.NormalBlending);pts.smoke.userData.seed=[...Array(pts.smoke.geometry.attributes.position.count)].map(()=>[Math.random(),rnd(-.3,.3),rnd(-.3,.3)]);
-  pts.lant=points(8,0xffd27a,.55);
-  pts.dust=points(mobile?60:240,0xf0dcb4,.08);const dp=pts.dust.geometry.attributes.position;for(let i=0;i<dp.count;i++)dp.setXYZ(i,rnd(-10,10),rnd(.3,7),rnd(-10,10));pts.dust.material.opacity=.55;
-
-  // pós-processamento (só desktop)
-  if(!mobile){composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
-    composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.55,.55,.82));composer.addPass(new OutputPass())}
-  resize();
-}
-
-function resize(){if(!renderer)return;const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();if(composer)composer.setSize(w,h);applyOffset()}
-function applyOffset(){const w=innerWidth,h=innerHeight;if(w<860)camera.setViewOffset(w,h,0,h*.2,w,h);else camera.setViewOffset(w,h,-w*.17*(1-S.offX),0,w,h)}
-addEventListener("resize",resize);
-
-/* ---------- estado por capítulo ---------- */
-let curCh=-1;
-function setChapter(i){if(i===curCh)return;curCh=i;
-  $$("#rail button").forEach((b,k)=>b.classList.toggle("on",k===i));
-  $$(".ruler .mk").forEach(b=>b.classList.toggle("on",+b.dataset.go===i));
-  const c=CH[i];if(i===5)setYear(SEDES[Math.max(0,sedeIdx)][0],"Sede");else if(i!==7&&i!==8)setYear(c.y,c.l);
-  if(i>0)bell(.8+(i%4)*.12);
-  if(!scene)return;
-  const E=ERA[i],d=reduce?0:2.2,mo=MOODS[E.m];
-  gsap.to(S,{...E.s,duration:d*.9,ease:"power2.inOut",overwrite:"auto"});
-  const k=innerWidth/innerHeight<.8?1.95:1.32;
-  const tx=E.t[0],ty=E.t[1],tz=E.t[2];
-  gsap.to(camTgt,{x:tx,y:ty,z:tz,duration:d,ease:"power3.inOut",overwrite:true});
-  gsap.to(camPos,{x:tx+(E.c[0]-tx)*k,y:ty+(E.c[1]-ty)*k,z:tz+(E.c[2]-tz)*k,duration:d,ease:"power3.inOut",overwrite:true});
-  [[cBg,mo.bg],[cKey,mo.key],[cHemi,mo.hemi]].forEach(([c,h])=>{const t=new THREE.Color(h);gsap.to(c,{r:t.r,g:t.g,b:t.b,duration:d,overwrite:true})});
-  gsap.to(L,{ki:mo.ki,hi:mo.hi,rim:mo.rim,exp:mo.exp,duration:d,overwrite:true});
-}
-
-/* ---------- arraste para girar ---------- */
-let drag=null,userRot=0,userRotV=0;
-if(fine){addEventListener("pointerdown",e=>{if(e.target.closest(".panel,.hud-top,#menu,.ruler,.rail,a,button"))return;drag={x:e.clientX};document.body.style.cursor="grabbing"});
-  addEventListener("pointermove",e=>{if(!drag)return;userRotV=(e.clientX-drag.x)*.005;drag.x=e.clientX;userRot+=userRotV});
-  addEventListener("pointerup",()=>{drag=null;document.body.style.cursor=""})}
-let mx=0,my=0;if(fine)addEventListener("pointermove",e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
-
-/* ---------- laço único ---------- */
-let t=0;const UP=new THREE.Vector3(0,1,0),TOP=new THREE.Vector3();
-function frame(time,dt){
-  if(!scene)return;dt=Math.min(.05,dt/1000||.016);t+=dt*M;
-  U.cane.uTime.value=t;U.cane.uGrow.value=Math.max(.001,S.cane);U.caneIn.uGrow.value=Math.max(.001,S.caneIn);
-  meshes.cane.visible=S.cane>.01;meshes.caneIn.visible=S.caneIn>.01;
-  const hn=Math.round(S.houses);meshes.hb.count=meshes.hr.count=hn;
-  meshes.tower.scale.set(1,Math.max(.001,S.tower),1);meshes.tower.visible=S.tower>.01;
-  const se=Math.max(.001,S.engenho);meshes.eng.scale.setScalar(se);meshes.eng.visible=S.engenho>.01;meshes.wheel.rotation.y+=dt*.8*M;
-  meshes.us.scale.setScalar(Math.max(.001,S.usina));meshes.us.visible=S.usina>.01;meshes.chim.scale.y=Math.max(.001,S.chimney);meshes.chr.visible=S.chimney>.98;
-  // fumaça
-  const sp=pts.smoke.geometry.attributes.position,sd=pts.smoke.userData.seed,top=TOP.set(-.9,4.8*S.chimney,-1.1).add(meshes.us.position);
-  for(let i=0;i<sp.count;i++){const s=sd[i];s[0]=(s[0]+dt*.12*M)%1;const h=s[0];sp.setXYZ(i,top.x+s[1]+h*2.4,top.y+h*3.2,top.z+s[2]+h*.6)}sp.needsUpdate=true;
-  pts.smoke.material.opacity=S.smoke*.42;pts.smoke.visible=S.smoke>.01;
-  // trem
-  meshes.train.visible=meshes.rail.visible=S.train>.01;meshes.rail.scale.setScalar(Math.max(.001,S.train));
-  meshes.cars.forEach((g,i)=>{const a=t*.12-i*.085;g.position.set(Math.cos(a)*8.45,0,Math.sin(a)*8.45);g.rotation.y=-a;g.scale.setScalar(Math.max(.001,S.train))});
-  // São Miguel + farol
-  meshes.sm.scale.setScalar(Math.max(.001,S.sm));meshes.sm.visible=S.sm>.01;
-  meshes.beacon.position.set(S.bpos*6.6,0,.6+S.bpos*6);meshes.beacon.visible=S.beacon>.01;
-  U.bmats[0].opacity=S.beacon*.22;U.bmats[1].opacity=S.beacon;U.bmats[2].opacity=S.beacon;meshes.bgem.rotation.y+=dt*1.2*M;meshes.bgem.position.y=6.8+Math.sin(t*2)*.15;
-  // fogo
-  const fp=pts.fire.geometry.attributes.position,fd=pts.fire.userData.seed;
-  for(let i=0;i<fp.count;i++){const s=fd[i];s[1]=(s[1]+dt*s[3]*.5*M)%1;fp.setXYZ(i,-4.6+s[0]*(1-s[1]*.6),s[1]*2.6,-3.2+s[2]*(1-s[1]*.6))}fp.needsUpdate=true;
-  pts.fire.material.opacity=S.fire*.9;pts.fire.visible=S.fire>.01;U.fireL.intensity=S.fire*(9+Math.sin(t*23)*2+Math.sin(t*7)*2);
-  // multidão
-  meshes.crowd.count=Math.round(S.crowd*300);meshes.boi.visible=S.crowd>.3;
-  const ba=t*.8;meshes.boi.position.set(.3+Math.cos(ba)*.45,0,3.1+Math.sin(ba)*.35);meshes.boi.rotation.y=-ba-Math.PI/2;
-  U.festL.intensity=Math.max(S.crowd,S.flags)*6+S.flagsPulse*8;
-  // anel dos 199 dias
-  meshes.ring.count=Math.round(S.ring);const rm=meshes.ring.material;rm.emissive.setRGB(.88-S.ringEnd*.1,.65-S.ringEnd*.45,.35-S.ringEnd*.25);rm.opacity=1-S.ringEnd*.55;
-  // bandeirinhas
-  meshes.flags.count=Math.round(S.flags*144);
-  // lanternas de 1817: fogem para os mangues
-  const lp=pts.lant.geometry.attributes.position;for(let i=0;i<lp.count;i++){const u=((t*.05+i/lp.count)%1);lp.setXYZ(i,1.5-u*9.8+Math.sin(i*3)*.4,.5+Math.sin(t*3+i)*.05,5.6-u*3+Math.cos(i*2)*.6)}lp.needsUpdate=true;
-  pts.lant.material.opacity=S.lant;pts.lant.visible=S.lant>.01;
-  // antífonas
-  meshes.anti.forEach((m,i)=>{m.material.opacity=S.anti*(antiSel<0?.75:i===antiSel?1:.3);const s=(antiSel===i?1.9:1)*(1+Math.sin(t*2+i)*.08);m.scale.setScalar(s)});
-  U.glow.emissiveIntensity=S.oculo*(1+Math.sin(t*1.3)*.06);U.door.emissiveIntensity=.15+S.crowd*.8;
-  // poeira
-  const dpp=pts.dust.geometry.attributes.position;for(let i=0;i<dpp.count;i++){let y=dpp.getY(i)+dt*.08*M;if(y>7)y=.3;dpp.setY(i,y)}dpp.needsUpdate=true;
-  // luzes e névoa
-  scene.fog.color.copy(cBg);U.key.color.copy(cKey);U.key.intensity=L.ki;U.hemi.color.copy(cHemi);U.hemi.intensity=L.hi;U.rim.intensity=L.rim;renderer.toneMappingExposure=L.exp;
-  // rotação da maquete
-  if(!drag){userRotV*=.94;userRot+=userRotV}
-  world.rotation.y+=dt*.06*S.spin*M;
-  if(S.spin<.05&&!drag){const tgt=Math.round(world.rotation.y/6.283)*6.283;world.rotation.y+=(tgt-world.rotation.y)*.03;userRot+=(0-userRot)*.03}
-  camera.position.copy(camPos);
-  if(M){camera.position.x+=mx*1.2;camera.position.y+=-my*.8}
-  camera.position.applyAxisAngle(UP,userRot);
-  camera.lookAt(camTgt);
-  applyOffset();
-  composer?composer.render():renderer.render(scene,camera);
-}
-
-/* =============== INÍCIO =============== */
-function hasGL(){try{const c=document.createElement("canvas");return !!(c.getContext("webgl2")||c.getContext("webgl"))}catch(e){return false}}
-try{if(hasGL()){build();setPre(70)}else document.documentElement.classList.add("no3d")}catch(err){console.error(err);document.documentElement.classList.add("no3d");scene=null}
+/* =============== SEM GSAP: site funciona igual, sem animação =============== */
+if(!window.gsap||!window.ScrollTrigger){$("#pre").remove();setSedeStatic();return}
+function setSedeStatic(){}
 
 gsap.registerPlugin(ScrollTrigger);
-if(!reduce){lenis=new Lenis({duration:1.2,smoothWheel:true});lenis.on("scroll",ScrollTrigger.update);gsap.ticker.add(tt=>lenis.raf(tt*1000));gsap.ticker.lagSmoothing(0)}
-gsap.ticker.add((time,dt)=>frame(time,dt));
+let lenis=null;
+if(!reduce&&window.Lenis){lenis=new Lenis({lerp:.09,wheelMultiplier:1});lenis.on("scroll",ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0)}
+lenis&&lenis.stop();
 
-// capítulos ao rolar
-$$("[data-ch]").forEach(sec=>ScrollTrigger.create({trigger:sec,start:"top 55%",end:"bottom 55%",onToggle:self=>{if(self.isActive)setChapter(+sec.dataset.ch)}}));
-// sedes (scrub)
-const sedeST=ScrollTrigger.create({trigger:"#c5",start:"top top",end:"bottom bottom",onUpdate:self=>setSede(Math.min(SEDES.length-1,Math.floor(self.progress*SEDES.length)))});
-setSede(0);
-// usina (scrub)
-ScrollTrigger.create({trigger:"#c7",start:"top top",end:"bottom bottom",onUpdate:self=>{const p=self.progress,y=Math.round(1892+p*(2014-1892));
-  $("#uprog").style.transform=`scaleX(${p})`;let on=0;USINA.forEach((u,k)=>{if(y>=u[0])on=k});$$("#umiles li").forEach((li,k)=>li.classList.toggle("on",k===on));
-  if(curCh===7){yrEl.textContent=y;yObj.v=y;rhead.style.left=yx(y);ylab.textContent="Usina Salgado"}
-  if(scene&&curCh===7){S.chimney=Math.min(1,p*12);S.smoke=y<2012?Math.min(1,p*14):Math.max(0,1-(y-2012)/2);S.train=y>=1922&&y<=1945?1:Math.max(0,S.train-.04)}}});
-$$("#umiles li")[0].classList.add("on");
-// município (scrub)
-ScrollTrigger.create({trigger:"#c8",start:"top top",end:"bottom bottom",onUpdate:self=>{const p=self.progress,day=Math.round(p*199);
-  $("#mday").textContent=day;const d=new Date(D0);d.setDate(d.getDate()+day);$("#mdate").textContent=day===0?"20/12/1963":fmtD(d);
-  let on=0;MUNI.forEach((u,k)=>{if(day>=u[0])on=k});$$("#mmiles li").forEach((li,k)=>li.classList.toggle("on",k===on));
-  if(curCh===8){yrEl.textContent=d.getFullYear();rhead.style.left=yx(d.getFullYear()+d.getMonth()/12);ylab.textContent=day>=199?"Extinto":"Município"}
-  if(scene&&curCh===8){S.ring=day;S.ringEnd=day>=199?1:0}}});
-$$("#mmiles li")[0].classList.add("on");
+/* pins primeiro: assim os gatilhos seguintes já contam o espaço deles */
+/* ---------- abertura: o Ó vira janela ---------- */
+// ao rolar, a câmera atravessa o arco do Ó (entre a torre e a moldura)
+const hero=$("#hero"),himg=$(".hero-img"),stmtW=split($("#stmt"),"sw");
+const htl=gsap.timeline({scrollTrigger:{trigger:hero,start:"top top",end:"+=200%",pin:true,scrub:reduce?true:.8}});
+htl.to(".hero-copy",{y:-140,opacity:0,duration:.25,ease:"power2.in"},0)
+   .to(".hero .cue,.hero-glow",{opacity:0,duration:.1},0)
+   .to(himg,{scale:9,duration:.6,ease:"power2.in"},0)
+   .to(".shade",{opacity:1,duration:.2,ease:"none"},.42)
+   .to(".statement",{opacity:1,duration:.08},.55)
+   .fromTo(stmtW,{opacity:.14},{opacity:1,duration:.05,stagger:.02,ease:"none"},.6)
+   .to({},{duration:.12});
 
-// entradas de texto e números
+/* ---------- viagem horizontal ---------- */
+const track=$("#jtrack"),jlen=()=>Math.max(0,track.scrollWidth-innerWidth);
+gsap.to(track,{x:()=>-jlen(),ease:"none",scrollTrigger:{trigger:"#viagem",start:"top top",end:()=>"+="+jlen(),pin:true,scrub:reduce?true:.8,invalidateOnRefresh:true,onUpdate:s=>$("#jprog").style.transform=`scaleX(${s.progress})`}});
+
+
+function goTo(el){if(!el)return;if(lenis)lenis.scrollTo(el,{duration:1.8,easing:t=>1-Math.pow(1-t,4)});else el.scrollIntoView({behavior:reduce?"auto":"smooth"})}
+
+/* ---------- menu ---------- */
+const menu=$("#menu"),mbtn=$("#mbtn");let menuOpen=false;
+function toggleMenu(o){if(o===menuOpen)return;menuOpen=o;mbtn.setAttribute("aria-expanded",o);document.documentElement.classList.toggle("menu-open",o);
+  if(o){lenis&&lenis.stop();gsap.set(menu,{visibility:"visible"});gsap.to(menu,{clipPath:"inset(0 0 0% 0)",duration:reduce?0:.8,ease:"expo.inOut"});
+    gsap.fromTo("#mlist li button",{yPercent:110},{yPercent:0,duration:reduce?0:.8,ease:"expo.out",stagger:.04,delay:reduce?0:.3});setTimeout(()=>$("#mlist button").focus(),reduce?0:400)}
+  else{lenis&&lenis.start();gsap.to(menu,{clipPath:"inset(0 0 100% 0)",duration:reduce?0:.7,ease:"expo.inOut",onComplete:()=>gsap.set(menu,{visibility:"hidden"})})}}
+mbtn.onclick=()=>toggleMenu(!menuOpen);
+$$("[data-open-menu]").forEach(b=>b.onclick=()=>toggleMenu(true));
+addEventListener("keydown",e=>{if(e.key==="Escape"&&menuOpen){toggleMenu(false);mbtn.focus()}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;const was=menuOpen;toggleMenu(false);setTimeout(()=>goTo($("#c"+b.dataset.go)),was?350:0)});
+$$('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{const id=a.getAttribute("href");const t=id==="#top"?document.body:$(id);if(t){e.preventDefault();id==="#top"?(lenis?lenis.scrollTo(0,{duration:2}):scrollTo({top:0,behavior:"smooth"})):goTo(t)}}));
+
+/* ---------- cursor + magnético + inclinação ---------- */
+if(fine&&!reduce){
+  document.documentElement.classList.add("has-cursor");
+  const cur=$(".cursor"),dot=$(".cursor .dot"),ring=$(".cursor .ring"),lab=$(".cursor .ring span");
+  const dx=gsap.quickTo(dot,"x",{duration:.08}),dy=gsap.quickTo(dot,"y",{duration:.08}),rx=gsap.quickTo(ring,"x",{duration:.45,ease:"power3"}),ry=gsap.quickTo(ring,"y",{duration:.45,ease:"power3"});
+  addEventListener("pointermove",e=>{dx(e.clientX);dy(e.clientY);rx(e.clientX);ry(e.clientY)});
+  document.addEventListener("pointerover",e=>{const t=e.target.closest("[data-cursor],a,button,dfn");if(!t){cur.classList.remove("big");return}const l=t.dataset.cursor;cur.classList.toggle("big",!!l);lab.textContent=l||""});
+  $$(".mag").forEach(m=>{const xt=gsap.quickTo(m,"x",{duration:.6,ease:"elastic.out(1,.4)"}),yt=gsap.quickTo(m,"y",{duration:.6,ease:"elastic.out(1,.4)"});
+    m.addEventListener("pointermove",e=>{const r=m.getBoundingClientRect();xt((e.clientX-r.left-r.width/2)*.3);yt((e.clientY-r.top-r.height/2)*.4)});
+    m.addEventListener("pointerleave",()=>{xt(0);yt(0)})});
+  $$(".tilt").forEach(c=>{c.addEventListener("pointermove",e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;gsap.to(c,{rotateY:x*14,rotateX:-y*14,duration:.5,ease:"power2.out"})});
+    c.addEventListener("pointerleave",()=>gsap.to(c,{rotateX:0,rotateY:0,duration:.9,ease:"elastic.out(1,.5)"}))});
+}
+
+/* ---------- tema por seção + HUD ---------- */
+const root=document.documentElement,yrEl=$("#yr"),ylab=$("#ylab"),hud=$(".hud"),hudch=$("#hudch");const yObj={v:2026};
+function setYear(y,label){ylab.textContent=label||"";if(y==null){gsap.killTweensOf(yObj);yrEl.textContent="Ó";return}
+  gsap.to(yObj,{v:y,duration:reduce?0:1.2,ease:"power3.out",overwrite:true,onUpdate:()=>yrEl.textContent=Math.round(yObj.v)})}
+let curCh=-1;
+function setChapter(i){if(i===curCh)return;curCh=i;hud.classList.toggle("show",i>0);hudch.textContent=pad(i)+" / 12";
+  const c=CH[i];if(i===5)setYear(SEDES[Math.max(0,sedeIdx)][0],"Sede");else if(i!==7&&i!==8)setYear(c.y,c.l);if(i>0)bell(.8+(i%4)*.12)}
+$$("[data-theme]").forEach(sec=>{if(sec===root)return;const sp=sec.parentElement.classList.contains("pin-spacer")?sec.parentElement:sec;ScrollTrigger.create({trigger:sp,start:"top 55%",end:"bottom 55%",onToggle:s=>{if(s.isActive){root.dataset.theme=sec.dataset.theme;const ch=sec.dataset.ch??sec.dataset.hud;if(ch!=null)setChapter(+ch);else setChapter(0)}}})});
+// barra de progresso
+gsap.to(".progress",{scaleX:1,ease:"none",scrollTrigger:{trigger:document.body,start:"top top",end:"bottom bottom",scrub:.3}});
+
+/* ---------- títulos e revelações ---------- */
+const splitEls=$$("[data-split]");const words=new Map();splitEls.forEach(el=>words.set(el,split(el)));
 if(!reduce){
-  $$(".ch:not(.hero) .panel").forEach(p=>gsap.from(p.children,{y:26,opacity:0,duration:.9,ease:"power3.out",stagger:.06,scrollTrigger:{trigger:p,start:"top 82%"}}));
-  $$("[data-count]").forEach(el=>{const n=+el.dataset.count,pre=el.dataset.pre||"",sm=el.querySelector("small"),o={v:0},txt=el.firstChild;
-    gsap.to(o,{v:n,duration:1.6,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 85%"},onUpdate:()=>{txt.textContent=pre+(el.dataset.fmt?Math.round(o.v).toLocaleString("pt-BR"):Math.round(o.v))}})});
-  $$("#vbars i").forEach(i=>gsap.fromTo(i,{scaleX:0},{scaleX:+i.style.getPropertyValue("--w"),duration:1.4,ease:"expo.out",scrollTrigger:{trigger:"#vbars",start:"top 85%"}}));
-}else $$("#vbars i").forEach(i=>i.style.transform=`scaleX(${i.style.getPropertyValue("--w")})`);
+  splitEls.forEach(el=>{if(el.closest(".hero"))return;gsap.from(words.get(el),{yPercent:115,rotate:6,duration:1.2,ease:"expo.out",stagger:.05,scrollTrigger:{trigger:el,start:"top 86%"}})});
+  $$("[data-reveal]").forEach(el=>gsap.from(el,{y:50,opacity:0,duration:1.1,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 90%"}}));
+  $$(".legend .lcard").forEach((c,i)=>gsap.from(c,{y:80,rotateX:-25,opacity:0,duration:1.2,ease:"expo.out",delay:i*.08,scrollTrigger:{trigger:".legend",start:"top 82%"}}));
+  $$(".chap-n").forEach(n=>gsap.fromTo(n,{yPercent:30},{yPercent:-30,ease:"none",scrollTrigger:{trigger:n.closest(".chap"),start:"top bottom",end:"bottom top",scrub:true}}));
+  $$("[data-count]").forEach(el=>{const n=+el.dataset.count,pre=el.dataset.pre||"",o={v:0},txt=el.firstChild;
+    gsap.to(o,{v:n,duration:2,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 88%"},onUpdate:()=>{txt.textContent=pre+(el.dataset.fmt?Math.round(o.v).toLocaleString("pt-BR"):Math.round(o.v))}})});
+  // marquee reage à velocidade
+  const mq=$(".mq");const skew=gsap.quickTo(mq,"skewX",{duration:.4}),mx=gsap.quickTo(mq,"x",{duration:.6});let off=0;
+  if(lenis)lenis.on("scroll",({velocity})=>{skew(gsap.utils.clamp(-12,12,velocity*-.6));off-=velocity*.6;mx(off%600)});
+  // capítulos específicos
+  gsap.to("#marm",{rotation:360,svgOrigin:"200 165",duration:9,ease:"none",repeat:-1});
+  ScrollTrigger.create({trigger:"#c2",start:"top bottom",end:"bottom top",onUpdate:s=>gsap.getTweensOf("#marm")[0]?.timeScale(1+Math.abs(s.getVelocity())/400)});
+  gsap.from("#men .man",{y:40,opacity:0,duration:.7,ease:"back.out(2)",stagger:{each:.07,from:"random"},scrollTrigger:{trigger:"#men",start:"top 80%"}});
+  gsap.from("#tl3l",{attr:{x2:20},duration:1.6,ease:"power2.inOut",scrollTrigger:{trigger:"#tl3",start:"top 85%"}});
+  const route=$("#route"),RL=route.getTotalLength();gsap.set(route,{strokeDasharray:`${RL}`,strokeDashoffset:RL});
+  const mtl=gsap.timeline({scrollTrigger:{trigger:"#c4 .chap-grid",start:"top 70%",end:"bottom 60%",scrub:.6}});mtl.to(route,{strokeDashoffset:0,ease:"none",duration:1},0);
+  $$("#map .pt").forEach(p=>mtl.from(p,{opacity:0,scale:.6,transformOrigin:"50% 50%",duration:.12},+p.dataset.at));
+  gsap.from("#units i",{scale:0,duration:.4,ease:"back.out(2)",stagger:{each:.004,from:"start"},scrollTrigger:{trigger:"#units",start:"top 82%"}});
+  $$("#vbars i").forEach(i=>gsap.fromTo(i,{scaleX:0},{scaleX:+i.dataset.w,duration:1.6,ease:"expo.out",scrollTrigger:{trigger:"#vbars",start:"top 85%"}}));
+  gsap.from("#reel .ep",{x:120,opacity:0,duration:1.2,ease:"expo.out",stagger:.07,scrollTrigger:{trigger:"#reel",start:"top 85%"}});
+}else{$$("#vbars i").forEach(i=>i.style.transform=`scaleX(${i.dataset.w})`)}
 
-// preloader → abertura
+/* ---------- 05 sedes ---------- */
+let sedeIdx=-1;const crown=$("#crown");
+function setSede(i){if(i===sedeIdx)return;const prev=sedeIdx;sedeIdx=i;const s=SEDES[i];
+  $("#syear").textContent=s[0];$("#slaw").textContent=s[2];$("#sswap").textContent=i;
+  $("#town-o").classList.toggle("on",s[1]==="o");$("#town-s").classList.toggle("on",s[1]==="s");
+  $$("#stops button").forEach((b,k)=>b.classList.toggle("on",k===i));
+  gsap.to(crown,{left:s[1]==="o"?"25%":"75%",duration:reduce?0:.9,ease:"expo.inOut"});
+  if(prev>=0&&!reduce){gsap.fromTo(crown,{y:0},{y:-36,duration:.45,yoyo:true,repeat:1,ease:"power2.out"});gsap.from("#syear",{yPercent:30,opacity:.2,duration:.5,ease:"power3.out"})}
+  if(curCh===5)setYear(s[0],"Sede");if(prev>=0)bell(s[1]==="o"?.7:.9)}
+const sedeST=ScrollTrigger.create({trigger:"#sedes",start:"top top",end:"bottom bottom",onUpdate:s=>setSede(Math.min(SEDES.length-1,Math.floor(s.progress*SEDES.length)))});
+setSede(0);
+$("#stops").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;const y=sedeST.start+(sedeST.end-sedeST.start)*((i+.5)/SEDES.length);lenis?lenis.scrollTo(y,{duration:1}):scrollTo(0,y)});
+
+/* ---------- 07 usina ---------- */
+const lis7=$$("#umiles li");lis7[0].classList.add("on");
+gsap.set("#chim",{scaleY:0});
+ScrollTrigger.create({trigger:"#usina",start:"top top",end:"bottom bottom",onUpdate:self=>{const p=self.progress,y=Math.round(1892+p*(2014-1892));
+  $("#uprog").style.transform=`scaleX(${p})`;$("#uyear").textContent=y;let on=0;USINA.forEach((u,k)=>{if(y>=u[0])on=k});lis7.forEach((li,k)=>li.classList.toggle("on",k===on));
+  if(curCh===7){yrEl.textContent=y;yObj.v=y;ylab.textContent="Usina Salgado"}
+  gsap.set("#chim",{scaleY:Math.min(1,p*8)});
+  const working=y<2014;$("#smoke").style.opacity=working?Math.min(1,p*10):0;$("#ustate").textContent=working?"moendo":"parada";
+  const tr=y>=1922&&y<1975;gsap.to(["#train","#rails"],{opacity:tr?1:0,duration:.4,overwrite:"auto"});
+  gsap.set("#train",{x:((p*1600)%520)-110})}});
+
+/* ---------- 08 município ---------- */
+const lis8=$$("#mmiles li");lis8[0].classList.add("on");const D0=new Date(1963,11,20);
+const fmtD=d=>pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear();
+ScrollTrigger.create({trigger:"#muni",start:"top top",end:"bottom bottom",onUpdate:self=>{const day=Math.round(self.progress*199);
+  $("#mday").textContent=day;const d=new Date(D0);d.setDate(d.getDate()+day);$("#mdate").textContent=fmtD(d);
+  ticks.forEach((t,k)=>{t.classList.toggle("on",k<day&&day<199);t.classList.toggle("cut",day>=199)});
+  let on=0;MUNI.forEach((u,k)=>{if(day>=u[0])on=k});lis8.forEach((li,k)=>li.classList.toggle("on",k===on));
+  if(curCh===8){yrEl.textContent=d.getFullYear();ylab.textContent=day>=199?"Extinto":"Município"}}});
+
+/* ---------- preloader → abertura ---------- */
 let seen=false;try{seen=sessionStorage.getItem("ndo-seen")==="1";sessionStorage.setItem("ndo-seen","1")}catch(e){}
-const hero=gsap.timeline({paused:true});
-hero.from(".hero h1 .l>span",{yPercent:115,rotate:4,duration:1.3,ease:"expo.out",stagger:.12})
-    .from(".hero .kick,.hero .lead,.hero .row,.hero .legend,.hero .hint",{y:24,opacity:0,duration:.9,ease:"power3.out",stagger:.08},"-=.9");
-if(scene&&!reduce){camPos.set(26,20,30);gsap.to(camPos,{x:13,y:8,z:17,duration:3.2,ease:"power3.out",delay:.2})}
-function start(){setPre(100);$("#pre").classList.add("out");if(!reduce)hero.play(0);else hero.progress(1);setChapter(0);ScrollTrigger.refresh()}
-const minT=seen||reduce?0:1300,t0=performance.now();
-Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))]).then(()=>{setPre(92);const w=Math.max(0,minT-(performance.now()-t0));
-  const iv=setInterval(()=>setPre(Math.min(99,progress+4)),60);setTimeout(()=>{clearInterval(iv);start()},w)});
+const heroWords=words.get($(".hero h1"));
+const intro=gsap.timeline({paused:true});
+intro.to("#pre",{yPercent:-100,duration:1.1,ease:"expo.inOut"})
+  .from(heroWords,{yPercent:115,rotate:8,duration:1.4,ease:"expo.out",stagger:.08},"-=.45")
+  .from(".hero-img img",{yPercent:30,opacity:0,duration:1.8,ease:"expo.out"},"<")
+  .from(".hero .kick,[data-hero-in],.hero .cue",{y:30,opacity:0,duration:1,ease:"power3.out",stagger:.1},"-=1.1")
+  .from(".top",{y:-30,opacity:0,duration:.8,ease:"power3.out"},"-=.9")
+  .add(()=>{$("#pre").style.display="none"});
+const pc={v:0},minT=seen||reduce?.4:1.6;
+const loader=gsap.to(pc,{v:100,duration:minT,ease:"power2.inOut",onUpdate:()=>{$("#pren").textContent=Math.round(pc.v);gsap.set("#pre .bar",{scaleX:pc.v/100})}});
+Promise.all([loader.then(),Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))])]).then(()=>{lenis&&lenis.start();ScrollTrigger.refresh();reduce?intro.progress(1):intro.play()});
 addEventListener("load",()=>ScrollTrigger.refresh());
+})();
 </script>
 </body>
 </html>
