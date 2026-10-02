@@ -11,3 +11,13 @@ python -m http.server 5173
 As decisões de design, e de onde cada uma veio, estão em [DESIGN.md](DESIGN.md).
 
 Pesquisa: Memórias do Ó. Dedicado a Seu Álvaro, guardião da memória oral do Ó.
+
+## Créditos das fotos
+
+As fotos reais da Igreja Matriz e da festa são de terceiros e aparecem com crédito no site:
+
+- Guga Matos / JC Imagem (Jornal do Commercio): fachada, largo, interior, detalhes e restauro do altar-mor (2014)
+- Arquidiocese de Olinda e Recife: altar, fiéis, missa e a Matriz à noite (festa da padroeira, 2021)
+- Prefeitura do Ipojuca: baobá
+
+Antes de publicar o site, confirme a autorização de uso com cada autor.

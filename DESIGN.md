@@ -8,13 +8,19 @@ O site antigo colocava todo o texto em painéis escuros por cima de uma maquete 
 |---|---|---|
 | **Abertura com tensão**: preloader com contador e uma cortina que sobe | Lusion, Locomotive, Active Theory | contador de 0 a 100 e cortina que revela o título |
 | **Rolagem que vira câmera**: a página é presa e a rolagem conduz a cena | páginas de produto da Apple, Igloo Inc. | a câmera atravessa o arco do Ó, e a frase de abertura se acende palavra por palavra |
-| **Tipografia gigante revelada por máscara** | Obys, Cuberto, Dogstudio | todos os títulos entram palavra por palavra, de baixo para cima |
+| **Tipografia gigante revelada por máscara** (Playfair Display, com espaço para os acentos) | Obys, Cuberto, Dogstudio | todos os títulos entram palavra por palavra, de baixo para cima |
 | **Troca de "luz" por capítulo** | Stripe Sessions, Bruno Simon | cada era tem uma paleta: papel (engenhos), fogo (1645), azul (1817), fumaça (usina), festa (1890) |
 | **Galeria horizontal presa** | Resn, KPR, Porsche | "O mapa da viagem", com as 12 paradas |
 | **Dado que se mexe com a rolagem** (*scrollytelling*) | The Pudding, NYT, Reuters Graphics | Batalha das Sedes, linha do tempo da usina, anel dos 199 dias, rota da fuga de 1817 |
 | **Microinterações e cursor próprio** | Awwwards SOTD em geral | cursor com rótulo, botões magnéticos, cartões que inclinam, placas que viram |
 | **Textura e movimento contínuo** | Messenger (Abeto), Prior Holdings | grão de filme, faixa de texto que reage à velocidade da rolagem, moenda girando |
 | **Um conceito por tela** | Linear, Apple | cada capítulo abre com número, título e um resumo "Em uma frase" |
+
+## Fotos reais
+
+- **A abertura usa a foto da Matriz dentro de um arco**, como uma janela de capela. A foto tem resolução média, então ela aparece nítida no arco e só ocupa a tela inteira durante a transição, já escurecida.
+- **Cada foto tem legenda e crédito**, e a galeria "A Matriz hoje" abre as fotos em tamanho maior.
+- As legendas não afirmam mais do que a fonte mostra. Por exemplo, a foto do altar diz "altar enfeitado para a festa", e não "a imagem original da padroeira".
 
 ## Para ser didático
 
