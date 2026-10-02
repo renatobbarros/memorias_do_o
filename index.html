@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nossa Senhora do Ó</title>
+<meta name="description" content="Atravesse quatro séculos da história de Nossa Senhora do Ó, em Ipojuca-PE, numa maquete 3D interativa. Cada fato com fonte.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 200 200%27%3E%3Crect width=%27200%27 height=%27200%27 rx=%2744%27 fill=%27%23221d17%27/%3E%3Cg fill=%27none%27 transform=%27translate(100 104) scale(0.78) translate(-100 -96)%27%3E%3Cpath d=%27M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z%27 stroke=%27%23f0e6d2%27 stroke-width=%2712%27 stroke-linejoin=%27round%27/%3E%3Ccircle cx=%27100%27 cy=%27112%27 r=%2726%27 stroke=%27%23c9893a%27 stroke-width=%2716%27/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..800&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#120f0b;--bg-2:#1c1712;--bg-3:#2b2419;--line:#3a3122;
+  --ink:#f0e6d2;--muted:#b9aa8a;--sepia:#c9893a;--sepia-2:#e0a55a;--teal:#4a9b96;--teal-2:#7cc4be;
+  --panel:rgba(18,15,11,.8);
+  --display:"Fraunces",Georgia,serif;--text:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --cond:"Barlow Condensed","Arial Narrow",sans-serif;--mono:"Space Mono","Courier New",monospace;
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:17px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--sepia-2)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--sepia-2);outline-offset:3px}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;font-weight:700}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- cena ---------- */
+#gl{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;touch-action:pan-y}
+.no3d #gl{display:none}
+.no3d body,.no3d .fallback{display:block}
+.fallback{display:none;position:fixed;inset:0;z-index:0;background:#120f0b url(img/o-igreja.webp) 70% 40%/min(900px,120vw) no-repeat;opacity:.5}
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 80% 70% at 60% 45%,transparent 40%,rgba(10,8,6,.75))}
+.grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain 1s steps(6) infinite}
+@keyframes grain{20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-6%,-2%)}80%{transform:translate(5%,4%)}}
+
+/* ---------- preloader ---------- */
+#pre{position:fixed;inset:0;z-index:100;background:#0e0c09;display:grid;place-items:center;transition:opacity .9s var(--ease),visibility .9s}
+#pre.out{opacity:0;visibility:hidden}
+#pre .box{display:grid;justify-items:center;gap:22px}
+#pre svg{width:132px;height:132px}
+#pre svg .d{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 1.6s var(--ease) forwards}
+#pre svg .d2{animation-delay:.35s}
+@keyframes draw{to{stroke-dashoffset:0}}
+#pre .n{font-family:var(--mono);font-size:13px;letter-spacing:.14em;color:var(--muted);font-variant-numeric:tabular-nums}
+#pre .n b{color:var(--sepia-2);font-weight:400}
+
+/* ---------- HUD ---------- */
+.hud-top{position:fixed;top:0;left:0;right:0;z-index:70;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px clamp(16px,3vw,28px);pointer-events:none}
+.hud-top>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand svg{width:30px;height:30px}
+.brand b{font-family:var(--display);font-size:17px;font-weight:600;line-height:1.1}
+.brand b i{color:var(--sepia)}
+.brand small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;font-weight:400}
+.tools{display:flex;gap:8px}
+.tbtn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:rgba(18,15,11,.6);backdrop-filter:blur(6px);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;color:var(--ink)}
+.tbtn:hover{border-color:var(--sepia)}
+.tbtn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6}
+.tbtn .bars{display:inline-flex;gap:2px;align-items:flex-end;height:12px}
+.tbtn .bars i{width:2px;background:var(--sepia-2);height:30%}
+.tbtn.on .bars i{animation:eq 1s ease-in-out infinite}
+.tbtn.on .bars i:nth-child(2){animation-delay:.2s}.tbtn.on .bars i:nth-child(3){animation-delay:.4s}
+@keyframes eq{50%{height:100%}}
+@media (max-width:560px){.tbtn .lbl{display:none}.tbtn{padding:0 12px}}
+
+/* trilha de capítulos (esquerda) */
+.rail{position:fixed;left:clamp(10px,1.6vw,22px);top:50%;translate:0 -50%;z-index:30;display:grid;gap:6px;list-style:none;margin:0;padding:0}
+.rail button{display:flex;align-items:center;gap:10px;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.08em;min-height:24px}
+.rail button i{display:block;width:10px;height:1px;background:currentColor;transition:width .4s var(--ease)}
+.rail button span{opacity:0;transform:translateX(-6px);transition:.3s;white-space:nowrap;text-transform:uppercase}
+.rail button:hover span{opacity:1;transform:none}
+.rail button.on{color:var(--sepia-2)}
+.rail button.on i{width:26px}
+@media (max-width:1100px){.rail{display:none}}
+
+/* régua do tempo (baixo) */
+.ruler{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px clamp(16px,3vw,28px) calc(12px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end;pointer-events:none;background:linear-gradient(transparent,rgba(12,10,7,.85) 55%)}
+.ruler .yr{font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,46px);line-height:.9;font-variant-numeric:tabular-nums;letter-spacing:-.02em;min-width:3.2ch}
+.ruler .yr small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:400;margin-bottom:6px;text-transform:uppercase}
+.ruler .track{position:relative;height:30px;pointer-events:auto}
+.ruler .line{position:absolute;left:0;right:0;bottom:8px;height:1px;background:var(--line)}
+.ruler .tick{position:absolute;bottom:8px;width:1px;height:6px;background:#5a4c36}
+.ruler .tick.big{height:12px;background:#8d7a58}
+.ruler .tick b{position:absolute;bottom:14px;left:50%;translate:-50% 0;font-family:var(--mono);font-size:9px;color:#8d7a58;font-weight:400}
+.ruler .mk{position:absolute;bottom:3px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;border:1px solid var(--sepia);background:var(--bg);cursor:pointer;padding:0}
+.ruler .mk:hover,.ruler .mk.on{background:var(--sepia)}
+.ruler .mk::after{content:"";position:absolute;inset:-12px}
+.ruler .head{position:absolute;bottom:0;width:2px;height:26px;margin-left:-1px;background:var(--sepia-2);box-shadow:0 0 12px rgba(224,165,90,.7);transition:opacity .3s}
+@media (max-width:700px){.ruler .tick b{display:none}.ruler{gap:12px}}
+
+/* menu de capítulos */
+#menu{position:fixed;inset:0;z-index:60;background:rgba(12,10,7,.96);backdrop-filter:blur(10px);display:none;overflow:auto;padding:84px clamp(16px,5vw,64px) 60px}
+#menu.open{display:block}
+#menu ol{list-style:none;margin:0 auto;padding:0;max-width:1000px;display:grid;gap:2px}
+#menu li button{width:100%;display:grid;grid-template-columns:56px 1fr auto;gap:16px;align-items:baseline;padding:14px 4px;background:none;border:0;border-bottom:1px solid var(--line);cursor:pointer;text-align:left}
+#menu li button:hover b{color:var(--sepia-2)}
+#menu li em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted)}
+#menu li b{font-family:var(--display);font-size:clamp(22px,3.4vw,38px);font-weight:600;line-height:1.1;transition:color .2s}
+#menu li span{font-family:var(--mono);font-size:11px;color:var(--sepia-2)}
+#menu .legend{max-width:1000px;margin:34px auto 0;display:flex;flex-wrap:wrap;gap:10px 22px;color:var(--muted);font-size:15px}
+
+/* ---------- capítulos ---------- */
+main{position:relative;z-index:10}
+.ch{position:relative;min-height:100svh;display:flex;align-items:center;padding:110px clamp(16px,4vw,64px) 120px;padding-left:clamp(16px,7vw,120px);pointer-events:none}
+.ch.tall{display:block;padding:0;height:340vh}
+.ch.tall .sticky{position:sticky;top:0;height:100svh;display:flex;align-items:center;padding:96px clamp(16px,4vw,64px) 110px;padding-left:clamp(16px,7vw,120px)}
+.panel{pointer-events:auto;width:100%;max-width:500px;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:10px;padding:clamp(20px,2.6vw,32px);display:grid;gap:14px}
+.panel.wide{max-width:640px}
+.panel.clear{background:none;border:0;backdrop-filter:none;-webkit-backdrop-filter:none;padding:0}
+.kick{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--sepia-2)}
+.panel h2{font-size:clamp(34px,4.6vw,58px);line-height:1;letter-spacing:-.02em}
+.panel h2 em{font-weight:400;color:var(--sepia)}
+.panel p{color:#ddd1b8}
+.panel p strong{color:var(--ink);font-weight:600}
+.big{font-family:var(--display);font-weight:800;font-size:clamp(46px,7vw,92px);line-height:.9;letter-spacing:-.03em;color:var(--sepia-2);font-variant-numeric:tabular-nums}
+.big small{font-family:var(--text);font-weight:500;font-size:15px;letter-spacing:0;color:var(--muted);display:block;margin-top:6px;line-height:1.3}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.stats div{border-top:1px solid var(--line);padding-top:10px}
+.stats b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(30px,3.6vw,44px);line-height:1;color:var(--sepia-2);font-variant-numeric:tabular-nums}
+.stats span{font-size:14px;color:var(--muted);line-height:1.3;display:block;margin-top:4px}
+blockquote{margin:0;padding:14px 18px;border-left:2px solid var(--sepia);background:rgba(201,137,58,.1);font-family:var(--display);font-style:italic;font-size:clamp(19px,2vw,24px);line-height:1.3}
+blockquote cite{display:block;margin-top:8px;font-family:var(--mono);font-style:normal;font-size:11px;color:var(--muted);letter-spacing:.06em}
+
+/* selos */
+.selo{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;font-family:var(--mono);font-size:10px;letter-spacing:.06em;line-height:1;padding:4px 7px;border-radius:2px;white-space:nowrap;text-decoration:none;margin-left:4px}
+.selo::before{content:attr(data-k);font-weight:700}
+.selo.doc{background:var(--sepia);color:#1b140c}
+.selo.acad{border:1px solid var(--sepia);color:var(--sepia-2)}
+.selo.oral{background:rgba(74,155,150,.18);border:1px solid var(--teal);color:var(--teal-2)}
+.selo.lenda{border:1px dashed #8d7a58;color:var(--muted)}
+.selo.pend{border:1px dashed #c2432f;color:#e98a78}
+a.selo:hover{filter:brightness(1.15)}
+.legend .selo{margin-left:0}
+
+/* botões */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 20px;font-family:var(--cond);font-weight:600;font-size:16px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1px solid var(--sepia);border-radius:6px;color:var(--ink);background:none;cursor:pointer;overflow:hidden;isolation:isolate;transition:color .35s}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--sepia);transform:scaleY(0);transform-origin:bottom;transition:transform .45s var(--ease)}
+.btn:hover::before{transform:scaleY(1)}
+.btn:hover{color:#1b140c}
+.btn.fill{background:var(--sepia);color:#1b140c}
+.btn.fill::before{background:var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+
+/* hero */
+.hero .panel{max-width:620px}
+.hero h1{font-size:clamp(54px,9vw,128px);line-height:.86;letter-spacing:-.035em;font-weight:800;font-variation-settings:"opsz" 144}
+.hero h1 .l{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 .l>span{display:inline-block}
+.hero h1 em{font-weight:400;color:var(--sepia)}
+.hero .lead{font-family:var(--display);font-style:italic;font-size:clamp(20px,2.2vw,27px);line-height:1.3;color:var(--ink);max-width:28ch}
+.hero .legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:14px;color:var(--muted);margin-top:4px}
+.cue{position:absolute;left:50%;bottom:86px;translate:-50% 0;display:grid;justify-items:center;gap:6px}
+.cue i{display:block;width:1px;height:40px;background:linear-gradient(var(--sepia),transparent);animation:cue 1.8s var(--ease) infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}50%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+.hint{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.hint svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5}
+@media (hover:none){.hint.mouse{display:none}}
+
+/* antífonas */
+.anti{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.anti button{min-height:54px;border:1px solid var(--line);border-radius:6px;background:rgba(0,0,0,.25);cursor:pointer;display:grid;place-items:center;font-family:var(--display);font-size:22px;font-style:italic;color:var(--sepia);transition:.25s}
+.anti button small{font-family:var(--mono);font-style:normal;font-size:9px;color:var(--muted)}
+.anti button:hover,.anti button.on{border-color:var(--sepia);background:rgba(201,137,58,.16)}
+.anti-out{min-height:72px;border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:grid;gap:2px}
+.anti-out b{font-family:var(--display);font-size:24px;line-height:1.1}
+.anti-out span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* sedes */
+.sede-now{display:grid;gap:4px}
+.sede-now .who{font-family:var(--display);font-size:clamp(26px,3vw,36px);line-height:1.05}
+.sede-now .who em{color:var(--sepia);font-style:italic;font-weight:400}
+.sede-now .who.sm em{color:var(--teal-2)}
+.stops{display:flex;gap:4px;margin-top:4px}
+.stops button{flex:1;height:30px;border:0;padding:0;background:none;cursor:pointer;position:relative}
+.stops button::before{content:"";position:absolute;left:0;right:0;top:12px;height:6px;border-radius:2px;background:var(--line);transition:.3s}
+.stops button.o::before{background:rgba(201,137,58,.45)}
+.stops button.s::before{background:rgba(74,155,150,.45)}
+.stops button.on::before{top:8px;height:14px}
+.stops button.o.on::before{background:var(--sepia)}
+.stops button.s.on::before{background:var(--teal)}
+.stops-lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.key{display:flex;gap:16px;font-size:13px;color:var(--muted)}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.bars{display:grid;gap:8px}
+.bars div{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;font-size:14px}
+.bars i{display:block;height:12px;border-radius:2px;background:var(--sepia);transform-origin:left}
+.bars div:nth-child(2) i{background:var(--teal)}
+.bars b{font-family:var(--mono);font-size:12px;font-weight:400}
+
+/* marcos (usina / município) */
+.miles{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.miles li{display:grid;grid-template-columns:62px 1fr;gap:12px;padding:8px 0;border-top:1px solid var(--line);opacity:.38;transition:opacity .4s}
+.miles li.on{opacity:1}
+.miles li b{font-family:var(--mono);font-size:12px;color:var(--sepia-2);font-weight:400}
+.miles li p{font-size:15px;line-height:1.45}
+.prog{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.prog b{display:block;height:100%;background:var(--sepia);transform-origin:left;transform:scaleX(0)}
+.daybig{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.daybig .date{font-family:var(--mono);font-size:13px;color:var(--muted)}
+
+/* festas */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:40px;padding:6px 13px;border:1px solid var(--teal);border-radius:999px;background:rgba(74,155,150,.08);color:var(--ink);font-family:var(--cond);font-size:16px;letter-spacing:.04em;cursor:pointer;transition:.25s}
+.chips button:hover,.chips button.on{background:var(--teal);color:#0d1716}
+.chip-out{min-height:64px;font-size:15px;color:#ddd1b8;border-left:2px solid var(--teal);padding:6px 0 6px 14px}
+
+/* quiz */
+.quiz{display:grid;gap:14px}
+.qhead{display:flex;justify-content:space-between;align-items:center}
+.qdots{display:flex;gap:5px}
+.qdots i{width:18px;height:4px;border-radius:2px;background:var(--line)}
+.qdots i.ok{background:var(--sepia)}.qdots i.no{background:#8a3a2c}.qdots i.cur{background:var(--ink)}
+.qcard{border:1px solid var(--line);border-radius:8px;padding:20px;background:rgba(0,0,0,.25);min-height:120px;display:grid;align-content:center}
+.qcard p{font-family:var(--display);font-size:clamp(20px,2.2vw,26px);line-height:1.3;color:var(--ink)}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qopts button{min-height:52px;border:1px solid var(--line);border-radius:6px;background:rgba(0,0,0,.2);cursor:pointer;display:grid;gap:2px;justify-items:start;padding:8px 12px;text-align:left;transition:.2s}
+.qopts button b{font-family:var(--cond);font-size:17px;letter-spacing:.04em}
+.qopts button small{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.06em}
+.qopts button:hover:not(:disabled){border-color:var(--sepia)}
+.qopts button.right{border-color:var(--sepia);background:rgba(201,137,58,.22)}
+.qopts button.wrong{border-color:#c2432f;background:rgba(194,67,47,.18)}
+.qopts button:disabled{cursor:default}
+.qfeed{min-height:24px;font-size:15px;color:#ddd1b8}
+.qfeed b{color:var(--ink)}
+
+/* ruas */
+.plaques{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.plq{position:relative;min-height:128px;border:0;padding:0;background:none;cursor:pointer;perspective:800px;text-align:left}
+.plq .in{position:absolute;inset:0;transition:transform .7s var(--ease);transform-style:preserve-3d}
+.plq.open .in{transform:rotateY(180deg)}
+.plq .f,.plq .b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:6px;padding:12px;display:grid}
+.plq .f{background:#f4f1ea;border:3px double #2f6f8f;color:#1f4f6f;align-content:center;justify-items:center;text-align:center;box-shadow:inset 0 0 0 6px #f4f1ea,inset 0 0 0 7px #9cc3d4}
+.plq .f small{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:#4f7f9a}
+.plq .f b{font-family:var(--cond);font-weight:700;font-size:19px;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}
+.plq .b{background:var(--bg-2);border:1px solid var(--teal);transform:rotateY(180deg);font-size:13.5px;line-height:1.4;color:#ddd1b8;align-content:start;gap:6px}
+.plq .b .selo{margin-left:0;justify-self:start}
+
+/* fontes */
+.srcs{display:grid;gap:6px;font-size:14.5px;margin:0;padding:0;list-style:none}
+.srcs li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
+.srcs a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+.srcs a:hover{border-color:var(--sepia)}
+.gaps{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.gaps li{display:flex;gap:10px;font-size:15px;color:#ddd1b8}
+.gaps li::before{content:"?";flex:none;width:22px;height:22px;border-radius:50%;border:1px dashed #c2432f;color:#e98a78;display:grid;place-items:center;font-family:var(--mono);font-size:12px}
+footer{position:relative;z-index:10;padding:24px clamp(16px,7vw,120px) 110px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;pointer-events:auto}
+footer a{color:var(--ink)}
+
+/* celular: maquete em cima, texto embaixo */
+@media (max-width:860px){
+  .ch{align-items:flex-end;padding:46svh 16px 96px}
+  .ch.tall .sticky{align-items:flex-end;padding:0 16px 92px}
+  .panel{max-width:none;padding:18px}
+  .panel h2{font-size:clamp(30px,8.4vw,40px)}
+  .hero{padding-top:38svh}
+  .cue{display:none}
+  .anti button{min-height:46px;font-size:18px}
+  .qopts{grid-template-columns:1fr 1fr}
+  .tall .panel{gap:10px}
+  .tall .panel p{font-size:15px}
+  .miles li{grid-template-columns:52px 1fr;padding:6px 0}
+  .miles li p{font-size:14px}
+  .miles li:not(.on){display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  #pre svg .d{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="fallback" aria-hidden="true"></div>
+<div class="vig" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<div id="pre" aria-hidden="true">
+  <div class="box">
+    <svg viewBox="0 0 200 200" fill="none">
+      <circle class="d" cx="100" cy="100" r="96" stroke="#c9893a" stroke-width="3"/>
+      <g transform="translate(100 104) scale(0.62) translate(-100 -96)">
+        <path class="d d2" d="M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z" stroke="#f0e6d2" stroke-width="8" stroke-linejoin="round"/>
+        <circle class="d d2" cx="100" cy="112" r="26" stroke="#c9893a" stroke-width="12"/>
+      </g>
+    </svg>
+    <div class="n">CARREGANDO 4 SÉCULOS · <b id="pren">000</b>%</div>
+  </div>
+</div>
+
+<header class="hud-top">
+  <a class="brand" href="#c0" aria-label="Nossa Senhora do Ó, início">
+    <svg viewBox="0 0 200 200" fill="none" aria-hidden="true"><g transform="translate(100 104) scale(0.78) translate(-100 -96)"><path d="M34 184 V86 H48 C48 62 66 58 74 46 C82 34 88 22 100 16 C112 22 118 34 126 46 C134 58 152 62 152 86 H166 V184 Z" stroke="#f0e6d2" stroke-width="12" stroke-linejoin="round"/><circle cx="100" cy="112" r="26" stroke="#c9893a" stroke-width="16"/><path d="M108 72 L122 56" stroke="#c9893a" stroke-width="13" stroke-linecap="round"/></g></svg>
+    <b>Nossa Senhora do <i>Ó</i><small>Uma história em 12 capítulos</small></b>
+  </a>
+  <div class="tools">
+    <button class="tbtn" id="snd" type="button" aria-pressed="false" aria-label="Ligar som ambiente"><span class="bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="lbl">Som</span></button>
+    <button class="tbtn" id="mbtn" type="button" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h8"/></svg><span class="lbl">Capítulos</span></button>
+  </div>
+</header>
+
+<nav id="menu" aria-label="Capítulos"><ol id="mlist"></ol>
+  <div class="legend"><span><span class="selo doc" data-k="DOC"></span> documento oficial</span><span><span class="selo acad" data-k="ACAD"></span> pesquisa que cita documento</span><span><span class="selo oral" data-k="ORAL"></span> memória dos moradores</span><span><span class="selo lenda" data-k="LENDA"></span> tradição sem prova</span></div>
+</nav>
+<ul class="rail" id="rail" aria-label="Capítulos"></ul>
+
+<div class="ruler" aria-hidden="true">
+  <div class="yr"><small id="ylab">Hoje</small><span id="yr">2026</span></div>
+  <div class="track" id="rtrack"><div class="line"></div><div class="head" id="rhead"></div></div>
+</div>
+
+<main>
+<!-- 0 · ABERTURA -->
+<section class="ch hero" id="c0" data-ch="0">
+  <div class="panel clear">
+    <span class="kick">Ipojuca · Pernambuco · antes de 1608</span>
+    <h1 aria-label="Nossa Senhora do Ó"><span class="l" aria-hidden="true"><span>Nossa Senhora</span></span><span class="l" aria-hidden="true"><span>do <em>Ó</em></span></span></h1>
+    <p class="lead">Um bairro que já foi sede de município, campo de batalha e palco de festa. Role e atravesse quatro séculos.</p>
+    <div class="row">
+      <a class="btn fill" href="#c1">Começar a viagem</a>
+      <button class="btn" type="button" data-open-menu>Ver capítulos</button>
+    </div>
+    <div class="legend">Cada fato traz um selo:
+      <span><span class="selo doc" data-k="DOC"></span> documento</span>
+      <span><span class="selo acad" data-k="ACAD"></span> pesquisa</span>
+      <span><span class="selo oral" data-k="ORAL"></span> memória oral</span>
+      <span><span class="selo lenda" data-k="LENDA"></span> lenda</span>
+    </div>
+    <span class="hint mouse"><svg viewBox="0 0 16 16"><path d="M3 8h10M3 8l3-3M3 8l3 3M13 8l-3-3M13 8l-3 3"/></svg>Arraste a maquete para girar</span>
+  </div>
+  <div class="cue mono" aria-hidden="true">Role<i></i></div>
+</section>
+
+<!-- 1 · POR QUE Ó -->
+<section class="ch" id="c1" data-ch="1">
+  <div class="panel">
+    <span class="kick">01 · A origem do nome</span>
+    <h2>Por que <em>“Ó”</em>?</h2>
+    <p>O nome vem das sete <strong>Antífonas do Ó</strong>, cantadas de 17 a 23 de dezembro. Cada uma começa com “Ó”. <a class="selo doc" data-k="DOC" href="https://www.arquidioceseolindarecife.org/em-ipojuca-fieis-participam-da-festa-de-nossa-senhora-do-o/" target="_blank" rel="noopener">Arquidiocese</a></p>
+    <div class="anti" id="anti" role="group" aria-label="As sete antífonas"></div>
+    <div class="anti-out" aria-live="polite" id="antiout"><b>Toque num “Ó”</b><span>e veja a antífona de cada dia</span></div>
+    <p>É a devoção à <strong>Virgem grávida</strong>, Senhora da Expectação do Parto. A imagem mostra Maria com a mão sobre o ventre. <a class="selo acad" data-k="ACAD" href="https://pt.wikipedia.org/wiki/Nossa_Senhora_do_%C3%93" target="_blank" rel="noopener">Wikipédia</a></p>
+    <p>A devoção nasceu em Toledo, Espanha, no ano 656. No Brasil, começou em Olinda, com Duarte Coelho, e de lá chegou a Ipojuca. <span class="selo acad" data-k="ACAD">Megale e Etzel</span></p>
+    <blockquote>“Nossa Senhora do Ó adorada na imagem de uma mulher prenhe”<cite>Gilberto Freyre · Casa-Grande &amp; Senzala</cite></blockquote>
+  </div>
+</section>
+
+<!-- 2 · ENGENHOS -->
+<section class="ch" id="c2" data-ch="2">
+  <div class="panel">
+    <span class="kick">02 · Séculos XVI e XVII</span>
+    <h2>Terra de <em>engenhos</em></h2>
+    <p>O distrito já existia antes de 1608, com o nome <strong>Nossa Senhora do Ó de Ipojuca</strong>. <a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE</a></p>
+    <p>No começo do século XVII, Cosme Dias da Fonseca fundou o <strong>Engenho Salgado</strong>, dentro do Ó. Em 1636, ele moía com bois. <span class="selo doc" data-k="DOC">inventário holandês</span></p>
+    <div class="stats">
+      <div><b data-count="30" data-pre="+">+30</b><span>engenhos em Ipojuca entre 1550 e 1650</span></div>
+      <div><b data-count="5000" data-fmt="1">5.000</b><span>arrobas de açúcar no Salgado em 1636</span></div>
+    </div>
+    <p>O rio era navegável até o meio do território. Por ele descia o açúcar. <span class="selo acad" data-k="ACAD">Leão, via TCC UFPE</span></p>
+  </div>
+</section>
+
+<!-- 3 · 1645 -->
+<section class="ch" id="c3" data-ch="3">
+  <div class="panel">
+    <span class="kick">03 · 1634–1645</span>
+    <h2>A luta contra <em>os holandeses</em></h2>
+    <p>Em 12 de março de 1634, os holandeses desembarcaram em terras do Engenho Salgado. <span class="selo acad" data-k="ACAD">Engenhos de PE</span></p>
+    <div class="big" data-count="16">16<small>homens armados se levantaram com Amador de Araújo em 17 de julho de 1645. O povo incendiou o quartel holandês.</small></div>
+    <p>Seis dias depois, numa emboscada no <strong>Engenho Tabatinga</strong>, os holandeses foram derrotados. <a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE</a></p>
+    <p><strong>Você sabia?</strong> Em 1641–42, um fiscal holandês reclamou que os engenhos de Ipojuca jogavam bagaço de cana nos rios. É um dos primeiros registros de poluição de rios na Mata pernambucana. <span class="selo doc" data-k="DOC">relatório holandês</span></p>
+  </div>
+</section>
+
+<!-- 4 · 1817 -->
+<section class="ch" id="c4" data-ch="4">
+  <div class="panel">
+    <span class="kick">04 · 15 de maio de 1817</span>
+    <h2>O fim de uma <em>revolução</em></h2>
+    <p>As tropas de <strong>Domingos José Martins</strong>, líder da Revolução Pernambucana, foram derrotadas entre Merepe e Ipojuca. <a class="selo acad" data-k="ACAD" href="https://en.wikipedia.org/wiki/Pernambucan_revolution" target="_blank" rel="noopener">R. C. Lins, Fundaj</a></p>
+    <p>Ele fugiu pelos mangues de Porto de Galinhas, se escondeu numa casa e foi preso. Foi fuzilado em Salvador no mesmo ano. <span class="selo acad" data-k="ACAD">relato de preso</span></p>
+    <p>O Ó guarda isso no mapa: <strong>Rua da Batalha</strong> e <strong>Travessa Batalha Domingos José Martins</strong>. <span class="selo doc" data-k="DOC">nomes oficiais</span></p>
+    <p>Em 2011, Martins entrou no Livro dos Heróis da Pátria. A bandeira de Pernambuco nasceu nessa mesma revolução. <span class="selo doc" data-k="DOC">Lei federal</span></p>
+  </div>
+</section>
+
+<!-- 5 · BATALHA DAS SEDES (scrub) -->
+<section class="ch tall" id="c5" data-ch="5">
+  <div class="sticky">
+    <div class="panel">
+      <span class="kick">05 · 1846–1896 · role para avançar</span>
+      <h2>A Batalha <em>das Sedes</em></h2>
+      <p>Por 50 anos, a sede do município trocou de lugar entre o Ó e São Miguel, lei após lei.</p>
+      <div class="sede-now" aria-live="polite">
+        <div class="big" id="syear">1846</div>
+        <div class="who" id="swho">Sede: <em>Nossa Senhora do Ó</em></div>
+        <span class="mono" id="slaw">Lei provincial 152 · 30/03/1846 · cria o município</span>
+      </div>
+      <div class="stops" id="stops" role="group" aria-label="Escolha uma lei"></div>
+      <div class="stops-lbl"><span>1846</span><span>1896</span></div>
+      <div class="key"><span><i style="background:var(--sepia)"></i>Ó</span><span><i style="background:var(--teal)"></i>São Miguel (hoje Ipojuca)</span><a class="selo doc" data-k="DOC" href="https://biblioteca.ibge.gov.br/visualizacao/livros/liv82148.pdf" target="_blank" rel="noopener">IBGE 1948</a></div>
+    </div>
+  </div>
+</section>
+<section class="ch" id="c5b" data-ch="5">
+  <div class="panel">
+    <span class="kick">05 · Quem era maior?</span>
+    <h2>A vila <em>do Ó</em></h2>
+    <p>Por volta de 1889, o Ó tinha cerca de <strong>250 casas</strong>. Era maior que São Miguel. <span class="selo acad" data-k="ACAD">Sebastião Galvão</span></p>
+    <div class="bars" id="vbars">
+      <div><span>Vila do Ó</span><i style="--w:1"></i><b>~1.500 almas</b></div>
+      <div><span>São Miguel</span><i style="--w:.467"></i><b>~700 almas</b></div>
+    </div>
+    <p>O historiador Antônio Geraldo Leão chama o Ó de <strong>“Vila Rebelde”</strong>. Ele conta que, com tanta mudança, o lugar ganhou o apelido de “Vila das Trouxas”. <span class="selo acad" data-k="ACAD">um só autor</span></p>
+    <p>O aniversário de Ipojuca, <strong>30 de março</strong>, é a data da lei que criou o município com sede no Ó. <span class="selo acad" data-k="ACAD">IBGE · Frei Milton</span></p>
+  </div>
+</section>
+
+<!-- 6 · 1890 BOI -->
+<section class="ch" id="c6" data-ch="6">
+  <div class="panel">
+    <span class="kick">06 · 28 de junho de 1890</span>
+    <h2>O boi na frente <em>da igreja</em></h2>
+    <p>Em 1872, a paróquia sediada no Ó tinha <strong>19.420 pessoas</strong>. Delas, <strong>3.315 eram escravizadas</strong>. <span class="selo acad" data-k="ACAD">tese Unicamp, 2014</span></p>
+    <p>Na véspera de São Pedro de 1890, dois anos depois da Abolição, a polícia autorizou um <strong>bumba meu boi</strong> em frente à igreja do Ó.</p>
+    <div class="big" data-count="300" data-pre="~">~300<small>pessoas assistiram, entre elas ex-escravizados dos engenhos vizinhos.</small></div>
+    <p>Os nomes ficaram no inquérito: Cláudio Pergentino Ferreira do Monte, 40 anos, cozinheiro do Engenho Salgado; o capitão João Manoel; e um moço chamado Liberato. <span class="selo doc" data-k="DOC">inquérito policial</span></p>
+  </div>
+</section>
+
+<!-- 7 · USINA (scrub) -->
+<section class="ch tall" id="c7" data-ch="7">
+  <div class="sticky">
+    <div class="panel">
+      <span class="kick">07 · 1892–2014 · role para avançar</span>
+      <h2>O tempo <em>da usina</em></h2>
+      <div class="prog"><b id="uprog"></b></div>
+      <ul class="miles" id="umiles"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · MUNICÍPIO (scrub) -->
+<section class="ch tall" id="c8" data-ch="8">
+  <div class="sticky">
+    <div class="panel">
+      <span class="kick">08 · 1963–1964 · role para avançar</span>
+      <h2>199 dias <em>de município</em></h2>
+      <div class="daybig" aria-live="polite"><div class="big" id="mday">0</div><span class="date" id="mdate">20/12/1963</span></div>
+      <ul class="miles" id="mmiles"></ul>
+      <p style="font-size:14px">Quem foi o prefeito? Esse documento ainda não foi achado. <span class="selo pend" data-k="PENDENTE"></span> <a href="https://wa.me/5581989361309?text=Ol%C3%A1!%20Sei%20algo%20sobre%20o%20munic%C3%ADpio%20do%20%C3%93%20em%201963-64%3A%20" target="_blank" rel="noopener">Você sabe? Conte pra gente</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · MEMÓRIA VIVA -->
+<section class="ch" id="c9" data-ch="9">
+  <div class="panel">
+    <span class="kick">09 · Século XX, contado em 2017</span>
+    <h2>A memória que <em>ninguém escreveu</em></h2>
+    <p>Em 2017, uma pesquisa da UFPE ouviu quatro idosos do Ó, de 83 a 90 anos. Todos lembraram das mesmas festas. <a class="selo oral" data-k="ORAL" href="https://repositorio.ufpe.br/bitstream/123456789/47752/1/TCC%20Deomaci%20Jose%20Ramos.pdf" target="_blank" rel="noopener">TCC UFPE · Deomaci J. Ramos</a></p>
+    <div class="chips" id="chips" role="group" aria-label="Festas lembradas"></div>
+    <div class="chip-out" id="chipout" aria-live="polite">Toque numa festa para saber onde e com quem ela acontecia.</div>
+    <blockquote>“Apoi meu filho, o Ó era bom demais!”<cite>Moradora de 85 anos · TCC UFPE, 2017</cite></blockquote>
+    <p>Hoje a padroeira é celebrada duas vezes por ano: no Advento e na primeira semana de fevereiro. Desde outubro de 2005, o Ó tem paróquia própria. <span class="selo doc" data-k="DOC">Arquidiocese</span></p>
+    <p>A Arquidiocese data a igreja matriz do <strong>século XVI</strong>. Ela está em processo de tombamento pela Fundarpe. <span class="selo doc" data-k="DOC">Arquidiocese, 2021</span></p>
+  </div>
+</section>
+
+<!-- 10 · QUIZ -->
+<section class="ch" id="c10" data-ch="10">
+  <div class="panel wide">
+    <span class="kick">10 · Teste o que você aprendeu</span>
+    <h2>Fato, relato <em>ou lenda?</em></h2>
+    <p>Nem tudo que se conta sobre o Ó tem documento. Para cada frase, escolha de onde ela vem.</p>
+    <div class="quiz" id="quiz"></div>
+  </div>
+</section>
+
+<!-- 11 · RUAS -->
+<section class="ch" id="c11" data-ch="11">
+  <div class="panel wide">
+    <span class="kick">11 · Toponímia</span>
+    <h2>As ruas <em>contam</em></h2>
+    <p>Os nomes das ruas guardam a história do Ó. Toque numa placa para virar.</p>
+    <div class="plaques" id="plaques"></div>
+  </div>
+</section>
+
+<!-- 12 · FONTES -->
+<section class="ch" id="c12" data-ch="12">
+  <div class="panel wide">
+    <span class="kick">12 · De onde vem cada fato</span>
+    <h2>Fontes e <em>o que falta</em></h2>
+    <ul class="srcs">
+      <li><span class="selo doc" data-k="DOC"></span><a href="https://biblioteca.ibge.gov.br/visualizacao/dtb/pernambuco/ipojuca.pdf" target="_blank" rel="noopener">IBGE · Divisão Territorial de Ipojuca</a></li>
+      <li><span class="selo doc" data-k="DOC"></span><a href="https://biblioteca.ibge.gov.br/visualizacao/livros/liv82148.pdf" target="_blank" rel="noopener">IBGE · Sinopse Estatística do Ipojuca, 1948</a></li>
+      <li><span class="selo doc" data-k="DOC"></span><a href="https://www.arquidioceseolindarecife.org/em-ipojuca-fieis-participam-da-festa-de-nossa-senhora-do-o/" target="_blank" rel="noopener">Arquidiocese de Olinda e Recife · Festa do Ó, 2021</a></li>
+      <li><span class="selo acad" data-k="ACAD"></span><a href="https://repositorio.ufpe.br/bitstream/123456789/47752/1/TCC%20Deomaci%20Jose%20Ramos.pdf" target="_blank" rel="noopener">Deomaci José Ramos · TCC UFPE sobre a memória dos idosos do Ó</a></li>
+      <li><span class="selo acad" data-k="ACAD"></span><a href="https://pesquisaescolar.fundaj.gov.br/pt-br/artigo/usina-salgado/" target="_blank" rel="noopener">Fundaj · Usina Salgado</a></li>
+      <li><span class="selo acad" data-k="ACAD"></span><a href="https://freimilton-ofm.blogspot.com/2009/06/" target="_blank" rel="noopener">Frei Milton Coelho OFM · história de Ipojuca</a></li>
+      <li><span class="selo acad" data-k="ACAD"></span><a href="https://pt.wikipedia.org/wiki/Nossa_Senhora_do_%C3%93" target="_blank" rel="noopener">Wikipédia · Nossa Senhora do Ó</a></li>
+      <li><span class="selo acad" data-k="ACAD"></span><a href="https://exame.com/colunistas/primeiro-lugar/usina-salgado-coloca-terrenos-a-venda/" target="_blank" rel="noopener">Exame · Usina Salgado põe terrenos à venda</a></li>
+    </ul>
+    <p><strong>Ajude a completar esta história.</strong> Ainda faltam documentos sobre:</p>
+    <ul class="gaps">
+      <li>O prefeito e a sede do município de 1963–64</li>
+      <li>Os furtos de São Benedito, Sant'Ana e São José, nos anos 70 e 80</li>
+      <li>A coroa votiva da padroeira e quem a doou</li>
+      <li>O livro de Antônio Geraldo de Souza Leão (2004)</li>
+    </ul>
+    <div class="row">
+      <a class="btn fill" href="https://wa.me/5581989361309?text=Ol%C3%A1!%20Tenho%20uma%20informa%C3%A7%C3%A3o%20sobre%20a%20hist%C3%B3ria%20do%20%C3%93%3A%20" target="_blank" rel="noopener">Tenho uma informação</a>
+      <a class="btn" href="#c0">Voltar ao início</a>
+    </div>
+  </div>
+</section>
+</main>
+<footer><span>Pesquisa e realização: <a href="https://www.instagram.com/memorias_do_o/" target="_blank" rel="noopener">Memórias do Ó</a> · dedicado a Seu Álvaro, guardião da memória oral do Ó</span><span>Nossa Senhora do Ó · Ipojuca-PE</span></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script type="module">
+import * as THREE from 'three';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches&&!/[?&]motion=1/.test(location.search);
+const fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
+const mobile=innerWidth<860;
+const M=reduce?0:1; // multiplicador de movimento
+let progress=0;const setPre=p=>{progress=Math.max(progress,p);$("#pren").textContent=String(Math.round(progress)).padStart(3,"0")};
+setPre(8);
+
+/* =============== DADOS (todos do Arsenal Histórico) =============== */
+const CH=[
+ {t:"Abertura",y:2026,l:"Hoje"},
+ {t:"Por que “Ó”?",y:null,l:"17–23 dez",yl:"Antífonas"},
+ {t:"Terra de engenhos",y:1608,l:"Antes de"},
+ {t:"A luta contra os holandeses",y:1645,l:"Julho"},
+ {t:"O fim de uma revolução",y:1817,l:"15 de maio"},
+ {t:"A Batalha das Sedes",y:1846,l:"Sede"},
+ {t:"O boi na frente da igreja",y:1890,l:"28 de junho"},
+ {t:"O tempo da usina",y:1892,l:"Usina Salgado"},
+ {t:"199 dias de município",y:1963,l:"Município"},
+ {t:"A memória que ninguém escreveu",y:2017,l:"Pesquisa UFPE"},
+ {t:"Fato, relato ou lenda?",y:2026,l:"Hoje"},
+ {t:"As ruas contam",y:2026,l:"Hoje"},
+ {t:"Fontes e o que falta",y:2026,l:"Hoje"}];
+const ANTI=[["Ó Sabedoria","O Sapientia",17],["Ó Adonai","O Adonai",18],["Ó Raiz de Jessé","O Radix Iesse",19],["Ó Chave de Davi","O Clavis David",20],["Ó Sol nascente","O Oriens",21],["Ó Rei das nações","O Rex Gentium",22],["Ó Emanuel","O Emmanuel",23]];
+const SEDES=[
+ [1846,"o","Lei provincial 152 · 30/03/1846 · cria o município"],
+ [1849,"s","Lei provincial 236 · 22/05/1849"],
+ [1861,"o","Lei provincial 499 · 29/05/1861 · instalado em 1862"],
+ [1864,"s","Lei provincial 587 · 09/05/1864"],
+ [1870,"o","Lei provincial 918 · 18/05/1870"],
+ [1879,"s","Lei provincial 1.334 · 18/02/1879"],
+ [1880,"o","Lei provincial 1.514 · 04/08/1880"],
+ [1888,"s","Lei provincial 1.929 · 16/11/1888"],
+ [1890,"o","Decreto estadual 23 · 04/10/1890"],
+ [1896,"s","Lei estadual 173 · 06/06/1896 · sede vai de vez para Ipojuca, elevada a cidade"]];
+const USINA=[
+ [1892,"1892","O Engenho Salgado vira <strong>Usina Salgado</strong>, à margem do rio Salgado.","acad","Fundaj"],
+ [1929,"1929","18 propriedades, <strong>45 km de ferrovia</strong>, 5 locomotivas, 90 operários, uma vila com 80 casas e escola com 50 alunos.","acad","Fundaj"],
+ [1940,"1940","O censo conta <strong>4.369 habitantes</strong> no distrito do Ó.","doc","IBGE"],
+ [1960,"anos 60","Na época das Ligas Camponesas, a usina entra em crise e é administrada pelo padre Antônio Melo.","acad","Fundaj"],
+ [1975,"1975","A família Queiroz compra a usina.","acad","Fundaj"],
+ [2014,"c. 2014","A usina <strong>para de moer</strong>. O terreno, de 1.500 hectares, é posto à venda.","acad","Exame"]];
+const MUNI=[
+ [0,"20/12/63","A Lei estadual 4.979 transforma o distrito em <strong>município de Nossa Senhora do Ó</strong>. O governo Arraes criou vários municípios nesse dia.","doc","IBGE"],
+ [104,"02/04/64","O governador Miguel Arraes é deposto pelo golpe militar.","doc","registro histórico"],
+ [199,"06/07/64","O Tribunal de Justiça de PE (MS 56.906) extingue o município. Camela também. O território volta para Ipojuca.","doc","IBGE"]];
+const FESTAS=[
+ ["Função de boi","Acontecia perto da igreja ou na antiga praça do mercado, “onde é a antiga delegacia”."],
+ ["Samba de matuto","Mestre Fuminho comandava. As rodas eram no Sítio Canoas e na praça do mercado."],
+ ["Coco de roda","Seu Vitor fazia coco e pastoril nas feiras do Pátio do Mercado, hoje Praça José Victor."],
+ ["Cavalo marinho","Também com Mestre Fuminho, junto com o samba de matuto e a função de boi."],
+ ["Quadrilha junina","Albertino puxava a quadrilha de São João."],
+ ["Bloco Última Hora","Saía da Rua da Palha, antiga Rua do Cabaré, organizado por Seu Vitor. Havia também o bloco Flor da Manhã."],
+ ["La Ursa","Saía no carnaval. Hoje o Ó é um dos quatro polos oficiais do carnaval de Ipojuca."]];
+const QUIZ=[
+ ["Em 1890 houve um bumba meu boi autorizado pela polícia em frente à igreja do Ó.","doc","Está num <b>inquérito policial</b> de 1890, citado numa tese da Unicamp (2014)."],
+ ["Porto de Galinhas se chamava Porto Rico. O nome vem de africanos escondidos sob galinhas-d'angola.","lenda","É <b>a versão mais contada</b>, mas não tem documento. Um mapa antigo marca “Porto dos Cavalos”."],
+ ["“Apoi meu filho, o Ó era bom demais!”","oral","Frase de uma moradora de 85 anos, gravada na <b>pesquisa da UFPE de 2017</b>."],
+ ["Nossa Senhora do Ó foi município por 6 meses e 16 dias.","doc","<b>Lei 4.979/1963</b> criou; o TJPE extinguiu em 06/07/1964."],
+ ["O Ó tinha polícia própria, que perdeu um combate em 1891 na Rua da Batalha.","acad","Vem do historiador Antônio Geraldo Leão (2004). É <b>um só autor</b> e nenhum documento foi achado ainda."],
+ ["O baobá do Ó tem mais de 350 anos.","lenda","<b>Não há datação científica</b>. A idade circula em blogs, sem prova."],
+ ["Em 1641–42, um fiscal holandês reclamou que os engenhos jogavam bagaço de cana nos rios.","doc","Está num <b>relatório holandês</b>, citado por Frei Milton."],
+ ["A imagem da santa mudava de posição sozinha e forçou a reforma da fachada.","lenda","É <b>tradição oral</b> sem documento. A mesma história aparece em outras lendas da região."]];
+const QOPT=[["doc","Documento","lei, censo, inquérito"],["acad","Pesquisa","historiador ou tese"],["oral","Memória oral","quem viveu conta"],["lenda","Lenda","sem prova"]];
+const RUAS=[
+ ["Rua","da Batalha","Duas histórias disputam o nome: a derrota de 1817 ou um combate de 1891.","acad","duas versões"],
+ ["Travessa","Batalha Domingos José Martins","Homenagem ao líder da Revolução de 1817, derrotado entre Merepe e Ipojuca.","doc","nome oficial"],
+ ["Praça","José Victor","Era o Pátio do Mercado, onde Seu Vitor fazia coco de roda e pastoril.","oral","TCC UFPE"],
+ ["Rua","da Palha","Antiga Rua do Cabaré. Dali saía o bloco de carnaval Última Hora.","oral","TCC UFPE"],
+ ["Praça","Carozita de Brito","Carozita encomendou as tribunas da igreja nos anos 60, feitas por Baixa Romão.","oral","dossiê local"],
+ ["Praça","do Baobá","A cerca de 100 metros da paróquia. Há outro baobá a 5 km, entre canaviais.","doc","endereço"]];
+
+/* =============== UI =============== */
+// menu + trilha + régua
+const mlist=$("#mlist"),rail=$("#rail"),rtrack=$("#rtrack");
+const Y0=1590,Y1=2030,yx=y=>((y-Y0)/(Y1-Y0)*100)+"%";
+CH.forEach((c,i)=>{
+  const li=document.createElement("li");li.innerHTML=`<button type="button" data-go="${i}"><em>${String(i).padStart(2,"0")}</em><b>${c.t}</b><span>${c.y?(i===2?"antes de 1608":i===5?"1846–1896":i===7?"1892–2014":i===8?"1963–64":c.y):"17–23 dez"}</span></button>`;mlist.appendChild(li);
+  const r=document.createElement("li");r.innerHTML=`<button type="button" data-go="${i}" aria-label="${c.t}"><i></i><span>${String(i).padStart(2,"0")} ${c.t}</span></button>`;rail.appendChild(r);
+});
+for(let y=1600;y<=2020;y+=20){const t=document.createElement("span");t.className="tick"+(y%100===0?" big":"");t.style.left=yx(y);if(y%100===0)t.innerHTML=`<b>${y}</b>`;rtrack.appendChild(t)}
+CH.forEach((c,i)=>{if(!c.y||i===0||i>=10)return;const b=document.createElement("button");b.className="mk";b.type="button";b.dataset.go=i;b.style.left=yx(c.y);b.setAttribute("aria-label",c.t);rtrack.appendChild(b)});
+const menu=$("#menu"),mbtn=$("#mbtn");
+function toggleMenu(o){menu.classList.toggle("open",o);mbtn.setAttribute("aria-expanded",o);if(lenis)o?lenis.stop():lenis.start();if(o)mlist.querySelector("button").focus()}
+mbtn.onclick=()=>toggleMenu(!menu.classList.contains("open"));
+$$("[data-open-menu]").forEach(b=>b.onclick=()=>toggleMenu(true));
+addEventListener("keydown",e=>{if(e.key==="Escape"&&menu.classList.contains("open")){toggleMenu(false);mbtn.focus()}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;toggleMenu(false);goTo($("#c"+b.dataset.go))});
+$$('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{const t=$(a.getAttribute("href"));if(t){e.preventDefault();goTo(t)}}));
+let lenis=null;
+function goTo(el){if(!el)return;if(lenis)lenis.scrollTo(el,{duration:1.6});else el.scrollIntoView({behavior:reduce?"auto":"smooth"})}
+
+// antífonas
+let antiSel=-1;
+$("#anti").innerHTML=ANTI.map((a,i)=>`<button type="button" data-i="${i}" aria-label="${a[0]}, ${a[2]} de dezembro">Ó<small>${a[2]}/12</small></button>`).join("");
+$("#anti").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;antiSel=+b.dataset.i;$$("#anti button").forEach((x,i)=>x.classList.toggle("on",i===antiSel));const a=ANTI[antiSel];$("#antiout").innerHTML=`<b>${a[0]}</b><span>${a[2]} de dezembro · em latim, “${a[1]}”</span>`;bell(0.6+antiSel*.08)});
+
+// sedes
+$("#stops").innerHTML=SEDES.map((s,i)=>`<button type="button" class="${s[1]}" data-i="${i}" aria-label="${s[0]}: sede em ${s[1]==="o"?"Nossa Senhora do Ó":"São Miguel"}"></button>`).join("");
+$("#stops").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;const st=sedeST;if(st){const y=st.start+(st.end-st.start)*((i+.5)/SEDES.length);lenis?lenis.scrollTo(y,{duration:1}):scrollTo(0,y)}else setSede(i)});
+let sedeIdx=-1;
+function setSede(i){if(i===sedeIdx)return;sedeIdx=i;const s=SEDES[i];
+  $("#syear").textContent=s[0];
+  const w=$("#swho");w.className="who"+(s[1]==="s"?" sm":"");w.innerHTML=i===9?"Sede: <em>Ipojuca</em> (antiga São Miguel)":"Sede: <em>"+(s[1]==="o"?"Nossa Senhora do Ó":"São Miguel")+"</em>";
+  $("#slaw").textContent=s[2];
+  $$("#stops button").forEach((b,k)=>b.classList.toggle("on",k===i));
+  setYear(s[0],"Sede");
+  if(scene){gsap.to(S,{bpos:s[1]==="o"?0:1,houses:70+i/9*180,duration:1.1,ease:"power3.inOut",overwrite:"auto"})}
+  if(i>0)bell(s[1]==="o"?.7:.9);
+}
+
+// usina e município
+$("#umiles").innerHTML=USINA.map(u=>`<li><b>${u[1]}</b><p>${u[2]} <span class="selo ${u[3]}" data-k="${u[3].toUpperCase()}">${u[4]}</span></p></li>`).join("");
+$("#mmiles").innerHTML=MUNI.map(u=>`<li><b>${u[1]}</b><p>${u[2]} <span class="selo ${u[3]}" data-k="${u[3].toUpperCase()}">${u[4]}</span></p></li>`).join("");
+const D0=new Date(1963,11,20);
+const fmtD=d=>String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")+"/"+d.getFullYear();
+
+// festas
+$("#chips").innerHTML=FESTAS.map((f,i)=>`<button type="button" data-i="${i}" aria-pressed="false">${f[0]}</button>`).join("");
+$("#chips").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;$$("#chips button").forEach((x,k)=>{x.classList.toggle("on",k===i);x.setAttribute("aria-pressed",k===i)});$("#chipout").innerHTML=`<strong>${FESTAS[i][0]}.</strong> ${FESTAS[i][1]} <span class="selo oral" data-k="ORAL">memória</span>`;if(scene)gsap.fromTo(S,{flagsPulse:1},{flagsPulse:0,duration:1.2})});
+
+// ruas
+$("#plaques").innerHTML=RUAS.map(r=>`<button type="button" class="plq" aria-expanded="false"><span class="in"><span class="f"><small>${r[0].toUpperCase()}</small><b>${r[1]}</b></span><span class="b">${r[2]}<span class="selo ${r[3]}" data-k="${r[3].toUpperCase()}">${r[4]}</span></span></span></button>`).join("");
+$("#plaques").addEventListener("click",e=>{const b=e.target.closest(".plq");if(!b)return;const o=!b.classList.contains("open");b.classList.toggle("open",o);b.setAttribute("aria-expanded",o)});
+
+// quiz
+let qi=0,qs=[];
+function renderQuiz(){
+  const q=$("#quiz");
+  if(qi>=QUIZ.length){const ok=qs.filter(Boolean).length;
+    q.innerHTML=`<div class="qcard"><p>Você acertou <b>${ok} de ${QUIZ.length}</b>. ${ok>=6?"Você já pode ser guia do Ó.":ok>=4?"Bom! A história do Ó tem muitas camadas.":"Normal: lenda e fato se misturam muito por aqui."}</p></div><div class="row"><button class="btn fill" type="button" id="qagain">Jogar de novo</button></div>`;
+    $("#qagain").onclick=()=>{qi=0;qs=[];renderQuiz()};return}
+  const [txt,ans,exp]=QUIZ[qi];
+  q.innerHTML=`<div class="qhead"><span class="mono">Frase ${qi+1} de ${QUIZ.length}</span><span class="qdots">${QUIZ.map((_,k)=>`<i class="${k<qi?(qs[k]?"ok":"no"):k===qi?"cur":""}"></i>`).join("")}</span></div>
+  <div class="qcard"><p>${txt}</p></div>
+  <div class="qopts">${QOPT.map(o=>`<button type="button" data-a="${o[0]}"><b>${o[1]}</b><small>${o[2]}</small></button>`).join("")}</div>
+  <div class="qfeed" aria-live="polite"></div>`;
+  q.querySelector(".qopts").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;
+    const right=b.dataset.a===ans;qs[qi]=right;
+    q.querySelectorAll(".qopts button").forEach(x=>{x.disabled=true;if(x.dataset.a===ans)x.classList.add("right")});
+    if(!right)b.classList.add("wrong");
+    const lbl=QOPT.find(o=>o[0]===ans)[1];
+    q.querySelector(".qfeed").innerHTML=`${right?"<b>Acertou.</b>":"<b>Não foi dessa vez.</b>"} Resposta: <span class="selo ${ans}" data-k="${ans.toUpperCase()}">${lbl}</span><br>${exp}<div class="row" style="margin-top:12px"><button class="btn" type="button" id="qnext">${qi+1<QUIZ.length?"Próxima frase":"Ver resultado"}</button></div>`;
+    $("#qnext").onclick=()=>{qi++;renderQuiz()};$("#qnext").focus({preventScroll:true});
+    bell(right?1.2:.5);
+  });
+}
+renderQuiz();
+
+// ano no HUD
+const yrEl=$("#yr"),ylab=$("#ylab"),rhead=$("#rhead");let yShown=2026;const yObj={v:2026};
+function setYear(y,label){
+  ylab.textContent=label||"";
+  if(y==null){yrEl.textContent="Ó";rhead.style.opacity=0;return}
+  rhead.style.opacity=1;
+  if(typeof y==="number"){
+    gsap.to(yObj,{v:y,duration:reduce?0:1.1,ease:"power3.out",overwrite:true,onUpdate:()=>{yrEl.textContent=Math.round(yObj.v);rhead.style.left=yx(yObj.v)}});
+  }
+}
+
+/* =============== SOM (opcional, sintetizado) =============== */
+let ac=null,master=null;
+function audioOn(){
+  ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=0;master.connect(ac.destination);
+  const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=380;lp.connect(master);
+  [55,82.4,110.2].forEach((f,i)=>{const o=ac.createOscillator();o.type=i?"sine":"triangle";o.frequency.value=f;const g=ac.createGain();g.gain.value=[.05,.03,.015][i];
+    const l=ac.createOscillator();l.frequency.value=.07+i*.05;const lg=ac.createGain();lg.gain.value=1.2;l.connect(lg).connect(o.frequency);l.start();o.connect(g).connect(lp);o.start()});
+  master.gain.linearRampToValueAtTime(.9,ac.currentTime+2);
+}
+function bell(k=1){if(!ac||ac.state!=="running"||master.gain.value<.1)return;const t=ac.currentTime,base=196*k;
+  [[1,.05],[2,.025],[2.4,.02],[3,.012],[4.2,.008]].forEach(([m,a])=>{const o=ac.createOscillator();o.frequency.value=base*m;const g=ac.createGain();g.gain.setValueAtTime(a,t);g.gain.exponentialRampToValueAtTime(.0001,t+3.2/m+.6);o.connect(g).connect(master);o.start(t);o.stop(t+4)})}
+$("#snd").onclick=()=>{const b=$("#snd");
+  if(!ac){audioOn();b.classList.add("on");b.setAttribute("aria-pressed","true");b.setAttribute("aria-label","Desligar som ambiente");setTimeout(()=>bell(1),300);return}
+  const on=master.gain.value<.1;master.gain.cancelScheduledValues(ac.currentTime);master.gain.linearRampToValueAtTime(on?.9:0,ac.currentTime+.6);
+  b.classList.toggle("on",on);b.setAttribute("aria-pressed",on);b.setAttribute("aria-label",on?"Desligar som ambiente":"Ligar som ambiente");if(on)ac.resume()};
+
+/* =============== CENA 3D =============== */
+let scene=null,renderer,camera,composer,world;
+const S={houses:260,cane:1,caneIn:0,engenho:0,tower:1,usina:1,chimney:1,smoke:0,train:0,sm:0,beacon:0,bpos:0,fire:0,crowd:0,ring:0,ringEnd:0,flags:0,flagsPulse:0,lant:0,anti:0,spin:1,oculo:1,offX:0};
+const camPos=new THREE.Vector3(13,8,17),camTgt=new THREE.Vector3(0,1.6,0);
+const MOODS={
+ noite:{bg:"#120f0b",key:"#ffd9a8",ki:2.4,hemi:"#7a6a54",hi:.9,rim:.6,exp:1.05},
+ dourado:{bg:"#24180d",key:"#ffb066",ki:3.2,hemi:"#9a7a50",hi:1.1,rim:.3,exp:1.1},
+ fogo:{bg:"#1c0d07",key:"#ff8a48",ki:1.6,hemi:"#6a3a24",hi:.7,rim:.2,exp:1.05},
+ azul:{bg:"#0b1117",key:"#a9c2e0",ki:1.4,hemi:"#3a4a5a",hi:.7,rim:1,exp:1},
+ festa:{bg:"#160f0a",key:"#ffc27a",ki:2.6,hemi:"#8a6a4a",hi:1,rim:.5,exp:1.1},
+ industrial:{bg:"#1a1814",key:"#e8d4b0",ki:2.2,hemi:"#6a665a",hi:1,rim:.4,exp:1},
+ ouro:{bg:"#0e0b08",key:"#ffd9a0",ki:1.6,hemi:"#5a4a38",hi:.7,rim:.4,exp:1}};
+const ERA=[
+ {m:"noite",c:[13,8,17],t:[0,1.6,0],s:{houses:260,cane:1,caneIn:0,engenho:0,tower:1,usina:1,chimney:1,smoke:0,train:0,sm:0,beacon:0,fire:0,crowd:0,ring:0,ringEnd:0,flags:0,lant:0,anti:0,spin:1,oculo:1}},
+ {m:"noite",c:[0,2.6,7.2],t:[0,2.3,0],s:{houses:260,cane:1,anti:1,spin:0,oculo:2.4}},
+ {m:"dourado",c:[-12.5,5.5,-1.5],t:[-4.6,.6,-3.2],s:{houses:0,cane:1,caneIn:1,engenho:1,tower:0,usina:0,chimney:0,anti:0,spin:0,oculo:.6}},
+ {m:"fogo",c:[-10.5,4.2,-.5],t:[-4.6,1,-3.2],s:{houses:0,cane:.8,caneIn:.7,engenho:1,tower:0,usina:0,chimney:0,fire:1,spin:0,oculo:.4}},
+ {m:"azul",c:[9,3,10],t:[0,1,3],s:{houses:45,cane:1,caneIn:.4,engenho:0,tower:1,usina:0,chimney:0,fire:0,lant:1,spin:0,oculo:1.2}},
+ {m:"noite",c:[2,17,16],t:[2.5,0,2.5],s:{houses:70,cane:1,caneIn:0,tower:1,usina:0,chimney:0,lant:0,sm:1,beacon:1,crowd:0,spin:0,oculo:1}},
+ {m:"festa",c:[4.5,3.2,10],t:[0,.9,2.6],s:{houses:250,cane:1,caneIn:0,sm:0,beacon:0,usina:0,chimney:0,crowd:1,spin:0,oculo:1.8}},
+ {m:"industrial",c:[-12.5,6.5,-9],t:[-4.9,2.2,-2.9],s:{houses:250,crowd:0,usina:1,sm:0,ring:0,ringEnd:0,spin:0,oculo:.8}},
+ {m:"ouro",c:[0,27,.5],t:[0,0,0],s:{houses:260,usina:1,chimney:1,smoke:0,train:0,spin:0,oculo:1.4}},
+ {m:"festa",c:[6.5,5,11],t:[0,2.4,0],s:{houses:260,ring:0,ringEnd:0,flags:1,usina:1,chimney:1,spin:0,oculo:1.8}},
+ {m:"noite",c:[13,9,-11],t:[0,1.4,0],s:{houses:260,flags:0,usina:1,chimney:1,spin:1,oculo:1}},
+ {m:"noite",c:[0,20,7],t:[0,0,1],s:{houses:260,spin:0,oculo:1}},
+ {m:"noite",c:[16,12,17],t:[0,1.4,0],s:{houses:260,spin:1,oculo:1}}];
+
+const cBg=new THREE.Color(MOODS.noite.bg),cKey=new THREE.Color(MOODS.noite.key),cHemi=new THREE.Color(MOODS.noite.hemi);
+const L={ki:2.4,hi:.9,rim:.6,exp:1.05};
+
+function rnd(a,b){return a+Math.random()*(b-a)}
+function prism(w=1,h=.5,d=1){const s=new THREE.Shape();s.moveTo(-w/2,0);s.lineTo(w/2,0);s.lineTo(0,h);s.closePath();const g=new THREE.ExtrudeGeometry(s,{depth:d,bevelEnabled:false});g.translate(0,0,-d/2);return g}
+function dotTex(){const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.35,"rgba(255,255,255,.45)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,64,64);const t=new THREE.CanvasTexture(c);return t}
+function groundTex(){const c=document.createElement("canvas");c.width=c.height=512;const x=c.getContext("2d");x.fillStyle="#2a2219";x.fillRect(0,0,512,512);
+  for(let i=0;i<9000;i++){x.fillStyle=`rgba(${Math.random()<.5?"0,0,0":"120,96,64"},${Math.random()*.12})`;x.fillRect(Math.random()*512,Math.random()*512,2,2)}
+  x.strokeStyle="rgba(150,120,80,.18)";x.lineWidth=14; // ruas
+  x.beginPath();x.moveTo(256,300);x.lineTo(256,512);x.moveTo(256,300);x.lineTo(40,350);x.moveTo(256,300);x.lineTo(470,380);x.moveTo(256,240);x.lineTo(400,60);x.stroke();
+  x.beginPath();x.arc(256,256,150,0,6.283);x.lineWidth=8;x.stroke();
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t}
+function windMat(color,uniforms){const m=new THREE.MeshStandardMaterial({color,roughness:.85});
+  m.onBeforeCompile=sh=>{sh.uniforms.uTime=uniforms.uTime;sh.uniforms.uGrow=uniforms.uGrow;
+    sh.vertexShader="uniform float uTime;uniform float uGrow;\n"+sh.vertexShader.replace("#include <begin_vertex>",`#include <begin_vertex>
+      transformed.y*=uGrow; vec4 wp=instanceMatrix*vec4(0.,0.,0.,1.); float hh=transformed.y;
+      transformed.x+=sin(uTime*1.6+wp.x*.7+wp.z*.5)*.09*hh*hh; transformed.z+=cos(uTime*1.3+wp.x*.4)*.05*hh*hh;`)};return m}
+
+let U={},meshes={},pts={};
+function build(){
+  const canvas=$("#gl");
+  renderer=new THREE.WebGLRenderer({canvas,antialias:!mobile,powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(mobile?1.5:2,devicePixelRatio||1));
+  renderer.setSize(innerWidth,innerHeight,false);
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled=!mobile;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  scene=new THREE.Scene();scene.background=cBg;scene.fog=new THREE.Fog(cBg,28,70);
+  camera=new THREE.PerspectiveCamera(mobile?44:34,innerWidth/innerHeight,.1,200);
+  world=new THREE.Group();scene.add(world);
+
+  // luzes
+  const hemi=new THREE.HemisphereLight(cHemi,0x0c0906,.9);scene.add(hemi);U.hemi=hemi;
+  const key=new THREE.DirectionalLight(cKey,2.4);key.position.set(7,12,8);key.castShadow=!mobile;
+  key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-12,right:12,top:12,bottom:-12,near:1,far:40});key.shadow.bias=-.0004;key.shadow.normalBias=.02;scene.add(key);U.key=key;
+  const rim=new THREE.DirectionalLight(0x6f8fb8,.6);rim.position.set(-9,6,-10);scene.add(rim);U.rim=rim;
+  const fireL=new THREE.PointLight(0xff7a30,0,14,1.4);fireL.position.set(-4.6,1.4,-3.2);world.add(fireL);U.fireL=fireL;
+  const festL=new THREE.PointLight(0xffb060,0,10,1.4);festL.position.set(0,2.2,3.2);world.add(festL);U.festL=festL;
+
+  // maquete: pedestal
+  const gmat=new THREE.MeshStandardMaterial({map:groundTex(),roughness:1});
+  const sideMat=new THREE.MeshStandardMaterial({color:0x17120d,roughness:.9});
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(10,10.3,.9,128,1),[sideMat,gmat,sideMat]);base.position.y=-.45;base.receiveShadow=true;world.add(base);
+  const rimT=new THREE.Mesh(new THREE.TorusGeometry(10.02,.025,6,220),new THREE.MeshStandardMaterial({color:0xc9893a,emissive:0xc9893a,emissiveIntensity:1.6}));rimT.rotation.x=Math.PI/2;rimT.position.y=.005;world.add(rimT);
+
+  // rio
+  const curve=new THREE.CatmullRomCurve3([[-8.9,4.4],[-7.7,1.6],[-8.3,-1.6],[-7.2,-4.9],[-5.3,-8.1]].map(p=>new THREE.Vector3(p[0],0,p[1])));
+  const rp=[],ri=[],N=80;for(let i=0;i<=N;i++){const p=curve.getPoint(i/N),t=curve.getTangent(i/N),n=new THREE.Vector3(-t.z,0,t.x).multiplyScalar(.5+Math.sin(i*.3)*.08);rp.push(p.x+n.x,.025,p.z+n.z,p.x-n.x,.025,p.z-n.z);if(i<N){const a=i*2;ri.push(a,a+1,a+2,a+1,a+3,a+2)}}
+  const rg=new THREE.BufferGeometry();rg.setAttribute("position",new THREE.Float32BufferAttribute(rp,3));rg.setIndex(ri);rg.computeVertexNormals();
+  const river=new THREE.Mesh(rg,new THREE.MeshStandardMaterial({color:0x2a5654,roughness:.25,metalness:.3,emissive:0x0d2624,side:THREE.DoubleSide}));world.add(river);
+  const riverPts=[];for(let i=0;i<=40;i++)riverPts.push(curve.getPoint(i/40));
+  const nearRiver=(x,z,d)=>riverPts.some(p=>Math.hypot(p.x-x,p.z-z)<d);
+
+  // igreja matriz
+  const lime=new THREE.MeshStandardMaterial({color:0xe6dcc6,roughness:.92});
+  const stone=new THREE.MeshStandardMaterial({color:0xbfae8e,roughness:.85});
+  const tile=new THREE.MeshStandardMaterial({color:0x7c3a22,roughness:.8});
+  const gold=new THREE.MeshStandardMaterial({color:0xc9893a,metalness:.7,roughness:.35,emissive:0x3a2208});
+  const church=new THREE.Group();world.add(church);
+  const s=3.4/132,P=(x,y)=>new THREE.Vector2((x-100)*s,(184-y)*s);
+  const fs=new THREE.Shape();const mv=(x,y)=>{const p=P(x,y);fs.moveTo(p.x,p.y)},ln=(x,y)=>{const p=P(x,y);fs.lineTo(p.x,p.y)},bz=(a,b,c,d,e,f)=>{const p1=P(a,b),p2=P(c,d),p3=P(e,f);fs.bezierCurveTo(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y)};
+  mv(34,184);ln(34,86);ln(48,86);bz(48,62,66,58,74,46);bz(82,34,88,22,100,16);bz(112,22,118,34,126,46);bz(134,58,152,62,152,86);ln(166,86);ln(166,184);fs.closePath();
+  const door=new THREE.Path();{const a=P(82,184),b=P(82,150),c=P(100,150);door.moveTo(a.x,a.y);door.lineTo(b.x,b.y);door.absarc(c.x,c.y,18*s,Math.PI,0,true);const e=P(118,184);door.lineTo(e.x,e.y);door.closePath()}
+  const oc=P(100,100),ocR=22*s;const ocu=new THREE.Path();ocu.absarc(oc.x,oc.y,ocR,0,Math.PI*2,true);fs.holes.push(door,ocu);
+  const facade=new THREE.Mesh(new THREE.ExtrudeGeometry(fs,{depth:.32,bevelEnabled:true,bevelSize:.03,bevelThickness:.03,bevelSegments:2,curveSegments:24}),lime);facade.position.z=-.12;facade.castShadow=facade.receiveShadow=true;church.add(facade);
+  const glowMat=new THREE.MeshStandardMaterial({color:0x2a1608,emissive:0xffb35c,emissiveIntensity:1});U.glow=glowMat;
+  const ocg=new THREE.Mesh(new THREE.CircleGeometry(ocR,32),glowMat);ocg.position.set(oc.x,oc.y,-.06);church.add(ocg);
+  const ocr=new THREE.Mesh(new THREE.TorusGeometry(ocR,.045,8,40),stone);ocr.position.set(oc.x,oc.y,.24);church.add(ocr);
+  const dg=new THREE.Mesh(new THREE.PlaneGeometry(36*s,52*s),new THREE.MeshStandardMaterial({color:0x2e1b0e,emissive:0xff9a40,emissiveIntensity:.25}));dg.position.set(0,26*s,-.05);church.add(dg);U.door=dg.material;
+  [-1.66,1.66].forEach(x=>{const p=new THREE.Mesh(new THREE.BoxGeometry(.2,2.56,.12),stone);p.position.set(x,1.28,.24);p.castShadow=true;church.add(p)});
+  const cor=new THREE.Mesh(new THREE.BoxGeometry(3.6,.12,.2),stone);cor.position.set(0,2.55,.26);church.add(cor);
+  const cx1=new THREE.Mesh(new THREE.BoxGeometry(.07,.55,.07),stone);cx1.position.set(0,4.33+.3,.05);const cx2=new THREE.Mesh(new THREE.BoxGeometry(.32,.07,.07),stone);cx2.position.set(0,4.33+.4,.05);church.add(cx1,cx2);
+  const nave=new THREE.Mesh(new THREE.BoxGeometry(3.2,2.5,5.6),lime);nave.position.set(0,1.25,-2.9);nave.castShadow=nave.receiveShadow=true;church.add(nave);
+  const roof=new THREE.Mesh(prism(3.55,1.25,5.7),tile);roof.position.set(0,2.5,-2.95);roof.castShadow=true;church.add(roof);
+  const cap=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.9,1.6),lime);cap.position.set(0,.95,-6.4);cap.castShadow=true;church.add(cap);
+  const capr=new THREE.Mesh(prism(2.5,.9,1.7),tile);capr.position.set(0,1.9,-6.4);church.add(capr);
+  // torre (azulejo no coruchéu)
+  const tower=new THREE.Group();tower.position.set(2.32,0,-.75);church.add(tower);meshes.tower=tower;
+  const tb=new THREE.Mesh(new THREE.BoxGeometry(1.15,4.2,1.15),lime);tb.position.y=2.1;tb.castShadow=true;tower.add(tb);
+  [2.55,3.05,4.2].forEach(y=>{const c=new THREE.Mesh(new THREE.BoxGeometry(1.3,.1,1.3),stone);c.position.y=y;tower.add(c)});
+  const dark=new THREE.MeshStandardMaterial({color:0x140d08});
+  for(let k=0;k<4;k++){const a=k*Math.PI/2;const op=new THREE.Mesh(new THREE.PlaneGeometry(.46,.62),dark);op.position.set(Math.sin(a)*.58,3.6,Math.cos(a)*.58);op.rotation.y=a;tower.add(op);
+    const bl=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8,0,6.283,0,1.6),gold);bl.position.set(Math.sin(a)*.42,3.62,Math.cos(a)*.42);tower.add(bl)}
+  const azul=new THREE.MeshStandardMaterial({color:0x3f8f8a,roughness:.25,metalness:.15});
+  const sp=new THREE.Mesh(new THREE.ConeGeometry(.82,1.3,4),azul);sp.rotation.y=Math.PI/4;sp.position.y=4.25+.65;sp.castShadow=true;tower.add(sp);
+  const ball=new THREE.Mesh(new THREE.SphereGeometry(.09,12,8),gold);ball.position.y=5.6;tower.add(ball);
+  const tc1=new THREE.Mesh(new THREE.BoxGeometry(.05,.42,.05),gold);tc1.position.y=5.88;const tc2=new THREE.Mesh(new THREE.BoxGeometry(.24,.05,.05),gold);tc2.position.y=5.95;tower.add(tc1,tc2);
+  // adro + cruzeiro
+  const adro=new THREE.Mesh(new THREE.BoxGeometry(5.6,.1,3.8),new THREE.MeshStandardMaterial({color:0x6a5a44,roughness:1}));adro.position.set(.4,.05,1.95);adro.receiveShadow=true;world.add(adro);
+  const cz=new THREE.Group();cz.position.set(0,0,4.6);world.add(cz);
+  const czb=new THREE.Mesh(new THREE.BoxGeometry(.5,.25,.5),stone);czb.position.y=.12;const czp=new THREE.Mesh(new THREE.BoxGeometry(.1,1.5,.1),stone);czp.position.y=1;const cza=new THREE.Mesh(new THREE.BoxGeometry(.6,.1,.1),stone);cza.position.y=1.42;cz.add(czb,czp,cza);[czp,cza].forEach(m=>m.castShadow=true);
+
+  // antífonas: 7 luzes em volta do óculo
+  const am=new THREE.MeshStandardMaterial({color:0x2a1608,emissive:0xffc070,emissiveIntensity:2.5,transparent:true,opacity:0});
+  meshes.anti=[];for(let i=0;i<7;i++){const a=Math.PI*.5+((i-3)/7)*Math.PI*1.7;const m=new THREE.Mesh(new THREE.SphereGeometry(.07,12,8),am.clone());m.position.set(oc.x+Math.cos(a)*1.05,oc.y+Math.sin(a)*1.05,.55);church.add(m);meshes.anti.push(m)}
+
+  // casas
+  const isBlocked=(x,z)=>{const r=Math.hypot(x,z);if(r<2.6||r>6.9)return true;if(x>-2.6&&x<3.4&&z>-7.4&&z<4.2)return true;if(Math.abs(x)<.7&&z>0)return true;if(Math.hypot(x+5,z+2.8)<2.7)return true;if(Math.hypot(x-6.6,z-6.6)<1.7)return true;if(nearRiver(x,z,1.1))return true;return false};
+  const hp=[];let tries=0;while(hp.length<260&&tries<20000){tries++;const a=Math.random()*6.283,r=Math.sqrt(rnd(2.6*2.6,6.9*6.9)),x=Math.cos(a)*r,z=Math.sin(a)*r;if(isBlocked(x,z))continue;if(hp.some(p=>Math.hypot(p.x-x,p.z-z)<.82))continue;hp.push({x,z,r})}
+  hp.sort((a,b)=>a.r-b.r);
+  const hbody=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1).translate(0,.5,0),new THREE.MeshStandardMaterial({roughness:.9}),hp.length);
+  const hroof=new THREE.InstancedMesh(prism(1,1,1),tile,hp.length);
+  const pal=[0xe8dcc4,0xd9b98a,0xc9a27a,0xa9b8b0,0xd7a99a,0xe3cfa0,0xb8c4c8,0xd4c4a8];const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),e=new THREE.Euler(),v=new THREE.Vector3(),sc=new THREE.Vector3(),col=new THREE.Color();
+  hp.forEach((p,i)=>{const w=rnd(.5,.72),h=rnd(.42,.62),d=rnd(.6,.85);e.set(0,Math.atan2(-p.x,-p.z),0);q.setFromEuler(e);
+    m4.compose(v.set(p.x,0,p.z),q,sc.set(w,h,d));hbody.setMatrixAt(i,m4);hbody.setColorAt(i,col.setHex(pal[i%pal.length]).offsetHSL(0,0,rnd(-.06,.03)));
+    m4.compose(v.set(p.x,h,p.z),q,sc.set(w*1.1,w*.42,d*1.06));hroof.setMatrixAt(i,m4)});
+  hbody.castShadow=hbody.receiveShadow=hroof.castShadow=true;world.add(hbody,hroof);meshes.hb=hbody;meshes.hr=hroof;
+
+  // canavial (externo e interno)
+  U.cane={uTime:{value:0},uGrow:{value:1}};U.caneIn={uTime:U.cane.uTime,uGrow:{value:0}};
+  const blade=new THREE.BoxGeometry(.035,1,.035).translate(0,.5,0);
+  function caneField(n,r0,r1,uni,extra){const im=new THREE.InstancedMesh(blade,windMat(0x6f7a38,uni),n);let k=0,t=0;
+    while(k<n&&t<n*30){t++;const a=Math.random()*6.283,r=Math.sqrt(rnd(r0*r0,r1*r1)),x=Math.cos(a)*r,z=Math.sin(a)*r;
+      if(nearRiver(x,z,.75))continue;if(Math.abs(x)<.8&&z>3)continue;if(Math.hypot(x-6.6,z-6.6)<1.6)continue;if(extra&&extra(x,z))continue;
+      e.set(rnd(-.12,.12),Math.random()*6.283,rnd(-.12,.12));q.setFromEuler(e);m4.compose(v.set(x,0,z),q,sc.set(1,rnd(.7,1.25),1));im.setMatrixAt(k,m4);im.setColorAt(k,col.setHex(0x6f7a38).offsetHSL(rnd(-.03,.04),rnd(-.1,.05),rnd(-.08,.08)));k++}
+    im.count=k;world.add(im);return im}
+  meshes.cane=caneField(mobile?900:2800,7,9.75,U.cane,(x,z)=>Math.hypot(x+5,z+2.8)<2.6);
+  meshes.caneIn=caneField(mobile?500:1600,2.4,6.9,U.caneIn,(x,z)=>(x>-2.6&&x<3.4&&z>-7.4&&z<4.4)||Math.hypot(x+4.6,z+3.2)<2.2);
+
+  // engenho (moenda a boi + casa-grande)
+  const eng=new THREE.Group();eng.position.set(-4.6,0,-3.2);world.add(eng);meshes.eng=eng;
+  const wood=new THREE.MeshStandardMaterial({color:0x5a3a22,roughness:.9});
+  for(const [x,z] of [[-.8,-.8],[.8,-.8],[-.8,.8],[.8,.8]]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1.1,6),wood);p.position.set(x,.55,z);eng.add(p)}
+  const er=new THREE.Mesh(prism(2,.7,2),tile);er.position.y=1.1;er.castShadow=true;eng.add(er);
+  const wheel=new THREE.Group();wheel.position.set(1.7,0,1.2);eng.add(wheel);meshes.wheel=wheel;
+  const wt=new THREE.Mesh(new THREE.TorusGeometry(.65,.05,6,32),wood);wt.rotation.x=Math.PI/2;wt.position.y=.6;wheel.add(wt);
+  const ax=new THREE.Mesh(new THREE.CylinderGeometry(.08,.1,.9,8),wood);ax.position.y=.45;wheel.add(ax);
+  const arm=new THREE.Mesh(new THREE.BoxGeometry(2.2,.06,.06),wood);arm.position.y=.62;wheel.add(arm);
+  const ox=new THREE.MeshStandardMaterial({color:0x4a3a2c,roughness:1});
+  [-1.05,1.05].forEach(x=>{const b=new THREE.Mesh(new THREE.BoxGeometry(.38,.24,.18),ox);b.position.set(x,.22,0);b.castShadow=true;wheel.add(b)});
+  const cg=new THREE.Mesh(new THREE.BoxGeometry(1.6,.8,1),lime);cg.position.set(-1.7,.4,-1.3);cg.castShadow=true;eng.add(cg);
+  const cgr=new THREE.Mesh(prism(1.75,.55,1.1),tile);cgr.position.set(-1.7,.8,-1.3);eng.add(cgr);
+
+  // usina (mesmo lugar do engenho)
+  const brick=new THREE.MeshStandardMaterial({color:0x7a4a33,roughness:.9});
+  const us=new THREE.Group();us.position.set(-4.9,0,-2.9);world.add(us);meshes.us=us;
+  const ub=new THREE.Mesh(new THREE.BoxGeometry(2.5,1.3,1.7),brick);ub.position.y=.65;ub.castShadow=true;us.add(ub);
+  const ubr=new THREE.Mesh(prism(2.7,.6,1.8),new THREE.MeshStandardMaterial({color:0x5a5650,roughness:.6,metalness:.3}));ubr.position.y=1.3;us.add(ubr);
+  const ch=new THREE.Mesh(new THREE.CylinderGeometry(.17,.3,4.8,16).translate(0,2.4,0),brick);ch.position.set(-.9,0,-1.1);ch.castShadow=true;us.add(ch);meshes.chim=ch;
+  const chr=new THREE.Mesh(new THREE.TorusGeometry(.19,.04,6,16),brick);chr.rotation.x=Math.PI/2;chr.position.set(-.9,4.75,-1.1);us.add(chr);meshes.chr=chr;
+
+  // trem + trilho
+  const rail=new THREE.Mesh(new THREE.TorusGeometry(8.45,.03,4,240),new THREE.MeshStandardMaterial({color:0x8a7a62,metalness:.6,roughness:.4}));rail.rotation.x=Math.PI/2;rail.position.y=.04;world.add(rail);meshes.rail=rail;
+  const train=new THREE.Group();world.add(train);meshes.train=train;meshes.cars=[];
+  const loco=new THREE.MeshStandardMaterial({color:0x2a2622,metalness:.5,roughness:.5});
+  for(let i=0;i<4;i++){const g=new THREE.Group();const b=new THREE.Mesh(new THREE.BoxGeometry(.32,.26,.6),i?brick:loco);b.position.y=.2;b.castShadow=true;g.add(b);if(!i){const st=new THREE.Mesh(new THREE.CylinderGeometry(.05,.06,.22,8),loco);st.position.set(0,.43,.18);g.add(st);const lamp=new THREE.Mesh(new THREE.SphereGeometry(.04,8,6),new THREE.MeshStandardMaterial({emissive:0xffd080,emissiveIntensity:4}));lamp.position.set(0,.25,.31);g.add(lamp)}train.add(g);meshes.cars.push(g)}
+
+  // São Miguel (capela no canto) + farol da sede
+  const smg=new THREE.Group();smg.position.set(6.6,0,6.6);smg.rotation.y=-Math.PI*.75;world.add(smg);meshes.sm=smg;
+  const smb=new THREE.Mesh(new THREE.BoxGeometry(1.1,1,1.6),lime);smb.position.y=.5;smb.castShadow=true;smg.add(smb);
+  const smr=new THREE.Mesh(prism(1.25,.55,1.7),tile);smr.position.y=1;smg.add(smr);
+  const smt=new THREE.Mesh(new THREE.BoxGeometry(.4,1.6,.4),lime);smt.position.set(.55,.8,.7);smg.add(smt);
+  const sms=new THREE.Mesh(new THREE.ConeGeometry(.3,.5,4),azul);sms.rotation.y=Math.PI/4;sms.position.set(.55,1.85,.7);smg.add(sms);
+  const beacon=new THREE.Group();world.add(beacon);meshes.beacon=beacon;
+  const bmat=new THREE.MeshBasicMaterial({color:0xe0a55a,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+  const bcyl=new THREE.Mesh(new THREE.CylinderGeometry(.35,.6,9,32,1,true).translate(0,4.5,0),bmat);beacon.add(bcyl);
+  const bring=new THREE.Mesh(new THREE.TorusGeometry(1,.04,8,64),new THREE.MeshStandardMaterial({emissive:0xe0a55a,emissiveIntensity:3,transparent:true,opacity:0}));bring.rotation.x=Math.PI/2;bring.position.y=.08;beacon.add(bring);
+  const bgem=new THREE.Mesh(new THREE.OctahedronGeometry(.35),new THREE.MeshStandardMaterial({color:0xc9893a,emissive:0xe0a55a,emissiveIntensity:2,metalness:.6,roughness:.3,transparent:true,opacity:0}));bgem.position.y=6.8;beacon.add(bgem);meshes.bgem=bgem;
+  U.bmats=[bmat,bring.material,bgem.material];
+
+  // multidão de 1890 + boi
+  const crowdN=300;const cg2=new THREE.CylinderGeometry(.05,.065,.24,6).translate(0,.12+.1,0);
+  const crowdM=new THREE.MeshStandardMaterial({roughness:.8});
+  crowdM.onBeforeCompile=sh=>{sh.uniforms.uTime=U.cane.uTime;sh.vertexShader="uniform float uTime;\n"+sh.vertexShader.replace("#include <begin_vertex>",`#include <begin_vertex>
+    vec4 wp=instanceMatrix*vec4(0.,0.,0.,1.); transformed.y+=abs(sin(uTime*5.+wp.x*13.+wp.z*7.))*.05;`)};
+  const crowd=new THREE.InstancedMesh(cg2,crowdM,crowdN);const cpal=[0xf0e6d2,0xc2432f,0xe0a55a,0x4a9b96,0x2f5f8f,0xd7a99a,0x8a5a6a,0xf3d37a];
+  const cpos=[];for(let i=0;i<crowdN;i++){let x,z;do{const a=Math.random()*6.283,r=rnd(.75,2.5);x=Math.cos(a)*r*1.12+.3;z=3.1+Math.sin(a)*r*.8}while(z<1.1||z>5.4);cpos.push([x,z]);
+    m4.compose(v.set(x,.1,z),q.identity(),sc.set(1,rnd(.85,1.2),1));crowd.setMatrixAt(i,m4);crowd.setColorAt(i,col.setHex(cpal[i%cpal.length]))}
+  crowd.count=0;world.add(crowd);meshes.crowd=crowd;
+  const boi=new THREE.Group();world.add(boi);meshes.boi=boi;
+  const boiM=new THREE.MeshStandardMaterial({color:0x8a2a1f,roughness:.6,emissive:0x2a0804});
+  const bb=new THREE.Mesh(new THREE.BoxGeometry(.5,.26,.26),boiM);bb.position.y=.42;const sk=new THREE.Mesh(new THREE.ConeGeometry(.42,.36,16,1,true),new THREE.MeshStandardMaterial({color:0xf3d37a,side:THREE.DoubleSide,roughness:.7}));sk.position.y=.24;
+  const hd=new THREE.Mesh(new THREE.BoxGeometry(.16,.16,.16),boiM);hd.position.set(.32,.5,0);const hn=new THREE.Mesh(new THREE.TorusGeometry(.1,.015,4,12,Math.PI),new THREE.MeshStandardMaterial({color:0xf0e6d2}));hn.position.set(.34,.6,0);hn.rotation.y=Math.PI/2;
+  boi.add(bb,sk,hd,hn);
+
+  // anel dos 199 dias
+  const ring=new THREE.InstancedMesh(new THREE.BoxGeometry(.06,.05,.2),new THREE.MeshStandardMaterial({color:0x3a2208,emissive:0xe0a55a,emissiveIntensity:2.2,transparent:true}),199);
+  for(let i=0;i<199;i++){const a=i/199*6.283-Math.PI/2;e.set(0,-a,0);q.setFromEuler(e);m4.compose(v.set(Math.cos(a)*9.87,.03,Math.sin(a)*9.87),q,sc.set(1,1,1));ring.setMatrixAt(i,m4)}
+  ring.count=0;world.add(ring);meshes.ring=ring;
+
+  // bandeirinhas
+  const flagShape=new THREE.Shape();flagShape.moveTo(-.07,0);flagShape.lineTo(.07,0);flagShape.lineTo(0,-.16);flagShape.closePath();
+  const flags=new THREE.InstancedMesh(new THREE.ShapeGeometry(flagShape),new THREE.MeshStandardMaterial({side:THREE.DoubleSide,roughness:.7,emissive:0x221408}),8*18);
+  const fpal=[0xc2432f,0xe0a55a,0x4a9b96,0xf0e6d2,0x2f5f8f,0xf3d37a,0x8a5a6a];let fk=0;const A=new THREE.Vector3(2.32,4.3,-.75);
+  for(let sI=0;sI<8;sI++){const a=-1.2+sI*(2.4/7)+Math.PI/2,B=new THREE.Vector3(Math.cos(a)*5.6,1.05,Math.sin(a)*5.6+.6);
+    for(let k=1;k<=18;k++){const t=k/19;v.lerpVectors(A,B,t);v.y-=Math.sin(Math.PI*t)*.9;e.set(0,Math.atan2(B.x-A.x,B.z-A.z)+Math.PI/2,0);q.setFromEuler(e);m4.compose(v,q,sc.set(1,1,1));flags.setMatrixAt(fk,m4);flags.setColorAt(fk,col.setHex(fpal[(fk*3)%fpal.length]));fk++}}
+  flags.count=0;world.add(flags);meshes.flags=flags;
+
+  // partículas: fogo, fumaça, lanternas, poeira
+  const tex=dotTex();
+  function points(n,color,size,blend){const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(n*3),3));const m=new THREE.PointsMaterial({color,size,map:tex,transparent:true,opacity:0,depthWrite:false,blending:blend||THREE.AdditiveBlending,sizeAttenuation:true});const p=new THREE.Points(g,m);world.add(p);return p}
+  pts.fire=points(mobile?60:180,0xff8a3a,.42);pts.fire.userData.seed=[...Array(pts.fire.geometry.attributes.position.count)].map(()=>[rnd(-1.2,1.2),Math.random(),rnd(-1,1.2),rnd(.6,1.4)]);
+  pts.smoke=points(mobile?40:110,0x8a847a,1.1,THREE.NormalBlending);pts.smoke.userData.seed=[...Array(pts.smoke.geometry.attributes.position.count)].map(()=>[Math.random(),rnd(-.3,.3),rnd(-.3,.3)]);
+  pts.lant=points(8,0xffd27a,.55);
+  pts.dust=points(mobile?60:240,0xf0dcb4,.08);const dp=pts.dust.geometry.attributes.position;for(let i=0;i<dp.count;i++)dp.setXYZ(i,rnd(-10,10),rnd(.3,7),rnd(-10,10));pts.dust.material.opacity=.55;
+
+  // pós-processamento (só desktop)
+  if(!mobile){composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
+    composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.55,.55,.82));composer.addPass(new OutputPass())}
+  resize();
+}
+
+function resize(){if(!renderer)return;const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();if(composer)composer.setSize(w,h);applyOffset()}
+function applyOffset(){const w=innerWidth,h=innerHeight;if(w<860)camera.setViewOffset(w,h,0,h*.2,w,h);else camera.setViewOffset(w,h,-w*.17*(1-S.offX),0,w,h)}
+addEventListener("resize",resize);
+
+/* ---------- estado por capítulo ---------- */
+let curCh=-1;
+function setChapter(i){if(i===curCh)return;curCh=i;
+  $$("#rail button").forEach((b,k)=>b.classList.toggle("on",k===i));
+  $$(".ruler .mk").forEach(b=>b.classList.toggle("on",+b.dataset.go===i));
+  const c=CH[i];if(i===5)setYear(SEDES[Math.max(0,sedeIdx)][0],"Sede");else if(i!==7&&i!==8)setYear(c.y,c.l);
+  if(i>0)bell(.8+(i%4)*.12);
+  if(!scene)return;
+  const E=ERA[i],d=reduce?0:2.2,mo=MOODS[E.m];
+  gsap.to(S,{...E.s,duration:d*.9,ease:"power2.inOut",overwrite:"auto"});
+  const k=innerWidth/innerHeight<.8?1.95:1.32;
+  const tx=E.t[0],ty=E.t[1],tz=E.t[2];
+  gsap.to(camTgt,{x:tx,y:ty,z:tz,duration:d,ease:"power3.inOut",overwrite:true});
+  gsap.to(camPos,{x:tx+(E.c[0]-tx)*k,y:ty+(E.c[1]-ty)*k,z:tz+(E.c[2]-tz)*k,duration:d,ease:"power3.inOut",overwrite:true});
+  [[cBg,mo.bg],[cKey,mo.key],[cHemi,mo.hemi]].forEach(([c,h])=>{const t=new THREE.Color(h);gsap.to(c,{r:t.r,g:t.g,b:t.b,duration:d,overwrite:true})});
+  gsap.to(L,{ki:mo.ki,hi:mo.hi,rim:mo.rim,exp:mo.exp,duration:d,overwrite:true});
+}
+
+/* ---------- arraste para girar ---------- */
+let drag=null,userRot=0,userRotV=0;
+if(fine){addEventListener("pointerdown",e=>{if(e.target.closest(".panel,.hud-top,#menu,.ruler,.rail,a,button"))return;drag={x:e.clientX};document.body.style.cursor="grabbing"});
+  addEventListener("pointermove",e=>{if(!drag)return;userRotV=(e.clientX-drag.x)*.005;drag.x=e.clientX;userRot+=userRotV});
+  addEventListener("pointerup",()=>{drag=null;document.body.style.cursor=""})}
+let mx=0,my=0;if(fine)addEventListener("pointermove",e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+
+/* ---------- laço único ---------- */
+let t=0;const UP=new THREE.Vector3(0,1,0),TOP=new THREE.Vector3();
+function frame(time,dt){
+  if(!scene)return;dt=Math.min(.05,dt/1000||.016);t+=dt*M;
+  U.cane.uTime.value=t;U.cane.uGrow.value=Math.max(.001,S.cane);U.caneIn.uGrow.value=Math.max(.001,S.caneIn);
+  meshes.cane.visible=S.cane>.01;meshes.caneIn.visible=S.caneIn>.01;
+  const hn=Math.round(S.houses);meshes.hb.count=meshes.hr.count=hn;
+  meshes.tower.scale.set(1,Math.max(.001,S.tower),1);meshes.tower.visible=S.tower>.01;
+  const se=Math.max(.001,S.engenho);meshes.eng.scale.setScalar(se);meshes.eng.visible=S.engenho>.01;meshes.wheel.rotation.y+=dt*.8*M;
+  meshes.us.scale.setScalar(Math.max(.001,S.usina));meshes.us.visible=S.usina>.01;meshes.chim.scale.y=Math.max(.001,S.chimney);meshes.chr.visible=S.chimney>.98;
+  // fumaça
+  const sp=pts.smoke.geometry.attributes.position,sd=pts.smoke.userData.seed,top=TOP.set(-.9,4.8*S.chimney,-1.1).add(meshes.us.position);
+  for(let i=0;i<sp.count;i++){const s=sd[i];s[0]=(s[0]+dt*.12*M)%1;const h=s[0];sp.setXYZ(i,top.x+s[1]+h*2.4,top.y+h*3.2,top.z+s[2]+h*.6)}sp.needsUpdate=true;
+  pts.smoke.material.opacity=S.smoke*.42;pts.smoke.visible=S.smoke>.01;
+  // trem
+  meshes.train.visible=meshes.rail.visible=S.train>.01;meshes.rail.scale.setScalar(Math.max(.001,S.train));
+  meshes.cars.forEach((g,i)=>{const a=t*.12-i*.085;g.position.set(Math.cos(a)*8.45,0,Math.sin(a)*8.45);g.rotation.y=-a;g.scale.setScalar(Math.max(.001,S.train))});
+  // São Miguel + farol
+  meshes.sm.scale.setScalar(Math.max(.001,S.sm));meshes.sm.visible=S.sm>.01;
+  meshes.beacon.position.set(S.bpos*6.6,0,.6+S.bpos*6);meshes.beacon.visible=S.beacon>.01;
+  U.bmats[0].opacity=S.beacon*.22;U.bmats[1].opacity=S.beacon;U.bmats[2].opacity=S.beacon;meshes.bgem.rotation.y+=dt*1.2*M;meshes.bgem.position.y=6.8+Math.sin(t*2)*.15;
+  // fogo
+  const fp=pts.fire.geometry.attributes.position,fd=pts.fire.userData.seed;
+  for(let i=0;i<fp.count;i++){const s=fd[i];s[1]=(s[1]+dt*s[3]*.5*M)%1;fp.setXYZ(i,-4.6+s[0]*(1-s[1]*.6),s[1]*2.6,-3.2+s[2]*(1-s[1]*.6))}fp.needsUpdate=true;
+  pts.fire.material.opacity=S.fire*.9;pts.fire.visible=S.fire>.01;U.fireL.intensity=S.fire*(9+Math.sin(t*23)*2+Math.sin(t*7)*2);
+  // multidão
+  meshes.crowd.count=Math.round(S.crowd*300);meshes.boi.visible=S.crowd>.3;
+  const ba=t*.8;meshes.boi.position.set(.3+Math.cos(ba)*.45,0,3.1+Math.sin(ba)*.35);meshes.boi.rotation.y=-ba-Math.PI/2;
+  U.festL.intensity=Math.max(S.crowd,S.flags)*6+S.flagsPulse*8;
+  // anel dos 199 dias
+  meshes.ring.count=Math.round(S.ring);const rm=meshes.ring.material;rm.emissive.setRGB(.88-S.ringEnd*.1,.65-S.ringEnd*.45,.35-S.ringEnd*.25);rm.opacity=1-S.ringEnd*.55;
+  // bandeirinhas
+  meshes.flags.count=Math.round(S.flags*144);
+  // lanternas de 1817: fogem para os mangues
+  const lp=pts.lant.geometry.attributes.position;for(let i=0;i<lp.count;i++){const u=((t*.05+i/lp.count)%1);lp.setXYZ(i,1.5-u*9.8+Math.sin(i*3)*.4,.5+Math.sin(t*3+i)*.05,5.6-u*3+Math.cos(i*2)*.6)}lp.needsUpdate=true;
+  pts.lant.material.opacity=S.lant;pts.lant.visible=S.lant>.01;
+  // antífonas
+  meshes.anti.forEach((m,i)=>{m.material.opacity=S.anti*(antiSel<0?.75:i===antiSel?1:.3);const s=(antiSel===i?1.9:1)*(1+Math.sin(t*2+i)*.08);m.scale.setScalar(s)});
+  U.glow.emissiveIntensity=S.oculo*(1+Math.sin(t*1.3)*.06);U.door.emissiveIntensity=.15+S.crowd*.8;
+  // poeira
+  const dpp=pts.dust.geometry.attributes.position;for(let i=0;i<dpp.count;i++){let y=dpp.getY(i)+dt*.08*M;if(y>7)y=.3;dpp.setY(i,y)}dpp.needsUpdate=true;
+  // luzes e névoa
+  scene.fog.color.copy(cBg);U.key.color.copy(cKey);U.key.intensity=L.ki;U.hemi.color.copy(cHemi);U.hemi.intensity=L.hi;U.rim.intensity=L.rim;renderer.toneMappingExposure=L.exp;
+  // rotação da maquete
+  if(!drag){userRotV*=.94;userRot+=userRotV}
+  world.rotation.y+=dt*.06*S.spin*M;
+  if(S.spin<.05&&!drag){const tgt=Math.round(world.rotation.y/6.283)*6.283;world.rotation.y+=(tgt-world.rotation.y)*.03;userRot+=(0-userRot)*.03}
+  camera.position.copy(camPos);
+  if(M){camera.position.x+=mx*1.2;camera.position.y+=-my*.8}
+  camera.position.applyAxisAngle(UP,userRot);
+  camera.lookAt(camTgt);
+  applyOffset();
+  composer?composer.render():renderer.render(scene,camera);
+}
+
+/* =============== INÍCIO =============== */
+function hasGL(){try{const c=document.createElement("canvas");return !!(c.getContext("webgl2")||c.getContext("webgl"))}catch(e){return false}}
+try{if(hasGL()){build();setPre(70)}else document.documentElement.classList.add("no3d")}catch(err){console.error(err);document.documentElement.classList.add("no3d");scene=null}
+
+gsap.registerPlugin(ScrollTrigger);
+if(!reduce){lenis=new Lenis({duration:1.2,smoothWheel:true});lenis.on("scroll",ScrollTrigger.update);gsap.ticker.add(tt=>lenis.raf(tt*1000));gsap.ticker.lagSmoothing(0)}
+gsap.ticker.add((time,dt)=>frame(time,dt));
+
+// capítulos ao rolar
+$$("[data-ch]").forEach(sec=>ScrollTrigger.create({trigger:sec,start:"top 55%",end:"bottom 55%",onToggle:self=>{if(self.isActive)setChapter(+sec.dataset.ch)}}));
+// sedes (scrub)
+const sedeST=ScrollTrigger.create({trigger:"#c5",start:"top top",end:"bottom bottom",onUpdate:self=>setSede(Math.min(SEDES.length-1,Math.floor(self.progress*SEDES.length)))});
+setSede(0);
+// usina (scrub)
+ScrollTrigger.create({trigger:"#c7",start:"top top",end:"bottom bottom",onUpdate:self=>{const p=self.progress,y=Math.round(1892+p*(2014-1892));
+  $("#uprog").style.transform=`scaleX(${p})`;let on=0;USINA.forEach((u,k)=>{if(y>=u[0])on=k});$$("#umiles li").forEach((li,k)=>li.classList.toggle("on",k===on));
+  if(curCh===7){yrEl.textContent=y;yObj.v=y;rhead.style.left=yx(y);ylab.textContent="Usina Salgado"}
+  if(scene&&curCh===7){S.chimney=Math.min(1,p*12);S.smoke=y<2012?Math.min(1,p*14):Math.max(0,1-(y-2012)/2);S.train=y>=1922&&y<=1945?1:Math.max(0,S.train-.04)}}});
+$$("#umiles li")[0].classList.add("on");
+// município (scrub)
+ScrollTrigger.create({trigger:"#c8",start:"top top",end:"bottom bottom",onUpdate:self=>{const p=self.progress,day=Math.round(p*199);
+  $("#mday").textContent=day;const d=new Date(D0);d.setDate(d.getDate()+day);$("#mdate").textContent=day===0?"20/12/1963":fmtD(d);
+  let on=0;MUNI.forEach((u,k)=>{if(day>=u[0])on=k});$$("#mmiles li").forEach((li,k)=>li.classList.toggle("on",k===on));
+  if(curCh===8){yrEl.textContent=d.getFullYear();rhead.style.left=yx(d.getFullYear()+d.getMonth()/12);ylab.textContent=day>=199?"Extinto":"Município"}
+  if(scene&&curCh===8){S.ring=day;S.ringEnd=day>=199?1:0}}});
+$$("#mmiles li")[0].classList.add("on");
+
+// entradas de texto e números
+if(!reduce){
+  $$(".ch:not(.hero) .panel").forEach(p=>gsap.from(p.children,{y:26,opacity:0,duration:.9,ease:"power3.out",stagger:.06,scrollTrigger:{trigger:p,start:"top 82%"}}));
+  $$("[data-count]").forEach(el=>{const n=+el.dataset.count,pre=el.dataset.pre||"",sm=el.querySelector("small"),o={v:0},txt=el.firstChild;
+    gsap.to(o,{v:n,duration:1.6,ease:"power3.out",scrollTrigger:{trigger:el,start:"top 85%"},onUpdate:()=>{txt.textContent=pre+(el.dataset.fmt?Math.round(o.v).toLocaleString("pt-BR"):Math.round(o.v))}})});
+  $$("#vbars i").forEach(i=>gsap.fromTo(i,{scaleX:0},{scaleX:+i.style.getPropertyValue("--w"),duration:1.4,ease:"expo.out",scrollTrigger:{trigger:"#vbars",start:"top 85%"}}));
+}else $$("#vbars i").forEach(i=>i.style.transform=`scaleX(${i.style.getPropertyValue("--w")})`);
+
+// preloader → abertura
+let seen=false;try{seen=sessionStorage.getItem("ndo-seen")==="1";sessionStorage.setItem("ndo-seen","1")}catch(e){}
+const hero=gsap.timeline({paused:true});
+hero.from(".hero h1 .l>span",{yPercent:115,rotate:4,duration:1.3,ease:"expo.out",stagger:.12})
+    .from(".hero .kick,.hero .lead,.hero .row,.hero .legend,.hero .hint",{y:24,opacity:0,duration:.9,ease:"power3.out",stagger:.08},"-=.9");
+if(scene&&!reduce){camPos.set(26,20,30);gsap.to(camPos,{x:13,y:8,z:17,duration:3.2,ease:"power3.out",delay:.2})}
+function start(){setPre(100);$("#pre").classList.add("out");if(!reduce)hero.play(0);else hero.progress(1);setChapter(0);ScrollTrigger.refresh()}
+const minT=seen||reduce?0:1300,t0=performance.now();
+Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))]).then(()=>{setPre(92);const w=Math.max(0,minT-(performance.now()-t0));
+  const iv=setInterval(()=>setPre(Math.min(99,progress+4)),60);setTimeout(()=>{clearInterval(iv);start()},w)});
+addEventListener("load",()=>ScrollTrigger.refresh());
+</script>
+</body>
+</html>
